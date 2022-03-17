@@ -10,11 +10,35 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
+  String _todoView = 'ListView'; // ListView or CalendarView
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Todo"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+                (_todoView == 'ListView') ? Icons.calendar_today : Icons.sort),
+            tooltip: 'Add new task',
+            onPressed: () {
+              setState(() {
+                _todoView =
+                    (_todoView == 'ListView') ? 'CalendarView' : 'ListView';
+              });
+            },
+          ),
+          PopupMenuButton<String>(
+              onSelected: (String value) {},
+              offset: Offset(0, 52),
+              itemBuilder: (BuildContext context) {
+                return {'Logout', 'Settings'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                      value: choice, child: Text(choice));
+                }).toList();
+              })
+        ],
       ),
       drawer: const NavDrawer(),
       body: Container(

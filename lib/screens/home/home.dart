@@ -12,14 +12,31 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
-      ),
+      appBar: AppBar(title: const Text("Home"), actions: <Widget>[
+        PopupMenuButton<String>(
+            onSelected: handleClick,
+            offset: Offset(0, 52),
+            itemBuilder: (BuildContext context) {
+              return {'Logout', 'Settings'}.map((String choice) {
+                return PopupMenuItem<String>(
+                    value: choice, child: Text(choice));
+              }).toList();
+            })
+      ]),
       drawer: const NavDrawer(),
       body: Container(
         padding: const EdgeInsets.all(16),
         child: const Text("Feel free to study the file structure :)"),
       ),
     );
+  }
+
+  void handleClick(String value) {
+    switch (value) {
+      case 'Logout':
+        break;
+      case 'Settings':
+        break;
+    }
   }
 }

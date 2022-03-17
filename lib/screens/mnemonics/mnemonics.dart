@@ -12,9 +12,21 @@ class _MnemonicsState extends State<Mnemonics> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Mnemonics"),
-      ),
+      appBar: AppBar(title: const Text("Mnemonics"), actions: <Widget>[
+        PopupMenuButton<String>(
+            onSelected: (String value) {},
+            offset: Offset(0, 52),
+            itemBuilder: (BuildContext context) {
+              return {
+                'Add memory method',
+                'Refresh vocab list',
+                'Take new photo'
+              }.map((String choice) {
+                return PopupMenuItem<String>(
+                    value: choice, child: Text(choice));
+              }).toList();
+            })
+      ]),
       drawer: const NavDrawer(),
       body: Container(
         padding: const EdgeInsets.all(16),
