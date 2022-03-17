@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Accelyst',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: primaryColor,
@@ -23,6 +24,11 @@ class MyApp extends StatelessWidget {
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: primaryColor,
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            primary: primaryColor,
+          ),
         ),
       ),
       home: const Home(),

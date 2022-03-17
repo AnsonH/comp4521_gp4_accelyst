@@ -1,3 +1,4 @@
+import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,15 @@ class _TodoState extends State<Todo> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) =>
+                  const EditTask(title: "Add Task"),
+            ),
+          );
+        },
       ),
     );
   }
