@@ -27,8 +27,10 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  circular_countdown_timer: ^0.2.1
   flutter:
     sdk: flutter
+  simple_timer: ^2.0.0
 
 dev_dependencies:
   flutter_test:
