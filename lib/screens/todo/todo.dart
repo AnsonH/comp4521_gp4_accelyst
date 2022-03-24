@@ -2,6 +2,8 @@ import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
+enum TodoView { list, calendar }
+
 class Todo extends StatefulWidget {
   const Todo({Key? key}) : super(key: key);
 
@@ -10,7 +12,7 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
-  String _todoView = 'ListView'; // ListView or CalendarView
+  TodoView _todoView = TodoView.list;
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +21,23 @@ class _TodoState extends State<Todo> {
         title: const Text("Todo"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(
-                (_todoView == 'ListView') ? Icons.calendar_today : Icons.sort),
+            icon: Icon((_todoView == TodoView.list)
+                ? Icons.calendar_today
+                : Icons.sort),
             tooltip: 'Add new task',
             onPressed: () {
               setState(() {
-                _todoView =
-                    (_todoView == 'ListView') ? 'CalendarView' : 'ListView';
+                _todoView = (_todoView == TodoView.list)
+                    ? TodoView.calendar
+                    : TodoView.list;
               });
             },
           ),
           PopupMenuButton<String>(
               onSelected: (String value) {},
-              offset: Offset(0, 52),
+              offset: const Offset(0, 52),
               itemBuilder: (BuildContext context) {
-                return {'Logout', 'Settings'}.map((String choice) {
+                return ['Logout', 'Settings'].map((String choice) {
                   return PopupMenuItem<String>(
                       value: choice, child: Text(choice));
                 }).toList();

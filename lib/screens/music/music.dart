@@ -21,9 +21,9 @@ class _MusicState extends State<Music> {
           ),
           PopupMenuButton<String>(
               onSelected: (String value) {},
-              offset: Offset(0, 52),
+              offset: const Offset(0, 52),
               itemBuilder: (BuildContext context) {
-                return {'I love music', '周杰倫', '張敬軒'}.map((String choice) {
+                return ['I love music', '周杰倫', '張敬軒'].map((String choice) {
                   return PopupMenuItem<String>(
                       value: choice, child: Text(choice));
                 }).toList();

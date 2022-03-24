@@ -15,9 +15,9 @@ class _HomeState extends State<Home> {
       appBar: AppBar(title: const Text("Home"), actions: <Widget>[
         PopupMenuButton<String>(
             onSelected: handleClick,
-            offset: Offset(0, 52),
+            offset: const Offset(0, 52),
             itemBuilder: (BuildContext context) {
-              return {'Logout', 'Settings'}.map((String choice) {
+              return ['Logout', 'Settings'].map((String choice) {
                 return PopupMenuItem<String>(
                     value: choice, child: Text(choice));
               }).toList();

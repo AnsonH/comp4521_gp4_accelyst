@@ -1,8 +1,4 @@
-import 'dart:math';
-import 'dart:async';
-
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
-
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +38,6 @@ class _TimerState extends State<Timer> {
       ),
       drawer: const NavDrawer(),
       body: Column(children: [
-        Text("Timer"),
         // https://pub.dev/packages/circular_countdown_timer/example
         Container(
             child: CircularCountDownTimer(
