@@ -1,3 +1,4 @@
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,24 @@ class _MnemonicsState extends State<Mnemonics> {
       drawer: const NavDrawer(),
       body: Container(
         padding: const EdgeInsets.all(16),
-        child: const Text("Mnemonics"),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text("Temporary links to forms:"),
+            ElevatedButton.icon(
+              label: const Text("Roman Room: Recall"),
+              icon: const Icon(Icons.open_in_new),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const RoomRecall(),
+                  ),
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
