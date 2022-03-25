@@ -1,5 +1,11 @@
+import 'package:comp4521_gp4_accelyst/widgets/photo/photo_carousel.dart';
 import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
 import 'package:flutter/material.dart';
+
+/* References:
+ *  - https://pub.dev/packages/photo_view#gallery
+ *  - https://github.com/bluefireteam/photo_view/blob/master/example/lib/screens/examples/gallery/gallery_example.dart
+ */
 
 // Placeholder items
 var gridItems = <PhotoGridItemData>[
@@ -53,26 +59,29 @@ var gridItems = <PhotoGridItemData>[
   ),
 ];
 
+/// A grid photo gallery. Tapping on a grid item opens a photo carousel where users can zoom in or out.
+/// Since this widget returns [SliverGrid], you should place this widget inside a [CustomScrollView]. For example:
+/// ```dart
+/// CustomScrollView(
+///   slivers: [
+///      /* ... */
+///      const PhotoGrid(),
+///   ],
+/// ),
+/// ```
+///
+/// External readings:
+///  - [Using slivers to achieve fancy scrolling](https://docs.flutter.dev/development/ui/advanced/slivers)
+///  - [Flutter Slivers Overview](https://youtu.be/k2v3gxtMlDE)
 class PhotoGrid extends StatelessWidget {
   final int crossAxisCount;
   final double crossAxisSpacing;
   final double mainAxisSpacing;
 
-  /// A grid photo gallery.
+  /// Creates a grid photo gallery.
   ///
-  /// Since this widget returns [SliverGrid], you should place this widget inside a [CustomScrollView]. For example:
-  /// ```dart
-  /// CustomScrollView(
-  ///   slivers: [
-  ///      /* ... */
-  ///      const PhotoGrid(),
-  ///   ],
-  /// ),
-  /// ```
-  ///
-  /// External readings:
-  ///  - [Using slivers to achieve fancy scrolling](https://docs.flutter.dev/development/ui/advanced/slivers)
-  ///  - [Flutter Slivers Overview](https://youtu.be/k2v3gxtMlDE)
+  /// [crossAxisCount] specifies the number of grid items per row, while [crossAxisSpacing] and [mainAxisSpacing]
+  /// specifies the gap between each item on the same row and the gap between each row respectively.
   const PhotoGrid({
     Key? key,
     this.crossAxisCount = 3,
@@ -88,9 +97,7 @@ class PhotoGrid extends StatelessWidget {
         (context, index) {
           return PhotoGridItem(
             itemData: gridItems[index],
-            onTap: () {
-              debugPrint("Pressed $index");
-            },
+            onTap: () => _openCarousel(context, index),
           );
         },
         childCount: gridItems.length,
@@ -100,6 +107,21 @@ class PhotoGrid extends StatelessWidget {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: crossAxisSpacing,
         mainAxisSpacing: mainAxisSpacing,
+      ),
+    );
+  }
+
+  void _openCarousel(BuildContext context, final int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => PhotoCarousel(
+          gridItems,
+          initialIndex: index,
+          backgroundDecoration: const BoxDecoration(
+            color: Colors.black,
+          ),
+        ),
       ),
     );
   }
