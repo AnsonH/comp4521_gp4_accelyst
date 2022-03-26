@@ -59,8 +59,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
           height: MediaQuery.of(context).size.height,
         ),
         child: Stack(
-          alignment:
-              AlignmentDirectional.bottomEnd, // "Image N" at bottom right
+          alignment: AlignmentDirectional.bottomCenter,
           children: [
             PhotoViewGallery.builder(
               itemCount: widget.carouselItems.length,
@@ -73,12 +72,15 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
             ),
             Container(
               padding: const EdgeInsets.all(20.0),
+              width: MediaQuery.of(context).size.width,
+              color: Colors.black.withOpacity(0.75),
               child: Text(
                 "Image ${currentIndex + 1}",
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16.0,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -93,6 +95,8 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
     return PhotoViewGalleryPageOptions(
       imageProvider: NetworkImage(item.resource),
       initialScale: PhotoViewComputedScale.contained,
+      minScale: PhotoViewComputedScale.contained * 0.8,
+      maxScale: PhotoViewComputedScale.covered * 1.1,
       heroAttributes: PhotoViewHeroAttributes(tag: item.id),
     );
   }

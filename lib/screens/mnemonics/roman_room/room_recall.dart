@@ -42,15 +42,30 @@ class _RoomRecallState extends State<RoomRecall> {
                   initialValue: "Sample Text\nMiddle Text\nBottom Text",
                   readOnly: true,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
                 Text(
                   "Your Roman Room",
-                  style: TextStyle(color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
                 ),
                 const SizedBox(height: 10),
               ]),
             ),
             const PhotoGrid(),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                const SizedBox(height: 30),
+                Text(
+                  "Room Objects",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ]),
+            ),
           ],
         ),
       ),
