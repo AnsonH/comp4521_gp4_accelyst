@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /* References:
  *  - https://pub.dev/packages/photo_view#gallery
@@ -6,19 +9,24 @@ import 'package:flutter/material.dart';
  */
 
 class PhotoGridItemData {
+  final String id;
+  final String resource;
+  File? imageFile;
+
   PhotoGridItemData({
     required this.id,
     required this.resource,
   });
-
-  final String id;
-  final String resource;
 }
 
+/// A single item in a photo grid.
 class PhotoGridItem extends StatelessWidget {
-  final PhotoGridItemData itemData;
+  final PhotoGridItemData? itemData;
   final GestureTapCallback onTap;
 
+  /// Creates a single item in a photo grid.
+  ///
+  /// Displays a loading spinner if [itemData] is null.
   const PhotoGridItem({
     Key? key,
     required this.itemData,
@@ -27,19 +35,29 @@ class PhotoGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Hero(
-        tag: itemData.id,
-        child: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(itemData.resource),
-              fit: BoxFit.cover,
+    return itemData == null
+        ? Container(
+            color: Colors.grey[300],
+            child: const Center(
+              child: SpinKitRing(
+                color: Colors.grey,
+                size: 40,
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          )
+        : GestureDetector(
+            onTap: () => onTap(),
+            child: Hero(
+              tag: itemData!.id,
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: FileImage(itemData!.imageFile!),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }

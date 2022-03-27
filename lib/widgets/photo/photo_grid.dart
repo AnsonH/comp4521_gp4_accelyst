@@ -7,58 +7,6 @@ import 'package:flutter/material.dart';
  *  - https://github.com/bluefireteam/photo_view/blob/master/example/lib/screens/examples/gallery/gallery_example.dart
  */
 
-// Placeholder items
-var gridItems = <PhotoGridItemData>[
-  PhotoGridItemData(
-    id: "item1",
-    resource: "https://picsum.photos/id/237/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item2",
-    resource: "https://picsum.photos/id/236/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item3",
-    resource: "https://picsum.photos/id/235/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item4",
-    resource: "https://picsum.photos/id/234/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item5",
-    resource: "https://picsum.photos/id/233/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item6",
-    resource: "https://picsum.photos/id/232/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item7",
-    resource: "https://picsum.photos/id/231/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item8",
-    resource: "https://picsum.photos/id/230/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item9",
-    resource: "https://picsum.photos/id/237/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item10",
-    resource: "https://picsum.photos/id/236/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item11",
-    resource: "https://picsum.photos/id/235/1280/720",
-  ),
-  PhotoGridItemData(
-    id: "item12",
-    resource: "https://picsum.photos/id/234/1280/720",
-  ),
-];
-
 /// A grid photo gallery. Tapping on a grid item opens a photo carousel where users can zoom in or out.
 /// Since this widget returns [SliverGrid], you should place this widget inside a [CustomScrollView]. For example:
 /// ```dart
@@ -74,16 +22,20 @@ var gridItems = <PhotoGridItemData>[
 ///  - [Using slivers to achieve fancy scrolling](https://docs.flutter.dev/development/ui/advanced/slivers)
 ///  - [Flutter Slivers Overview](https://youtu.be/k2v3gxtMlDE)
 class PhotoGrid extends StatelessWidget {
+  final List<PhotoGridItemData?> imagesData;
+  final int childCount;
   final int crossAxisCount;
   final double crossAxisSpacing;
   final double mainAxisSpacing;
 
-  /// Creates a grid photo gallery.
+  /// Creates a grid photo gallery from [imagesData], which is a list of image files.
   ///
   /// [crossAxisCount] specifies the number of grid items per row, while [crossAxisSpacing] and [mainAxisSpacing]
   /// specifies the gap between each item on the same row and the gap between each row respectively.
   const PhotoGrid({
     Key? key,
+    required this.imagesData,
+    required this.childCount,
     this.crossAxisCount = 3,
     this.crossAxisSpacing = 10,
     this.mainAxisSpacing = 10,
@@ -96,11 +48,15 @@ class PhotoGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           return PhotoGridItem(
-            itemData: gridItems[index],
-            onTap: () => _openCarousel(context, index),
+            itemData: imagesData[index],
+            onTap: () {
+              if (imagesData[index] != null) {
+                _openCarousel(context, index);
+              }
+            },
           );
         },
-        childCount: gridItems.length,
+        childCount: childCount,
       ),
       // Defines the grid layout
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -116,7 +72,7 @@ class PhotoGrid extends StatelessWidget {
       context,
       MaterialPageRoute<void>(
         builder: (context) => PhotoCarousel(
-          gridItems,
+          imagesData,
           initialIndex: index,
           backgroundDecoration: const BoxDecoration(
             color: Colors.black,

@@ -1,4 +1,6 @@
+import 'package:comp4521_gp4_accelyst/utils/services/http_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
+import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
 import 'package:flutter/material.dart';
 
 class RoomRecall extends StatefulWidget {
@@ -9,6 +11,24 @@ class RoomRecall extends StatefulWidget {
 }
 
 class _RoomRecallState extends State<RoomRecall> {
+  final List<PhotoGridItemData?> _imagesData =
+      List.filled(gridItems.length, null);
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Downloads placeholder images
+    getImagesFromPhotoGridItemData(
+      data: gridItems,
+      eachRoundCallback: (index, updatedImageData) {
+        if (mounted) {
+          setState(() => _imagesData[index] = updatedImageData);
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +73,10 @@ class _RoomRecallState extends State<RoomRecall> {
                 const SizedBox(height: 10),
               ]),
             ),
-            const PhotoGrid(),
+            PhotoGrid(
+              imagesData: _imagesData,
+              childCount: gridItems.length,
+            ),
             SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: 30),
@@ -72,3 +95,43 @@ class _RoomRecallState extends State<RoomRecall> {
     );
   }
 }
+
+// TODO: Delete the following placeholder items if no longer needed.
+var gridItems = <PhotoGridItemData>[
+  PhotoGridItemData(
+    id: "item1",
+    resource: "https://picsum.photos/id/237/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item2",
+    resource: "https://picsum.photos/id/236/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item3",
+    resource: "https://picsum.photos/id/235/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item4",
+    resource: "https://picsum.photos/id/234/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item5",
+    resource: "https://picsum.photos/id/233/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item6",
+    resource: "https://picsum.photos/id/232/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item7",
+    resource: "https://picsum.photos/id/231/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item8",
+    resource: "https://picsum.photos/id/230/1280/720.jpg",
+  ),
+  PhotoGridItemData(
+    id: "item9",
+    resource: "https://picsum.photos/id/237/1280/720.jpg",
+  ),
+];

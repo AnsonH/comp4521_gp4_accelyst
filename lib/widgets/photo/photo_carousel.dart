@@ -7,7 +7,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.
 class PhotoCarousel extends StatefulWidget {
-  final List<PhotoGridItemData> carouselItems;
+  final List<PhotoGridItemData?> carouselItems;
   final int initialIndex;
 
   // Parameters for PhotoViewGallery
@@ -43,6 +43,9 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    // Since `widget.carouselItems` could contain null items, we count no. of non-null items
+    int itemCount = widget.carouselItems.where((item) => item != null).length;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -62,7 +65,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
           alignment: AlignmentDirectional.bottomCenter,
           children: [
             PhotoViewGallery.builder(
-              itemCount: widget.carouselItems.length,
+              itemCount: itemCount,
               builder: _buildItem,
               onPageChanged: _onPageChanged,
               scrollPhysics: const BouncingScrollPhysics(),
@@ -90,10 +93,10 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
   }
 
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
-    final PhotoGridItemData item = widget.carouselItems[index];
+    final PhotoGridItemData item = widget.carouselItems[index]!;
 
     return PhotoViewGalleryPageOptions(
-      imageProvider: NetworkImage(item.resource),
+      imageProvider: FileImage(item.imageFile!),
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * 0.8,
       maxScale: PhotoViewComputedScale.covered * 1.1,

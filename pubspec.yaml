@@ -30,8 +30,18 @@ dependencies:
   circular_countdown_timer: ^0.2.1
   flutter:
     sdk: flutter
-  photo_view: ^0.13.0
+  flutter_spinkit: ^5.1.0
+  http: ^0.13.4
+  image_picker: ^0.8.4+11
+  path: ^1.8.0
+  path_provider: ^2.0.9
   simple_timer: ^2.0.0
+
+dependency_overrides:
+  photo_view:
+    git:
+      url: https://github.com/bluefireteam/photo_view
+      ref: master
 
 dev_dependencies:
   flutter_test:
