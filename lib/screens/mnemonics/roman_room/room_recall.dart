@@ -75,7 +75,7 @@ class _RoomRecallState extends State<RoomRecall> {
             ),
             PhotoGrid(
               imagesData: _imagesData,
-              childCount: gridItems.length,
+              imageCount: gridItems.length,
             ),
             SliverList(
               delegate: SliverChildListDelegate([

@@ -35,7 +35,7 @@ Future<File> getImageFromUrl(
 /// [saveSuccessCallback] is invoked after file is saved back to each element in [data].
 void getImagesFromPhotoGridItemData({
   required List<PhotoGridItemData> data,
-  required Function(int, PhotoGridItemData) saveSuccessCallback,
+  required void Function(int, PhotoGridItemData) saveSuccessCallback,
 }) {
   for (int i = 0; i < data.length; ++i) {
     final url = data[i].url;

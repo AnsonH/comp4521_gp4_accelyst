@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
 import 'package:comp4521_gp4_accelyst/widgets/photo/add_photo_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class RoomEdit extends StatefulWidget {
   const RoomEdit({Key? key}) : super(key: key);
@@ -10,6 +15,17 @@ class RoomEdit extends StatefulWidget {
 
 class _RoomEditState extends State<RoomEdit> {
   final _formKey = GlobalKey<FormState>();
+
+  final List<PhotoGridItemData> _images = [];
+
+  void _addImage(XFile image) {
+    setState(() {
+      _images.add(PhotoGridItemData(
+        id: const Uuid().v4(),
+        imageFile: File(image.path),
+      ));
+    });
+  }
 
   /* TODO:
    * 1. Create a model class to represent form data
@@ -55,15 +71,24 @@ class _RoomEditState extends State<RoomEdit> {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    // Hide the large "Add a photo" button if there are existing photos
+                    _images.isEmpty
+                        ? AddPhotoButton(onSuccess: _addImage)
+                        : Container(),
                   ],
                 ),
               ),
-              // TODO: Switch to PhotoGrid if there are >=1 photos
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  const AddPhotoButton(),
-                ]),
-              ),
+              // Show photo grid if there are existing photos
+              _images.isEmpty
+                  ? SliverList(
+                      delegate: SliverChildListDelegate([]),
+                    )
+                  : PhotoGrid(
+                      imagesData: _images,
+                      imageCount: _images.length,
+                      showAddPhotoButton: true,
+                      onAddPhotoSuccess: _addImage,
+                    ),
               SliverList(
                 delegate: SliverChildListDelegate([
                   const SizedBox(height: 30),
