@@ -1,6 +1,6 @@
+import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/http_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
 import 'package:flutter/material.dart';
 
 class RoomRecall extends StatefulWidget {
@@ -21,7 +21,7 @@ class _RoomRecallState extends State<RoomRecall> {
     // Downloads placeholder images
     getImagesFromPhotoGridItemData(
       data: gridItems,
-      eachRoundCallback: (index, updatedImageData) {
+      saveSuccessCallback: (index, updatedImageData) {
         if (mounted) {
           setState(() => _imagesData[index] = updatedImageData);
         }
@@ -100,38 +100,38 @@ class _RoomRecallState extends State<RoomRecall> {
 var gridItems = <PhotoGridItemData>[
   PhotoGridItemData(
     id: "item1",
-    resource: "https://picsum.photos/id/237/1280/720.jpg",
+    url: "https://picsum.photos/id/237/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item2",
-    resource: "https://picsum.photos/id/236/1280/720.jpg",
+    url: "https://picsum.photos/id/236/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item3",
-    resource: "https://picsum.photos/id/235/1280/720.jpg",
+    url: "https://picsum.photos/id/235/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item4",
-    resource: "https://picsum.photos/id/234/1280/720.jpg",
+    url: "https://picsum.photos/id/234/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item5",
-    resource: "https://picsum.photos/id/233/1280/720.jpg",
+    url: "https://picsum.photos/id/233/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item6",
-    resource: "https://picsum.photos/id/232/1280/720.jpg",
+    url: "https://picsum.photos/id/232/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item7",
-    resource: "https://picsum.photos/id/231/1280/720.jpg",
+    url: "https://picsum.photos/id/231/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item8",
-    resource: "https://picsum.photos/id/230/1280/720.jpg",
+    url: "https://picsum.photos/id/230/1280/720.jpg",
   ),
   PhotoGridItemData(
     id: "item9",
-    resource: "https://picsum.photos/id/237/1280/720.jpg",
+    url: "https://picsum.photos/id/237/1280/720.jpg",
   ),
 ];

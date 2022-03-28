@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
+import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';

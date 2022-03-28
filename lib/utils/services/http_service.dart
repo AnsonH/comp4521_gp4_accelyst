@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
+import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -32,18 +32,20 @@ Future<File> getImageFromUrl(
 /// Downloads image for each [PhotoGridItemData] instance in [data], then saves the file to `imageFile` property
 /// of the [PhotoGridItemData] instance.
 ///
-/// [eachRoundCallback] is invoked after file is saved back to each element in [data].
-Future<void> getImagesFromPhotoGridItemData({
+/// [saveSuccessCallback] is invoked after file is saved back to each element in [data].
+void getImagesFromPhotoGridItemData({
   required List<PhotoGridItemData> data,
-  required Function(int, PhotoGridItemData) eachRoundCallback,
-}) async {
+  required Function(int, PhotoGridItemData) saveSuccessCallback,
+}) {
   for (int i = 0; i < data.length; ++i) {
-    final image = await getImageFromUrl(
-      data[i].resource,
-      imageName: "${data[i].id}.jpg",
-    );
-    data[i].imageFile = image;
+    final url = data[i].url;
+    if (url == null) {
+      throw "`url` property of a `PhotoGridItemData` instance is null.";
+    }
 
-    eachRoundCallback(i, data[i]);
+    getImageFromUrl(url, imageName: "${data[i].id}.jpg").then((image) {
+      data[i].imageFile = image;
+      saveSuccessCallback(i, data[i]);
+    });
   }
 }
