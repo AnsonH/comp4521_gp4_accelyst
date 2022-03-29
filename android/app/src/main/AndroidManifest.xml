@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.comp4521_gp4_accelyst">
    <application
-        android:label="comp4521_gp4_accelyst"
+        android:label="Accelyst"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

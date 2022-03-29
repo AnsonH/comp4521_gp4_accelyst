@@ -19,8 +19,17 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         primaryColor: primaryColor,
+        textTheme: Theme.of(context).textTheme.apply(
+              fontFamily: "ProximaNova",
+              fontSizeDelta: 1,
+            ),
         appBarTheme: AppBarTheme(
           backgroundColor: primaryColor,
+          titleTextStyle: const TextStyle(
+            fontFamily: "ProximaNova",
+            fontSize: 21,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: primaryColor,

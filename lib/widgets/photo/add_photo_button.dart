@@ -40,7 +40,10 @@ class AddPhotoButton extends StatelessWidget {
           ),
           Text(
             "Add a photo",
-            style: TextStyle(fontSize: 15),
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -86,4 +89,5 @@ final _errorSnackBar = SnackBar(
     style: TextStyle(fontSize: 15),
   ),
   backgroundColor: Colors.red[700],
+  behavior: SnackBarBehavior.floating,
 );

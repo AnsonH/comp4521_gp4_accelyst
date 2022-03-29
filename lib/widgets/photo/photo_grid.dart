@@ -16,7 +16,7 @@ import 'package:image_picker/image_picker.dart';
 /// CustomScrollView(
 ///   slivers: [
 ///      /* ... */
-///      const PhotoGrid(),
+///      PhotoGrid(/* ... */),
 ///   ],
 /// ),
 /// ```
