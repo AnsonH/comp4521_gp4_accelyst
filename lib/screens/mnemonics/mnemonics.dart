@@ -1,5 +1,6 @@
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -61,6 +62,18 @@ class _MnemonicsState extends State<Mnemonics> {
                   context,
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => const RoomEdit(),
+                  ),
+                );
+              },
+            ),
+            ElevatedButton.icon(
+              label: const Text("Vocabulary"),
+              icon: const Icon(Icons.open_in_new),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => const VocabHome(),
                   ),
                 );
               },

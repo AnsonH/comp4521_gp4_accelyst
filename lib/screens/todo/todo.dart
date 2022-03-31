@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
+import 'package:comp4521_gp4_accelyst/screens/todo/todo_calendar.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,7 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
+  // default mode: list view
   TodoView _todoView = TodoView.list;
 
   @override
@@ -24,7 +26,9 @@ class _TodoState extends State<Todo> {
             icon: Icon((_todoView == TodoView.list)
                 ? Icons.calendar_today
                 : Icons.sort),
-            tooltip: 'Add new task',
+            tooltip: (_todoView == TodoView.list)
+                ? "Change to Calendar View"
+                : "Change to List View",
             onPressed: () {
               setState(() {
                 _todoView = (_todoView == TodoView.list)
@@ -45,10 +49,11 @@ class _TodoState extends State<Todo> {
         ],
       ),
       drawer: const NavDrawer(),
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        child: const Text("Todo"),
-      ),
+      body: Column(children: [
+        (_todoView == TodoView.calendar)
+            ? new TodoCalendar()
+            : Text("List View, to be implemented"),
+      ]),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {

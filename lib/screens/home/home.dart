@@ -27,6 +27,8 @@ class _HomeState extends State<Home> {
         ],
       ),
       drawer: const NavDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width *
+          0.4, // this line allows screen swipe to slide out drawer
       body: Container(
         padding: const EdgeInsets.all(16),
         child: const Text("Feel free to study the file structure :)"),
