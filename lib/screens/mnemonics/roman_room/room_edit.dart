@@ -27,7 +27,7 @@ class _RoomEditState extends State<RoomEdit> {
     });
   }
 
-  /* TODO:
+  /* TODO for room edit:
    * 1. Create a model class to represent form data
    * 2. Validate the form on save
    */
