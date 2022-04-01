@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/screens/home/home.dart';
+import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,35 +12,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Colors.indigo[800];
-
     return MaterialApp(
       title: 'Accelyst',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: primaryColor,
-        textTheme: Theme.of(context).textTheme.apply(
-              fontFamily: "ProximaNova",
-              fontSizeDelta: 1,
-            ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: primaryColor,
-          titleTextStyle: const TextStyle(
-            fontFamily: "ProximaNova",
-            fontSize: 21,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: primaryColor,
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            primary: primaryColor,
-          ),
-        ),
-      ),
+      theme: lightThemeData(context),
       home: const Home(),
     );
   }
