@@ -38,6 +38,7 @@ dependencies:
   simple_timer: ^2.0.0
   uuid: ^3.0.6
   syncfusion_flutter_calendar: ^19.4.56
+  sleek_circular_slider: ^2.0.1
 
 dependency_overrides:
   # `photo_view` throws "Looking up a deactivated widget's ancestor is unsafe" error when closing the gallery.
