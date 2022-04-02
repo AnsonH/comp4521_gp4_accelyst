@@ -12,18 +12,15 @@ class EditTask extends StatefulWidget {
 }
 
 class _EditTaskState extends State<EditTask> {
-  List<ChecklistData> _checklistData = [
+  final List<ChecklistData> _checklistData = [
     ChecklistData(id: const Uuid().v4(), checklistName: "One"),
     ChecklistData(id: const Uuid().v4(), checklistName: "Two"),
     ChecklistData(id: const Uuid().v4(), checklistName: "Three"),
   ];
 
   void deleteChecklistData(String id) {
-    final List<ChecklistData> newList = List.from(_checklistData);
-    newList.removeWhere((element) => element.id == id);
-
     setState(() {
-      _checklistData = newList;
+      _checklistData.removeWhere((element) => element.id == id);
     });
   }
 
@@ -137,8 +134,8 @@ class _EditTaskState extends State<EditTask> {
                       ));
                     });
                   },
-                  icon: Icon(Icons.add),
-                  label: Text("Checklist"),
+                  icon: const Icon(Icons.add),
+                  label: const Text("Checklist"),
                 ),
               ]),
             ),
