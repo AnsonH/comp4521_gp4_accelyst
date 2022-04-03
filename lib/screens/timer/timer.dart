@@ -1,7 +1,8 @@
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'dart:ui';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,9 @@ enum TimerState {
 
   /// Timer has started counting but paused.
   pause,
+
+  /// Timer has reached 0 and completed.
+  complete,
 }
 
 class Timer extends StatefulWidget {
@@ -30,7 +34,7 @@ class _TimerState extends State<Timer> {
   int durationSecs = 25 * 60;
   TimerState _timerState = TimerState.stop;
 
-  final CountDownController _controller = CountDownController();
+  final _controller = CircularTimerController();
 
   void _startTimer() {
     setState(() => _timerState = TimerState.resume);
@@ -47,10 +51,19 @@ class _TimerState extends State<Timer> {
     _controller.resume();
   }
 
-  void _resetTimer() {
+  void _resetTimer({int? duration}) {
     setState(() => _timerState = TimerState.stop);
-    _controller.restart(duration: durationSecs);
-    _controller.pause();
+    _controller.reset(duration: duration ?? durationSecs);
+  }
+
+  void _onTimerComplete() {
+    // TODO: Alert the user with sounds & notifications
+    setState(() => _timerState = TimerState.complete);
+  }
+
+  void _stopAlarmOnComplete() {
+    // TODO: Stop the alarm sound
+    _resetTimer();
   }
 
   void _showResetTimerDialog() {
@@ -91,6 +104,9 @@ class _TimerState extends State<Timer> {
     const timerTextStyles = TextStyle(
       fontSize: 60,
       fontWeight: FontWeight.w600,
+      fontFeatures: [
+        FontFeature.tabularFigures(), // Uniform width for each char
+      ],
     );
 
     return Theme(
@@ -131,10 +147,7 @@ class _TimerState extends State<Timer> {
                 ],
               ),
               const SizedBox(height: 20),
-              /* TODO for timer:
-               *  - Use `Stack` to add additional labels on top of the timer text.
-               *  - Detect when the timer reaches 0 secs.
-               */
+              // TODO: Use `Stack` to add additional labels on top of the timer text
               Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
@@ -146,7 +159,10 @@ class _TimerState extends State<Timer> {
                       max: 120,
                       initialValue: durationSecs / 60,
                       onChangeEnd: (double mins) {
-                        setState(() => durationSecs = mins.toInt() * 60);
+                        final duration = mins.toInt() * 60;
+                        // Update timer duration
+                        _resetTimer(duration: duration);
+                        setState(() => durationSecs = duration);
                       },
                       appearance: CircularSliderAppearance(
                         startAngle: 270,
@@ -185,19 +201,16 @@ class _TimerState extends State<Timer> {
                     child: Column(
                       children: [
                         const SizedBox(height: sliderWidth / 2),
-                        CircularCountDownTimer(
+                        CircularTimer(
                           controller: _controller,
                           duration: durationSecs,
-                          width: timerSize,
-                          height: timerSize,
-                          isReverse: true, // Reverse Countdown (max to 0)
-                          isReverseAnimation: true,
-                          autoStart: false,
-                          isTimerTextShown: true,
+                          size: timerSize,
                           fillColor: fillColor,
                           ringColor: ringColor,
                           textStyle: timerTextStyles,
+                          onComplete: _onTimerComplete,
                         ),
+                        const SizedBox(height: sliderWidth / 2),
                       ],
                     ),
                   ),
@@ -210,6 +223,7 @@ class _TimerState extends State<Timer> {
                 onPressedPause: _pauseTimer,
                 onPressedResume: _resumeTimer,
                 onPressedReset: _showResetTimerDialog,
+                onPressedStopAlarm: _stopAlarmOnComplete,
               ),
               const SizedBox(height: 40),
               Text("Duration: ${constructTime(durationSecs)}"),
