@@ -19,11 +19,25 @@ class _RoomEditState extends State<RoomEdit> {
   final List<PhotoGridItemData> _images = [];
 
   void _addImage(XFile image) {
+    // Image is saved to `/data/data/com.example.comp4521_gp4_accelyst/cache`
+    // Use "Device File Explorer" to view local files: https://developer.android.com/studio/debug/device-file-explorer
     setState(() {
       _images.add(PhotoGridItemData(
         id: const Uuid().v4(),
         imageFile: File(image.path),
       ));
+    });
+  }
+
+  void _deleteImage(String id) {
+    final imageToRemove = _images.firstWhere((item) => item.id == id);
+
+    // image_picker always saves images to this app's cache folder. Hence, removing an image chosen from
+    // image gallery will only delete the one from the cache folder, not the original copy in the image gallery.
+    imageToRemove.imageFile?.delete();
+
+    setState(() {
+      _images.removeWhere((image) => image.id == id);
     });
   }
 
@@ -88,6 +102,7 @@ class _RoomEditState extends State<RoomEdit> {
                       imageCount: _images.length,
                       showAddPhotoButton: true,
                       onAddPhotoSuccess: _addImage,
+                      onDeletePhoto: _deleteImage,
                     ),
               SliverList(
                 delegate: SliverChildListDelegate([

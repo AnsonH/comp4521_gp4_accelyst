@@ -33,17 +33,12 @@ class PhotoGridItem extends StatelessWidget {
               ),
             ),
           )
-        : GestureDetector(
-            onTap: () => onTap(),
-            child: Hero(
-              tag: itemData!.id,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: FileImage(itemData!.imageFile!),
-                    fit: BoxFit.cover,
-                  ),
-                ),
+        : Material(
+            child: Ink.image(
+              image: FileImage(itemData!.imageFile!),
+              fit: BoxFit.cover,
+              child: InkWell(
+                onTap: () => onTap(),
               ),
             ),
           );

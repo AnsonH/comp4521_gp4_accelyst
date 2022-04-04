@@ -25,21 +25,35 @@ import 'package:image_picker/image_picker.dart';
 ///  - [Using slivers to achieve fancy scrolling](https://docs.flutter.dev/development/ui/advanced/slivers)
 ///  - [Flutter Slivers Overview](https://youtu.be/k2v3gxtMlDE)
 class PhotoGrid extends StatelessWidget {
+  /// List of image data stored in [PhotoGridItemData] model class.
   final List<PhotoGridItemData?> imagesData;
+
+  /// Number of images
   final int imageCount;
+
+  /// Number of grid items per row
   final int crossAxisCount;
+
+  /// Vertical gap between each row of grid items.
   final double crossAxisSpacing;
+
+  /// Horizontal gap between each grid item within a row.
   final double mainAxisSpacing;
+
+  /// Whether to show an "Add a photo" button at the last.
+  ///
+  /// You should supply [onAddPhotoSuccess] if this is set to true.
   final bool showAddPhotoButton;
+
+  /// Optional callback for successfully adding a photo.
+  ///
+  /// This is optional when [showAddPhotoButton] is false.
   final void Function(XFile)? onAddPhotoSuccess;
 
-  /// Creates a grid photo gallery from [imagesData], which is a list of image files.
-  ///
-  /// [crossAxisCount] specifies the number of grid items per row, while [crossAxisSpacing] and [mainAxisSpacing]
-  /// specifies the gap between each item on the same row and the gap between each row respectively.
-  ///
-  /// [showAddPhotoButton] determines whether an "Add a photo" button will be added as the last grid item. If set to
-  /// true, you should provide [onAddPhotoSuccess], which is a callback to be called if user successfully picked a photo.
+  /// Optional callback for deleting a photo from the grid.
+  final void Function(String id)? onDeletePhoto;
+
+  /// Creates a grid photo gallery, where tapping an item opens a photo carousel.
   const PhotoGrid({
     Key? key,
     required this.imagesData,
@@ -49,6 +63,7 @@ class PhotoGrid extends StatelessWidget {
     this.mainAxisSpacing = 10,
     this.showAddPhotoButton = false,
     this.onAddPhotoSuccess,
+    this.onDeletePhoto,
   }) : super(key: key);
 
   @override
@@ -86,6 +101,7 @@ class PhotoGrid extends StatelessWidget {
         builder: (context) => PhotoCarousel(
           imagesData,
           initialIndex: index,
+          onDeletePhoto: onDeletePhoto,
           backgroundDecoration: const BoxDecoration(
             color: Colors.black,
           ),

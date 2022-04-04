@@ -2,6 +2,7 @@ import 'dart:io';
 
 /// Represents an item in a photo grid.
 class PhotoGridItemData {
+  /// UUID to identify the photo.
   final String id;
 
   /// Image URL if it has an online copy.

@@ -7,10 +7,15 @@ import 'package:photo_view/photo_view_gallery.dart';
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.
 class PhotoCarousel extends StatefulWidget {
+  /// List of image data stored in [PhotoGridItemData] model class.
   final List<PhotoGridItemData?> carouselItems;
+
+  /// Index of the image from [carouselItems] to be shown initially.
   final int initialIndex;
 
-  // Parameters for PhotoViewGallery
+  /// Optional callback for deleting a photo from the grid.
+  final void Function(String id)? onDeletePhoto;
+
   final LoadingBuilder? loadingBuilder;
   final BoxDecoration? backgroundDecoration;
   final PageController pageController;
@@ -23,6 +28,7 @@ class PhotoCarousel extends StatefulWidget {
     this.carouselItems, {
     Key? key,
     this.initialIndex = 0,
+    this.onDeletePhoto,
     this.loadingBuilder,
     this.backgroundDecoration,
   })  : pageController = PageController(initialPage: initialIndex),
@@ -55,6 +61,33 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          if (widget.onDeletePhoto != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text("Delete photo?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        widget.onDeletePhoto!(
+                            widget.carouselItems[currentIndex]!.id);
+                        Navigator.pop(context); // Close dialogue
+                        Navigator.pop(context); // Exit photo carousel
+                      },
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
       body: Container(
         decoration: widget.backgroundDecoration,
