@@ -38,6 +38,8 @@ dependencies:
   uuid: ^3.0.6
   syncfusion_flutter_calendar: ^19.4.56
   sleek_circular_slider: ^2.0.1
+  provider: ^6.0.2
+  animations: ^2.0.2
 
 dependency_overrides:
   # `photo_view` throws "Looking up a deactivated widget's ancestor is unsafe" error when closing the gallery.
