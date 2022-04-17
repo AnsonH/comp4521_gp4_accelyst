@@ -1,7 +1,7 @@
 import 'dart:io';
 
-/// Represents an item in a photo grid.
-class PhotoGridItemData {
+/// Represents an item in a roman room.
+class RomanRoomItem {
   /// UUID to identify the photo.
   final String id;
 
@@ -11,7 +11,7 @@ class PhotoGridItemData {
   /// Reference to the image stored in the file system.
   File? imageFile;
 
-  PhotoGridItemData({
+  RomanRoomItem({
     required this.id,
     this.url,
     this.imageFile,

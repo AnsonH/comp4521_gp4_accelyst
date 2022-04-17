@@ -1,6 +1,6 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/http_service.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid.dart';
 import 'package:flutter/material.dart';
 
 class RoomRecall extends StatefulWidget {
@@ -11,15 +11,14 @@ class RoomRecall extends StatefulWidget {
 }
 
 class _RoomRecallState extends State<RoomRecall> {
-  final List<PhotoGridItemData?> _imagesData =
-      List.filled(gridItems.length, null);
+  final List<RomanRoomItem?> _imagesData = List.filled(gridItems.length, null);
 
   @override
   void initState() {
     super.initState();
 
     // Downloads placeholder images
-    getImagesFromPhotoGridItemData(
+    getImagesFromRomanRoomItem(
       data: gridItems,
       saveSuccessCallback: (index, updatedImageData) {
         if (mounted) {
@@ -97,40 +96,40 @@ class _RoomRecallState extends State<RoomRecall> {
 }
 
 // TODO: Delete the following placeholder items if no longer needed.
-var gridItems = <PhotoGridItemData>[
-  PhotoGridItemData(
+var gridItems = <RomanRoomItem>[
+  RomanRoomItem(
     id: "item1",
     url: "https://picsum.photos/id/237/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item2",
     url: "https://picsum.photos/id/236/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item3",
     url: "https://picsum.photos/id/235/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item4",
     url: "https://picsum.photos/id/234/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item5",
     url: "https://picsum.photos/id/233/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item6",
     url: "https://picsum.photos/id/232/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item7",
     url: "https://picsum.photos/id/231/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item8",
     url: "https://picsum.photos/id/230/1280/720.jpg",
   ),
-  PhotoGridItemData(
+  RomanRoomItem(
     id: "item9",
     url: "https://picsum.photos/id/237/1280/720.jpg",
   ),

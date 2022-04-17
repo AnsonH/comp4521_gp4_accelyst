@@ -122,6 +122,7 @@ class _TimerState extends State<Timer> {
           ],
         ),
         drawer: const NavDrawer(),
+        drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
         body: Container(
           decoration: const BoxDecoration(
             image: DecorationImage(

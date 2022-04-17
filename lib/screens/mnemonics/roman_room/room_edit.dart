@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/add_photo_button.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/add_photo_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -16,13 +16,13 @@ class RoomEdit extends StatefulWidget {
 class _RoomEditState extends State<RoomEdit> {
   final _formKey = GlobalKey<FormState>();
 
-  final List<PhotoGridItemData> _images = [];
+  final List<RomanRoomItem> _images = [];
 
   void _addImage(XFile image) {
     // Image is saved to `/data/data/com.example.comp4521_gp4_accelyst/cache`
     // Use "Device File Explorer" to view local files: https://developer.android.com/studio/debug/device-file-explorer
     setState(() {
-      _images.add(PhotoGridItemData(
+      _images.add(RomanRoomItem(
         id: const Uuid().v4(),
         imageFile: File(image.path),
       ));

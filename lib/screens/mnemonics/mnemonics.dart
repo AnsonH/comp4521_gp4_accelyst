@@ -36,6 +36,7 @@ class _MnemonicsState extends State<Mnemonics> {
         ],
       ),
       drawer: const NavDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(

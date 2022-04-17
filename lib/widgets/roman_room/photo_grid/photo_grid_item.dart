@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -9,7 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 /// A single item in a photo grid.
 class PhotoGridItem extends StatelessWidget {
-  final PhotoGridItemData? itemData;
+  final RomanRoomItem? itemData;
   final GestureTapCallback onTap;
 
   /// Creates a single item in a photo grid.

@@ -1,6 +1,5 @@
 import 'package:animations/animations.dart';
 import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
-import 'package:comp4521_gp4_accelyst/screens/home/home.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/mnemonics.dart';
 import 'package:comp4521_gp4_accelyst/screens/settings/settings.dart';
 import 'package:comp4521_gp4_accelyst/screens/timer/timer.dart';
@@ -12,24 +11,19 @@ import 'package:provider/provider.dart';
 
 const appScreens = <AppScreen>[
   AppScreen(
-    widget: Home(),
-    drawerTitle: "Home",
-    drawerIcon: Icons.home,
-  ),
-  AppScreen(
     widget: Timer(),
     drawerTitle: "Timer",
     drawerIcon: Icons.timer,
   ),
   AppScreen(
-    widget: Mnemonics(),
-    drawerTitle: "Mnemonics",
-    drawerIcon: Icons.library_books,
-  ),
-  AppScreen(
     widget: Todo(),
     drawerTitle: "Todo",
     drawerIcon: Icons.format_list_bulleted,
+  ),
+  AppScreen(
+    widget: Mnemonics(),
+    drawerTitle: "Mnemonics",
+    drawerIcon: Icons.library_books,
   ),
   AppScreen(
     widget: Settings(),
@@ -50,10 +44,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  /// Index of the page to be currently shown.
   int _currentIndex = 0;
 
-  /// Sets the index of the page to be displayed.
   void setPageIndex(int index) {
     setState(() => _currentIndex = index);
   }

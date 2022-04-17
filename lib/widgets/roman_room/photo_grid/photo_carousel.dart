@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -7,8 +7,8 @@ import 'package:photo_view/photo_view_gallery.dart';
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.
 class PhotoCarousel extends StatefulWidget {
-  /// List of image data stored in [PhotoGridItemData] model class.
-  final List<PhotoGridItemData?> carouselItems;
+  /// List of image data stored in [RomanRoomItem] model class.
+  final List<RomanRoomItem?> carouselItems;
 
   /// Index of the image from [carouselItems] to be shown initially.
   final int initialIndex;
@@ -126,7 +126,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
   }
 
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
-    final PhotoGridItemData item = widget.carouselItems[index]!;
+    final RomanRoomItem item = widget.carouselItems[index]!;
 
     return PhotoViewGalleryPageOptions(
       imageProvider: FileImage(item.imageFile!),

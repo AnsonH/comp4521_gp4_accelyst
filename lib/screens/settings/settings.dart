@@ -16,6 +16,7 @@ class _SettingsState extends State<Settings> {
         title: const Text("Settings"),
       ),
       drawer: const NavDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
       body: Container(
         padding: const EdgeInsets.all(16),
         child: const Text("Settings"),
@@ -23,4 +24,3 @@ class _SettingsState extends State<Settings> {
     );
   }
 }
-

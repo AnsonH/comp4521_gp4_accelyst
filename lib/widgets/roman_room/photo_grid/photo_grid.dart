@@ -1,7 +1,7 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/add_photo_button.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_carousel.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid_item.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/add_photo_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_carousel.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -25,8 +25,8 @@ import 'package:image_picker/image_picker.dart';
 ///  - [Using slivers to achieve fancy scrolling](https://docs.flutter.dev/development/ui/advanced/slivers)
 ///  - [Flutter Slivers Overview](https://youtu.be/k2v3gxtMlDE)
 class PhotoGrid extends StatelessWidget {
-  /// List of image data stored in [PhotoGridItemData] model class.
-  final List<PhotoGridItemData?> imagesData;
+  /// List of image data stored in [RomanRoomItem] model class.
+  final List<RomanRoomItem?> imagesData;
 
   /// Number of images
   final int imageCount;
