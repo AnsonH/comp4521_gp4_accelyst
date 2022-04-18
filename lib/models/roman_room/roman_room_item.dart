@@ -5,15 +5,19 @@ class RomanRoomItem {
   /// UUID to identify the photo.
   final String id;
 
-  /// Image URL if it has an online copy.
-  String? url;
+  /// Description of the item.
+  String? description;
 
   /// Reference to the image stored in the file system.
   File? imageFile;
 
+  /// Image URL if it has an online copy.
+  String? url;
+
   RomanRoomItem({
     required this.id,
-    this.url,
+    this.description,
     this.imageFile,
+    this.url,
   });
 }

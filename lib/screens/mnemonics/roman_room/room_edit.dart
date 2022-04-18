@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/add_photo_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid.dart';
@@ -15,6 +16,12 @@ class RoomEdit extends StatefulWidget {
 
 class _RoomEditState extends State<RoomEdit> {
   final _formKey = GlobalKey<FormState>();
+
+  // TODO: Unfinished
+  final roomData = RomanRoom(
+    id: "foo",
+    items: [],
+  );
 
   final List<RomanRoomItem> _images = [];
 
@@ -98,8 +105,9 @@ class _RoomEditState extends State<RoomEdit> {
                       delegate: SliverChildListDelegate([]),
                     )
                   : PhotoGrid(
-                      imagesData: _images,
-                      imageCount: _images.length,
+                      roomData: roomData,
+                      itemsData: _images,
+                      itemCount: _images.length,
                       showAddPhotoButton: true,
                       onAddPhotoSuccess: _addImage,
                       onDeletePhoto: _deleteImage,

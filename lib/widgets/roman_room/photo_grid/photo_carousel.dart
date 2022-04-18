@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
+// TODO: Unused widget. Can delete this as well as "photo_view" package.
+
 /// A photo carousel with zoom controls.
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.

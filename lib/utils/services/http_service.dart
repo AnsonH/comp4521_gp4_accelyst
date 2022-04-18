@@ -13,19 +13,21 @@ Future<File> getImageFromUrl(
   String imageUrl, {
   String? imageName,
 }) async {
-  final response = await http.get(Uri.parse(imageUrl));
-  if (response.statusCode != 200) {
-    throw HttpException('${response.statusCode}');
-  }
-
-  // Get the document directory path
+  // Saved to `/data/data/com.example.comp4521_gp4_accelyst/app_flutter`
   imageName ??= path.basename(imageUrl);
   final appDir = await path_provider.getApplicationDocumentsDirectory();
   final localPath = path.join(appDir.path, imageName);
-
-  // Save to file
   final imageFile = File(localPath);
-  await imageFile.writeAsBytes(response.bodyBytes);
+
+  if (!imageFile.existsSync()) {
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode != 200) {
+      throw HttpException('${response.statusCode}');
+    }
+
+    await imageFile.writeAsBytes(response.bodyBytes);
+  }
+
   return imageFile;
 }
 
