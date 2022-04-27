@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 
 /// An icon button for the "Timer" page.
 class TimerIconButton extends StatelessWidget {
+  /// Callback for pressing the button.
+  ///
+  /// Pass `null` to this parameter to disable the button.
   final void Function()? onPressed;
+
   final IconData icon;
+
+  /// Whether the button has a grayish background.
   final bool hasBackground;
 
   /// Creates an icon button for the "Timer" page.
-  ///
-  ///  - Set [hasBackground] to true to give the button a grayish background.
-  ///  - To disable the button, pass `null` to [onPressed].
   const TimerIconButton({
     Key? key,
     required this.onPressed,

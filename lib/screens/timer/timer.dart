@@ -1,5 +1,8 @@
 import 'dart:ui';
+import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
+import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
@@ -32,38 +35,56 @@ class Timer extends StatefulWidget {
 
 class _TimerState extends State<Timer> {
   int durationSecs = 25 * 60;
-  TimerState _timerState = TimerState.stop;
+  TimerState timerState = TimerState.stop;
+  int ambientIndex = 0;
 
-  final _controller = CircularTimerController();
+  final _audioPlayer = AudioPlayerService();
+  final _timerController = CircularTimerController();
 
   void _startTimer() {
-    setState(() => _timerState = TimerState.resume);
-    _controller.start();
+    setState(() => timerState = TimerState.resume);
+    _timerController.start();
   }
 
   void _pauseTimer() {
-    setState(() => _timerState = TimerState.pause);
-    _controller.pause();
+    setState(() => timerState = TimerState.pause);
+    _timerController.pause();
   }
 
   void _resumeTimer() {
-    setState(() => _timerState = TimerState.resume);
-    _controller.resume();
+    setState(() => timerState = TimerState.resume);
+    _timerController.resume();
   }
 
   void _resetTimer({int? duration}) {
-    setState(() => _timerState = TimerState.stop);
-    _controller.reset(duration: duration ?? durationSecs);
+    setState(() => timerState = TimerState.stop);
+    _timerController.reset(duration: duration ?? durationSecs);
   }
 
   void _onTimerComplete() {
     // TODO: Alert the user with sounds & notifications
-    setState(() => _timerState = TimerState.complete);
+    setState(() => timerState = TimerState.complete);
   }
 
   void _stopAlarmOnComplete() {
     // TODO: Stop the alarm sound
     _resetTimer();
+  }
+
+  void _playAmbientSound(int index) {
+    final String assetPath = ambientSounds[index].assetPath;
+
+    if (assetPath == "") {
+      _audioPlayer.stop();
+    } else {
+      _audioPlayer.playAsset(
+        assetPath,
+        loop: true,
+        volume: ambientSounds[index].volume,
+      );
+    }
+
+    setState(() => ambientIndex = index);
   }
 
   void _showResetTimerDialog() {
@@ -124,6 +145,7 @@ class _TimerState extends State<Timer> {
         drawer: const NavDrawer(),
         drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
         body: Container(
+          padding: const EdgeInsets.fromLTRB(25, 15, 25, 0),
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/timer_bg_wallpaper.jpg"),
@@ -132,28 +154,33 @@ class _TimerState extends State<Timer> {
           ),
           child: Column(
             children: [
-              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TimerIconButton(
                     icon: Icons.tune,
-                    onPressed: _timerState != TimerState.stop ? null : () {},
+                    onPressed: timerState == TimerState.stop ? () {} : null,
                   ),
                   const SizedBox(width: 50),
                   TimerIconButton(
                     icon: Icons.music_note,
-                    onPressed: () {},
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      builder: (context) => AmbientBottomSheet(
+                        initialIndex: ambientIndex,
+                        onPressed: (index) => _playAmbientSound(index),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               // TODO: Use `Stack` to add additional labels on top of the timer text
               Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
                   Offstage(
-                    offstage: _timerState != TimerState.stop,
+                    offstage: timerState != TimerState.stop,
                     // https://pub.dev/packages/sleek_circular_slider
                     child: SleekCircularSlider(
                       min: 10, // in minutes
@@ -197,13 +224,13 @@ class _TimerState extends State<Timer> {
                     ),
                   ),
                   Offstage(
-                    offstage: _timerState == TimerState.stop,
+                    offstage: timerState == TimerState.stop,
                     // https://pub.dev/packages/circular_countdown_timer/example
                     child: Column(
                       children: [
                         const SizedBox(height: sliderWidth / 2),
                         CircularTimer(
-                          controller: _controller,
+                          controller: _timerController,
                           duration: durationSecs,
                           size: timerSize,
                           fillColor: fillColor,
@@ -217,18 +244,35 @@ class _TimerState extends State<Timer> {
                   ),
                 ],
               ),
-              const SizedBox(height: 45),
+              const SizedBox(height: 30),
               TimerControls(
-                state: _timerState,
+                state: timerState,
                 onPressedStart: _startTimer,
                 onPressedPause: _pauseTimer,
                 onPressedResume: _resumeTimer,
                 onPressedReset: _showResetTimerDialog,
                 onPressedStopAlarm: _stopAlarmOnComplete,
               ),
-              const SizedBox(height: 40),
-              Text("Duration: ${constructTime(durationSecs)}"),
-              Text("Timer State: ${_timerState.toString()}")
+              const SizedBox(height: 25),
+              const Divider(
+                thickness: 1,
+                height: 20,
+                color: Color.fromARGB(255, 83, 86, 108),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    "Upcoming To-dos",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text("Timer State: ${timerState.toString()}")
+                ],
+              ),
             ],
           ),
         ),
