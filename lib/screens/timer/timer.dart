@@ -4,9 +4,12 @@ import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/dark_theme_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/slider_setting.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/switch_setting.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -34,12 +37,18 @@ class Timer extends StatefulWidget {
 }
 
 class _TimerState extends State<Timer> {
+  // Dynamic timer states
   int durationSecs = 25 * 60;
   TimerState timerState = TimerState.stop;
   int ambientIndex = 0;
+  bool focusMode = false; // TODO: Implement Focus Mode
 
+  // Services & controllers
   final _audioPlayer = AudioPlayerService();
   final _timerController = CircularTimerController();
+
+  static int minDuration = 10;
+  static int maxDuration = 120;
 
   void _startTimer() {
     setState(() => timerState = TimerState.resume);
@@ -88,29 +97,96 @@ class _TimerState extends State<Timer> {
   }
 
   void _showResetTimerDialog() {
-    showDialog(
+    showDarkThemeDialog(
       context: context,
-      builder: (context) => Theme(
-        data: darkThemeData(context),
-        child: AlertDialog(
-          title: const Text("Stop the timer session?"),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: const Text(
-                'STOP',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              onPressed: () {
-                _resetTimer();
-                Navigator.pop(context);
-              },
-            ),
-          ],
+      title: "Stop the timer session?",
+      actions: [
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () => Navigator.pop(context),
         ),
+        TextButton(
+          child: const Text(
+            'STOP',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          onPressed: () {
+            _resetTimer();
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  void _showSettingsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Wrap(
+        children: [
+          Theme(
+            data: darkThemeData(context),
+            child: Material(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20,
+                  horizontal: 10,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Timer Settings",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    SliderSetting(
+                      label: "Session Duration (mins)",
+                      initialValue: durationSecs ~/ 60,
+                      onChanged: (int mins) {
+                        setState(() => durationSecs = mins * 60);
+                        _resetTimer(
+                            duration: mins * 60); // Update timer duration
+                      },
+                      min: minDuration,
+                      max: maxDuration,
+                    ),
+                    SwitchSetting(
+                      label: "Focus Mode",
+                      initialValue: focusMode,
+                      onChanged: (value) => setState(() => focusMode = value),
+                      onPressedInfo: () => _showFocusModeInfoDialog(context),
+                    ),
+                    const Divider(thickness: 1),
+                    SwitchSetting(
+                      label: "Pomodoro Mode",
+                      initialValue: false,
+                      onChanged: (value) {},
+                      onPressedInfo: () => _showPomodoroModeInfoDialog(context),
+                    ),
+                    SliderSetting(
+                      label: "Sessions",
+                      initialValue: 4,
+                      onChanged: (int mins) {},
+                      min: 2,
+                      max: 10,
+                    ),
+                    SliderSetting(
+                      label: "Short Break Duration (mins)",
+                      initialValue: 5,
+                      onChanged: (int mins) {},
+                      min: 3,
+                      max: 15,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -159,7 +235,9 @@ class _TimerState extends State<Timer> {
                 children: [
                   TimerIconButton(
                     icon: Icons.tune,
-                    onPressed: timerState == TimerState.stop ? () {} : null,
+                    onPressed: timerState == TimerState.stop
+                        ? () => _showSettingsBottomSheet()
+                        : null,
                   ),
                   const SizedBox(width: 50),
                   TimerIconButton(
@@ -183,8 +261,8 @@ class _TimerState extends State<Timer> {
                     offstage: timerState != TimerState.stop,
                     // https://pub.dev/packages/sleek_circular_slider
                     child: SleekCircularSlider(
-                      min: 10, // in minutes
-                      max: 120,
+                      min: minDuration.toDouble(), // in minutes
+                      max: maxDuration.toDouble(),
                       initialValue: durationSecs / 60,
                       onChangeEnd: (double mins) {
                         final duration = mins.toInt() * 60;
@@ -225,7 +303,6 @@ class _TimerState extends State<Timer> {
                   ),
                   Offstage(
                     offstage: timerState == TimerState.stop,
-                    // https://pub.dev/packages/circular_countdown_timer/example
                     child: Column(
                       children: [
                         const SizedBox(height: sliderWidth / 2),
@@ -279,4 +356,64 @@ class _TimerState extends State<Timer> {
       ),
     );
   }
+}
+
+void _showFocusModeInfoDialog(BuildContext context) {
+  showDarkThemeDialog(
+    context: context,
+    title: "What is Focus Mode?",
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Text(
+          "If Focus Mode is on, you are prohibited from leaving this app. Your phone will vibrate until you return back to the app.",
+        ),
+        SizedBox(height: 20),
+        Text(
+          "You are allowed to visit other pages of this app if Focus Mode is on.",
+        ),
+      ],
+    ),
+    actions: [
+      TextButton(
+        child: const Text(
+          'DISMISS',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        onPressed: () => Navigator.pop(context),
+      ),
+    ],
+  );
+}
+
+void _showPomodoroModeInfoDialog(BuildContext context) {
+  showDarkThemeDialog(
+    context: context,
+    title: "What is Pomodoro Mode?",
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Text(
+          "In Pomodoro mode, sessions run automatically one after another. Each session is separated by a short break of typically 5 minutes.",
+        ),
+        SizedBox(height: 20),
+        Text(
+          "You can adjust the number of sessions and length of short break using the sliders.",
+        ),
+        SizedBox(height: 20),
+        Text(
+          "This mode helps increase your level of focus and productivity.",
+        ),
+      ],
+    ),
+    actions: [
+      TextButton(
+        child: const Text(
+          'DISMISS',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        onPressed: () => Navigator.pop(context),
+      ),
+    ],
+  );
 }
