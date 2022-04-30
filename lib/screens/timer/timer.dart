@@ -1,13 +1,16 @@
 import 'dart:ui';
+
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/dark_theme_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/info_dialogs.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/slider_setting.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/switch_setting.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
@@ -71,7 +74,8 @@ class _TimerState extends State<Timer> {
   }
 
   void _onTimerComplete() {
-    // TODO: Alert the user with sounds & notifications
+    // TODO: Play alarm sound
+    NotificationService.notifyTimerComplete();
     setState(() => timerState = TimerState.complete);
   }
 
@@ -153,19 +157,20 @@ class _TimerState extends State<Timer> {
                       },
                       min: minDuration,
                       max: maxDuration,
+                      verticalPadding: 0.0,
                     ),
                     SwitchSetting(
                       label: "Focus Mode",
                       initialValue: focusMode,
                       onChanged: (value) => setState(() => focusMode = value),
-                      onPressedInfo: () => _showFocusModeInfoDialog(context),
+                      onPressedInfo: () => showFocusModeInfoDialog(context),
                     ),
                     const Divider(thickness: 1),
                     SwitchSetting(
                       label: "Pomodoro Mode",
                       initialValue: false,
                       onChanged: (value) {},
-                      onPressedInfo: () => _showPomodoroModeInfoDialog(context),
+                      onPressedInfo: () => showPomodoroModeInfoDialog(context),
                     ),
                     SliderSetting(
                       label: "Sessions",
@@ -334,7 +339,7 @@ class _TimerState extends State<Timer> {
               const Divider(
                 thickness: 1,
                 height: 20,
-                color: Color.fromARGB(255, 83, 86, 108),
+                color: ringColor,
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -356,64 +361,4 @@ class _TimerState extends State<Timer> {
       ),
     );
   }
-}
-
-void _showFocusModeInfoDialog(BuildContext context) {
-  showDarkThemeDialog(
-    context: context,
-    title: "What is Focus Mode?",
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: const [
-        Text(
-          "If Focus Mode is on, you are prohibited from leaving this app. Your phone will vibrate until you return back to the app.",
-        ),
-        SizedBox(height: 20),
-        Text(
-          "You are allowed to visit other pages of this app if Focus Mode is on.",
-        ),
-      ],
-    ),
-    actions: [
-      TextButton(
-        child: const Text(
-          'DISMISS',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
-    ],
-  );
-}
-
-void _showPomodoroModeInfoDialog(BuildContext context) {
-  showDarkThemeDialog(
-    context: context,
-    title: "What is Pomodoro Mode?",
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: const [
-        Text(
-          "In Pomodoro mode, sessions run automatically one after another. Each session is separated by a short break of typically 5 minutes.",
-        ),
-        SizedBox(height: 20),
-        Text(
-          "You can adjust the number of sessions and length of short break using the sliders.",
-        ),
-        SizedBox(height: 20),
-        Text(
-          "This mode helps increase your level of focus and productivity.",
-        ),
-      ],
-    ),
-    actions: [
-      TextButton(
-        child: const Text(
-          'DISMISS',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        onPressed: () => Navigator.pop(context),
-      ),
-    ],
-  );
 }

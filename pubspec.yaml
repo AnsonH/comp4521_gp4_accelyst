@@ -42,6 +42,7 @@ dependencies:
   animations: ^2.0.2
   reorderable_grid_view: ^2.2.2
   audioplayers: ^0.20.1
+  awesome_notifications: ^0.6.21
 
 dependency_overrides:
   # `photo_view` throws "Looking up a deactivated widget's ancestor is unsafe" error when closing the gallery.

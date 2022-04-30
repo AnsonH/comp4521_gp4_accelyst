@@ -1,38 +1,16 @@
 import 'package:animations/animations.dart';
 import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
-import 'package:comp4521_gp4_accelyst/screens/mnemonics/mnemonics.dart';
-import 'package:comp4521_gp4_accelyst/screens/settings/settings.dart';
-import 'package:comp4521_gp4_accelyst/screens/timer/timer.dart';
-import 'package:comp4521_gp4_accelyst/screens/todo/todo.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/indexed_transition_switcher.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const appScreens = <AppScreen>[
-  AppScreen(
-    widget: Timer(),
-    drawerTitle: "Timer",
-    drawerIcon: Icons.timer,
-  ),
-  AppScreen(
-    widget: Todo(),
-    drawerTitle: "Todo",
-    drawerIcon: Icons.format_list_bulleted,
-  ),
-  AppScreen(
-    widget: Mnemonics(),
-    drawerTitle: "Mnemonics",
-    drawerIcon: Icons.library_books,
-  ),
-  AppScreen(
-    widget: Settings(),
-    drawerTitle: "Settings",
-    drawerIcon: Icons.settings,
-  ),
-];
-
 void main() {
+  // Initialize services
+  WidgetsFlutterBinding.ensureInitialized();
+  NotificationService.initialize();
+
   runApp(const MyApp());
 }
 
@@ -45,6 +23,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    NotificationService.listenActions((notification) {
+      // Redirect to a page after clicking on notification.
+      String? pageIndex = notification.payload?['pageIndex'];
+      if (pageIndex != null) {
+        setState(() => _currentIndex = int.parse(pageIndex));
+      }
+    });
+  }
 
   void setPageIndex(int index) {
     setState(() => _currentIndex = index);
@@ -74,5 +65,11 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    NotificationService.dispose();
+    super.dispose();
   }
 }

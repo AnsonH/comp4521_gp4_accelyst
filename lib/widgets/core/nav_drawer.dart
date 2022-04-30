@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/main.dart';
+import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -48,9 +48,8 @@ class NavDrawer extends StatelessWidget {
                             iconColor: Colors.white,
                             onTap: () {
                               Navigator.pop(context); // Close drawer
-                              int index = appScreens.indexWhere(
-                                (s) => s.drawerTitle == screen.drawerTitle,
-                              );
+                              int index =
+                                  getAppScreenPageIndex(screen.drawerTitle);
                               setPageIndex(index);
                             },
                           ))

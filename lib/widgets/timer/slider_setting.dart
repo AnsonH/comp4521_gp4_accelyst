@@ -10,6 +10,7 @@ class SliderSetting extends StatefulWidget {
   final void Function(int) onChanged;
   final int min;
   final int max;
+  final double verticalPadding;
 
   /// Creates a slider for setting a single timer property.
   const SliderSetting({
@@ -19,6 +20,7 @@ class SliderSetting extends StatefulWidget {
     required this.onChanged,
     this.min = 1,
     this.max = 100,
+    this.verticalPadding = 5.0,
   })  : assert(min <= initialValue && initialValue <= max),
         super(key: key);
 
@@ -38,7 +40,7 @@ class _SliderSettingState extends State<SliderSetting> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.symmetric(vertical: widget.verticalPadding),
       child: Column(
         children: [
           Padding(
