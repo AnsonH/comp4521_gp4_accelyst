@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 
 /// A utility class to provide notification services.
@@ -26,11 +25,11 @@ class NotificationService {
       NotificationChannel(
         channelKey: NotificationChannelKey.timer,
         channelName: "Timer Notifications",
-        channelDescription: "Notifications when the study timer is finished.",
+        channelDescription: "Notifications for the study timer page.",
         defaultColor: primaryColor,
         importance: NotificationImportance.High,
         locked: true,
-        defaultRingtoneType: DefaultRingtoneType.Alarm,
+        soundSource: "resource://raw/res_timer_notification", // Custom sound
       ),
       NotificationChannel(
         channelKey: NotificationChannelKey.todo,
@@ -40,7 +39,7 @@ class NotificationService {
         importance: NotificationImportance.High,
         locked: true,
         channelShowBadge: true, // Show badge at app icon
-        soundSource: "resource://raw/res_custom_notification", // Custom sound
+        soundSource: "resource://raw/res_todo_notification", // Custom sound
       ),
     ];
 
@@ -57,19 +56,25 @@ class NotificationService {
     AwesomeNotifications().actionStream.listen(callback);
   }
 
-  /// Immediately notifies that the study timer has completed.
+  /// Creates a notification.
   ///
-  /// TODO: This notification will NOT fire at the right time if we exit the app.
-  static Future<void> notifyTimerComplete() async {
+  /// For [channelKey], you should use a constant from the [NotificationChannelKey] class.
+  ///
+  /// [payload] lets you store extra info related to this notification in the form of key-value
+  /// pairs. These info are hidden from user view.
+  static void createNotification({
+    required String channelKey,
+    String? title,
+    String? body,
+    Map<String, String>? payload,
+  }) async {
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: createUniqueId(),
-        channelKey: NotificationChannelKey.timer,
-        title: "${Emojis.time_alarm_clock} Study Timer",
-        body: "Your study timer has completed!",
-        notificationLayout: NotificationLayout.Default,
-        // Stores extra info related to this notification (hidden from user view)
-        payload: {"pageIndex": getAppScreenPageIndex("Timer").toString()},
+        channelKey: channelKey,
+        title: title,
+        body: body,
+        payload: payload,
       ),
     );
   }

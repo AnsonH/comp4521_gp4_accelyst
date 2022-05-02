@@ -10,7 +10,7 @@ void showFocusModeInfoDialog(BuildContext context) {
       mainAxisSize: MainAxisSize.min,
       children: const [
         Text(
-          "If Focus Mode is on, you are prohibited from leaving this app. Your phone will vibrate until you return back to the app.",
+          "If Focus Mode is on, you are prohibited from leaving this app. You'll receive a notification if you leave this app.",
         ),
         SizedBox(height: 20),
         Text(

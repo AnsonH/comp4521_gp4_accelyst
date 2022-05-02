@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
@@ -39,12 +40,14 @@ class Timer extends StatefulWidget {
   State<Timer> createState() => _TimerState();
 }
 
-class _TimerState extends State<Timer> {
+// Extending with WidgetsBindingObserver allows us to detect whether user exits the app,
+// which is useful when implementing Focus Mode.
+class _TimerState extends State<Timer> with WidgetsBindingObserver {
   // Dynamic timer states
   int durationSecs = 25 * 60;
   TimerState timerState = TimerState.stop;
   int ambientIndex = 0;
-  bool focusMode = false; // TODO: Implement Focus Mode
+  bool focusMode = false;
 
   // Services & controllers
   final _audioPlayer = AudioPlayerService();
@@ -75,7 +78,16 @@ class _TimerState extends State<Timer> {
 
   void _onTimerComplete() {
     // TODO: Play alarm sound
-    NotificationService.notifyTimerComplete();
+
+    // Create notification
+    // TODO: This notification will NOT fire at the right time if we exit the app.
+    NotificationService.createNotification(
+      channelKey: NotificationChannelKey.timer,
+      title: "⏰ Study Timer",
+      body: "Your study timer has completed!",
+      payload: {"pageIndex": getAppScreenPageIndex("Timer").toString()},
+    );
+
     setState(() => timerState = TimerState.complete);
   }
 
@@ -194,6 +206,27 @@ class _TimerState extends State<Timer> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this); // Set up WidgetsBindingObserver
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    // Create a notification if user leaves the app while Focus Mode is on
+    final isBackground = state == AppLifecycleState.paused;
+    if (focusMode && isBackground && timerState == TimerState.resume) {
+      NotificationService.createNotification(
+        channelKey: NotificationChannelKey.timer,
+        title: "❗ GO BACK TO ACCELYST",
+        body: "Please do not leave Accelyst while Focus Mode is on.",
+      );
+    }
   }
 
   @override
@@ -360,5 +393,11 @@ class _TimerState extends State<Timer> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 }
