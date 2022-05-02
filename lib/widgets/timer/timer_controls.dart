@@ -1,10 +1,10 @@
-import 'package:comp4521_gp4_accelyst/screens/timer/timer.dart';
+import 'package:comp4521_gp4_accelyst/models/timer/timer_state.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
 import 'package:flutter/material.dart';
 
 /// A set of control buttons for the timer.
 class TimerControls extends StatelessWidget {
-  final TimerState state;
+  final TimerStage stage;
   final void Function() onPressedStart;
   final void Function() onPressedPause;
   final void Function() onPressedResume;
@@ -20,7 +20,7 @@ class TimerControls extends StatelessWidget {
   ///  - [onPressedReset] - ⏹︎︎
   const TimerControls({
     Key? key,
-    required this.state,
+    required this.stage,
     required this.onPressedStart,
     required this.onPressedPause,
     required this.onPressedResume,
@@ -30,15 +30,15 @@ class TimerControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (state) {
-      case TimerState.stop:
+    switch (stage) {
+      case TimerStage.stop:
         // "⏵︎Start" button
         return RoundedButton(
           icon: Icons.play_arrow,
           label: "START",
           onPressed: onPressedStart,
         );
-      case TimerState.complete:
+      case TimerStage.complete:
         // "⏹︎︎ Stop" button
         return RoundedButton(
           icon: Icons.stop,
@@ -52,10 +52,10 @@ class TimerControls extends StatelessWidget {
           children: [
             // Pause/Play button
             TimerIconButton(
-              icon: state == TimerState.resume ? Icons.pause : Icons.play_arrow,
+              icon: stage == TimerStage.resume ? Icons.pause : Icons.play_arrow,
               hasBackground: true,
               onPressed: () {
-                state == TimerState.resume
+                stage == TimerStage.resume
                     ? onPressedPause()
                     : onPressedResume();
               },

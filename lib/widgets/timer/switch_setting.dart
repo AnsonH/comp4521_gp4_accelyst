@@ -39,12 +39,13 @@ class _SwitchSettingState extends State<SwitchSetting> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 22),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
+              const SizedBox(width: 12),
               Text(
                 widget.label,
                 style: const TextStyle(fontSize: 18),
