@@ -13,6 +13,7 @@ import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/info_dialogs.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/pomodoro_label.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/slider_setting.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/switch_setting.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
@@ -37,10 +38,15 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
   final TimerState timerState = TimerState();
 
   // Services & controllers
-  final _audioPlayer = AudioPlayerService();
+  final _ambientPlayer = AudioPlayerService();
+  final _alarmPlayer = AudioPlayerService();
   final _timerController = CircularTimerController();
 
-  void _startTimer() {
+  void _startTimer({bool incrementPomodoroSession = true}) {
+    if (timerState.pomodoroMode && incrementPomodoroSession) {
+      setState(() => timerState.pomodoroCurrentSession += 1);
+    }
+
     setState(() => timerState.stage = TimerStage.resume);
     _timerController.start();
   }
@@ -55,38 +61,61 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
     _timerController.resume();
   }
 
-  void _resetTimer({int? duration}) {
+  void _resetTimer({int? duration, bool resetPomodoro = false}) {
+    if (timerState.pomodoroMode && resetPomodoro) {
+      setState(() => timerState.resetPomodoro());
+    }
+
     setState(() => timerState.stage = TimerStage.stop);
-    _timerController.reset(duration: duration ?? timerState.durationSecs);
+    _timerController.reset(duration: duration ?? timerState.sessionDuration);
   }
 
   void _onTimerComplete() {
-    // TODO: Play alarm sound
+    // Play alarm sound
+    _alarmPlayer.playAsset("audio/timer_alarm.mp3", loop: true);
 
-    // Create notification
+    // Creates notification
     // TODO: This notification will NOT fire at the right time if we exit the app.
-    NotificationService.createNotification(
-      channelKey: NotificationChannelKey.timer,
-      title: "⏰ Study Timer",
-      body: "Your study timer has completed!",
-      payload: {"pageIndex": getAppScreenPageIndex("Timer").toString()},
-    );
+    String message = "🎉 Your study timer has completed!";
+    if (timerState.pomodoroMode) {
+      if (timerState.isPomodoroFinished) {
+        message = "🎉 You finished all Pomodoro sessions!";
+      } else if (timerState.pomodoroIsBreak) {
+        message = "Break has ended. Back to work! 💪";
+      } else {
+        message =
+            "Pomodoro session ${timerState.pomodoroStatus} has completed!";
+      }
+    }
+    _createTimerNotification(body: message);
 
     setState(() => timerState.stage = TimerStage.complete);
   }
 
   void _stopAlarmOnComplete() {
-    // TODO: Stop the alarm sound
-    _resetTimer();
+    _alarmPlayer.stop();
+
+    // Start/End Pomodoro break
+    if (timerState.pomodoroMode && !timerState.isPomodoroFinished) {
+      setState(() => timerState.pomodoroIsBreak = !timerState.pomodoroIsBreak);
+
+      int newDuration = timerState.pomodoroIsBreak
+          ? timerState.pomodoroBreakDuration * 60
+          : timerState.sessionDuration * 60;
+      _resetTimer(duration: newDuration);
+      _startTimer(incrementPomodoroSession: !timerState.pomodoroIsBreak);
+    } else {
+      _resetTimer(resetPomodoro: true);
+    }
   }
 
   void _playAmbientSound(int index) {
     final String assetPath = ambientSounds[index].assetPath;
 
     if (assetPath == "") {
-      _audioPlayer.stop();
+      _ambientPlayer.stop();
     } else {
-      _audioPlayer.playAsset(
+      _ambientPlayer.playAsset(
         assetPath,
         loop: true,
         volume: ambientSounds[index].volume,
@@ -111,7 +140,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           onPressed: () {
-            _resetTimer();
+            _resetTimer(resetPomodoro: true);
             Navigator.pop(context);
           },
         ),
@@ -145,9 +174,10 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                     const SizedBox(height: 25),
                     SliderSetting(
                       label: "Session Duration (mins)",
-                      initialValue: timerState.durationSecs ~/ 60,
+                      initialValue: timerState.sessionDuration ~/ 60,
                       onChanged: (int mins) {
-                        setState(() => timerState.durationSecs = mins * 60);
+                        setState(() => timerState.sessionDuration = mins * 60);
+
                         // Update timer duration
                         _resetTimer(duration: mins * 60);
                       },
@@ -288,18 +318,23 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
               Stack(
                 alignment: AlignmentDirectional.center,
                 children: <Widget>[
+                  if (timerState.pomodoroMode)
+                    PomodoroLabel(
+                      timerState: timerState,
+                      timerSize: timerSize,
+                    ),
                   Offstage(
                     offstage: timerState.stage != TimerStage.stop,
                     // https://pub.dev/packages/sleek_circular_slider
                     child: SleekCircularSlider(
                       min: minTimerDuration.toDouble(), // in minutes
                       max: maxTimerDuration.toDouble(),
-                      initialValue: timerState.durationSecs / 60,
+                      initialValue: timerState.sessionDuration / 60,
                       onChangeEnd: (double mins) {
                         final duration = mins.toInt() * 60;
+                        setState(() => timerState.sessionDuration = duration);
                         // Update timer duration
                         _resetTimer(duration: duration);
-                        setState(() => timerState.durationSecs = duration);
                       },
                       appearance: CircularSliderAppearance(
                         startAngle: 270,
@@ -339,7 +374,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                         const SizedBox(height: sliderWidth / 2),
                         CircularTimer(
                           controller: _timerController,
-                          duration: timerState.durationSecs,
+                          duration: timerState.sessionDuration,
                           size: timerSize,
                           fillColor: fillColor,
                           ringColor: ringColor,
@@ -354,7 +389,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 30),
               TimerControls(
-                stage: timerState.stage,
+                timerState: timerState,
                 onPressedStart: _startTimer,
                 onPressedPause: _pauseTimer,
                 onPressedResume: _resumeTimer,
@@ -378,7 +413,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text("Timer State: ${timerState.toString()}")
+                  Text("Timer Stage: ${timerState.stage.toString()}")
                 ],
               ),
             ],
@@ -393,4 +428,14 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
     WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
+}
+
+/// Creates a notification when timer is complete.
+void _createTimerNotification({required String body}) {
+  NotificationService.createNotification(
+    channelKey: NotificationChannelKey.timer,
+    title: "⏰ Study Timer",
+    body: body,
+    payload: {"pageIndex": getAppScreenPageIndex("Timer").toString()},
+  );
 }

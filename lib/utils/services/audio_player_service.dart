@@ -1,6 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 
 /// A helper class for audio playback.
+///
+/// To play several audios at the same time, create multiple instances of this class.
 class AudioPlayerService {
   late AudioPlayer _audioPlayer;
 

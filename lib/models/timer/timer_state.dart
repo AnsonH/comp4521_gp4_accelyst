@@ -2,16 +2,15 @@
 ///
 /// Not to be confused with the state of the entire "Timer" page.
 class TimerState {
-  /// Number of seconds left
-  int durationSecs = 25 * 60;
+  /// Duration of a session in seconds. Its value does not change while timer is counting.
+  ///
+  /// The number of seconds left of the timer is stored internally in the [CircularTimer] widget.
+  int sessionDuration = 25 * 60;
 
-  /// Current stage of the timer.
   TimerStage stage = TimerStage.stop;
 
-  /// Whether Focus Mode is on
   bool focusMode = false;
 
-  /// Whether Pomodoro Mode is on
   bool pomodoroMode = false;
 
   /// Total number of Pomodoro sessions.
@@ -23,11 +22,26 @@ class TimerState {
   /// Duration of short break in minutes.
   int pomodoroBreakDuration = 5;
 
-  /// Whether we are taking a short break.
   bool pomodoroIsBreak = false;
 
   /// Initializes the state of the timer component.
   TimerState();
+
+  /// Gets a string showing current Pomodoro session out of max. Pomodoro sessions (eg. "1 / 5").
+  String get pomodoroStatus {
+    return "$pomodoroCurrentSession / $pomodoroMaxSessions";
+  }
+
+  /// Whether current Pomodoro session is equal to maximum number of sessions.
+  bool get isPomodoroFinished {
+    return pomodoroCurrentSession == pomodoroMaxSessions;
+  }
+
+  /// Reset ongoing Pomodoro progress.
+  void resetPomodoro() {
+    pomodoroCurrentSession = 0;
+    pomodoroIsBreak = false;
+  }
 }
 
 /// Describes the stages of the timer.

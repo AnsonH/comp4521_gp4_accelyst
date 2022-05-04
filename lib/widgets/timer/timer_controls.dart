@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 
 /// A set of control buttons for the timer.
 class TimerControls extends StatelessWidget {
-  final TimerStage stage;
+  final TimerState timerState;
   final void Function() onPressedStart;
   final void Function() onPressedPause;
   final void Function() onPressedResume;
   final void Function() onPressedReset;
+
+  /// Callback for the button that appears when the timer is complete.
   final void Function() onPressedStopAlarm;
 
   /// Creates a set of control buttons for the timer.
@@ -20,7 +22,7 @@ class TimerControls extends StatelessWidget {
   ///  - [onPressedReset] - ⏹︎︎
   const TimerControls({
     Key? key,
-    required this.stage,
+    required this.timerState,
     required this.onPressedStart,
     required this.onPressedPause,
     required this.onPressedResume,
@@ -30,7 +32,7 @@ class TimerControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (stage) {
+    switch (timerState.stage) {
       case TimerStage.stop:
         // "⏵︎Start" button
         return RoundedButton(
@@ -39,10 +41,17 @@ class TimerControls extends StatelessWidget {
           onPressed: onPressedStart,
         );
       case TimerStage.complete:
-        // "⏹︎︎ Stop" button
+        String label = "STOP ALARM";
+        if (timerState.pomodoroMode && !timerState.isPomodoroFinished) {
+          // `pomodoroIsBreak = false` means that now we should start break now
+          label = timerState.pomodoroIsBreak ? "NEXT SESSION" : "START BREAK";
+        }
+
         return RoundedButton(
-          icon: Icons.stop,
-          label: "STOP ALARM",
+          icon: (timerState.pomodoroMode && !timerState.isPomodoroFinished)
+              ? Icons.play_arrow
+              : Icons.stop,
+          label: label,
           onPressed: onPressedStopAlarm,
         );
       default:
@@ -52,10 +61,12 @@ class TimerControls extends StatelessWidget {
           children: [
             // Pause/Play button
             TimerIconButton(
-              icon: stage == TimerStage.resume ? Icons.pause : Icons.play_arrow,
+              icon: timerState.stage == TimerStage.resume
+                  ? Icons.pause
+                  : Icons.play_arrow,
               hasBackground: true,
               onPressed: () {
-                stage == TimerStage.resume
+                timerState.stage == TimerStage.resume
                     ? onPressedPause()
                     : onPressedResume();
               },
