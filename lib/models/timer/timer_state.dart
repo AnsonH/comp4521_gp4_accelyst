@@ -1,3 +1,5 @@
+import 'package:comp4521_gp4_accelyst/utils/services/settings_service.dart';
+
 /// Stores the state of the timer component located at the center of the Timer page.
 ///
 /// Not to be confused with the state of the entire "Timer" page.
@@ -5,7 +7,13 @@ class TimerState {
   /// Duration of a session in seconds. Its value does not change while timer is counting.
   ///
   /// The number of seconds left of the timer is stored internally in the [CircularTimer] widget.
-  int sessionDuration = 25 * 60;
+
+  Future<int> _sessionDuration = SettingsService.getTimerDefaultTime();
+  late int sessionDuration;
+
+  Future initialize() async {
+    sessionDuration = (await _sessionDuration) * 60;
+  }
 
   TimerStage stage = TimerStage.stop;
 
@@ -25,7 +33,9 @@ class TimerState {
   bool pomodoroIsBreak = false;
 
   /// Initializes the state of the timer component.
-  TimerState();
+  TimerState() {
+    initialize();
+  }
 
   /// Gets a string showing current Pomodoro session out of max. Pomodoro sessions (eg. "1 / 5").
   String get pomodoroStatus {

@@ -7,6 +7,7 @@ import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/settings_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/dark_theme_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
@@ -30,8 +31,10 @@ class Timer extends StatefulWidget {
 // Extending with WidgetsBindingObserver allows us to detect whether user exits the app,
 // which is useful when implementing Focus Mode.
 class _TimerState extends State<Timer> with WidgetsBindingObserver {
-  static int minTimerDuration = 10;
-  static int maxTimerDuration = 120;
+  Future<int> _minTimerDuration = SettingsService.getTimerMinTime();
+  Future<int> _maxTimerDuration = SettingsService.getTimerMaxTime();
+  static late int minTimerDuration;
+  static late int maxTimerDuration;
 
   // Dynamic states
   int ambientIndex = 0;
@@ -101,7 +104,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
 
       int newDuration = timerState.pomodoroIsBreak
           ? timerState.pomodoroBreakDuration * 60
-          : timerState.sessionDuration * 60;
+          : timerState.sessionDuration;
       _resetTimer(duration: newDuration);
       _startTimer(incrementPomodoroSession: !timerState.pomodoroIsBreak);
     } else {
@@ -233,7 +236,15 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    timerStateInit();
     WidgetsBinding.instance!.addObserver(this); // Set up WidgetsBindingObserver
+  }
+
+  void timerStateInit() async {
+    minTimerDuration = await _minTimerDuration;
+    maxTimerDuration = await _maxTimerDuration;
+    await timerState.initialize();
+    setState(() {});
   }
 
   @override
