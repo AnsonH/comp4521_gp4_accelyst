@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
+import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
+import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/timer_state.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/ambient_bottom_sheet.dart';
