@@ -10,19 +10,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  Future<int> _minTime = SettingsService.getTimerMinTime();
-
-  @override
-  void initState() {
-    super.initState();
-    _minTime = SettingsService.getTimerMinTime();
-  }
-
-  void _retry() {
-    setState(() {
-      _minTime = SettingsService.getTimerMinTime();
-    });
-  }
+  final Future<int> _minTime = SettingsService.getTimerMinTime();
 
   @override
   Widget build(BuildContext context) {
@@ -38,23 +26,35 @@ class _SettingsState extends State<Settings> {
           children: [
             const Text("Settings"),
             FutureBuilder<int>(
-                future: _minTime,
-                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                  if (snapshot.hasData) {
-                    return Text('${snapshot.data}');
-                  } else {
-                    return Text("");
-                  }
-                }),
+              future: _minTime,
+              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                if (snapshot.hasData) {
+                  return Text('${snapshot.data}');
+                } else {
+                  return const Text("");
+                }
+              },
+            ),
             ElevatedButton(
-                onPressed: () async {
-                  await SettingsService.setTimerDefaultTime(40);
-                  await SettingsService.setTimerMinTime(1);
-                  await SettingsService.setTimerMaxTime(180);
-                  print(await SettingsService.getTimerMinTime());
-                  print(await SettingsService.getTimerMaxTime());
-                },
-                child: Text("Change Timer Settings")),
+              onPressed: () async {
+                await SettingsService.setTimerDefaultTime(40);
+                await SettingsService.setTimerMinTime(1);
+                await SettingsService.setTimerMaxTime(180);
+                print(await SettingsService.getTimerMinTime());
+                print(await SettingsService.getTimerMaxTime());
+              },
+              child: const Text("Change Timer Settings"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await SettingsService.setTimerDefaultTime(25);
+                await SettingsService.setTimerMinTime(10);
+                await SettingsService.setTimerMaxTime(120);
+                print(await SettingsService.getTimerMinTime());
+                print(await SettingsService.getTimerMaxTime());
+              },
+              child: const Text("Reset Timer Settings"),
+            ),
           ],
         ),
       ),

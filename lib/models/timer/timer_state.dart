@@ -4,15 +4,16 @@ import 'package:comp4521_gp4_accelyst/utils/services/settings_service.dart';
 ///
 /// Not to be confused with the state of the entire "Timer" page.
 class TimerState {
-  /// Duration of a session in seconds. Its value does not change while timer is counting.
-  ///
-  /// The number of seconds left of the timer is stored internally in the [CircularTimer] widget.
+  final Future<int> _sessionDuration = SettingsService.getTimerDefaultTime();
 
-  Future<int> _sessionDuration = SettingsService.getTimerDefaultTime();
-  late int sessionDuration;
+  /// Duration of a session in minutes. Its value does not change while timer is counting.
+  ///
+  /// Its value is updated in [initialize] to be equal to the value in user settings. The value
+  /// `25` is simply a placeholder value.
+  int sessionDuration = 25;
 
   Future initialize() async {
-    sessionDuration = (await _sessionDuration) * 60;
+    sessionDuration = (await _sessionDuration);
   }
 
   TimerStage stage = TimerStage.stop;

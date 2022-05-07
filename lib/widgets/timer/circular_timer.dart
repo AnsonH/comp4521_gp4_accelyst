@@ -155,7 +155,7 @@ class CircularTimerController {
     _state._controller.reverse(from: _state._controller.value);
   }
 
-  /// Resets the timer.
+  /// Resets the timer, where [duration] is in seconds.
   ///
   /// If [duration] is omitted, it uses the original duration of the timer.
   void reset({int? duration}) {

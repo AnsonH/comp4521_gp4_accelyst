@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:comp4521_gp4_accelyst/models/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/timer_state.dart';
-import 'package:comp4521_gp4_accelyst/screens/timer/ambient_bottom_sheet.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
@@ -31,10 +31,11 @@ class Timer extends StatefulWidget {
 // Extending with WidgetsBindingObserver allows us to detect whether user exits the app,
 // which is useful when implementing Focus Mode.
 class _TimerState extends State<Timer> with WidgetsBindingObserver {
-  Future<int> _minTimerDuration = SettingsService.getTimerMinTime();
-  Future<int> _maxTimerDuration = SettingsService.getTimerMaxTime();
-  static late int minTimerDuration;
-  static late int maxTimerDuration;
+  // User preferences
+  final Future<int> _minTimerDuration = SettingsService.getTimerMinTime();
+  final Future<int> _maxTimerDuration = SettingsService.getTimerMaxTime();
+  static int minTimerDuration = 10; // To be updated in `timerStateInit()`
+  static int maxTimerDuration = 120; // To be updated in `timerStateInit()`
 
   // Dynamic states
   int ambientIndex = 0;
@@ -70,7 +71,9 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
     }
 
     setState(() => timerState.stage = TimerStage.stop);
-    _timerController.reset(duration: duration ?? timerState.sessionDuration);
+    _timerController.reset(
+      duration: duration ?? timerState.sessionDuration * 60,
+    );
   }
 
   void _onTimerComplete() {
@@ -104,7 +107,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
 
       int newDuration = timerState.pomodoroIsBreak
           ? timerState.pomodoroBreakDuration * 60
-          : timerState.sessionDuration;
+          : timerState.sessionDuration * 60;
       _resetTimer(duration: newDuration);
       _startTimer(incrementPomodoroSession: !timerState.pomodoroIsBreak);
     } else {
@@ -177,9 +180,9 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                     const SizedBox(height: 25),
                     SliderSetting(
                       label: "Session Duration (mins)",
-                      initialValue: timerState.sessionDuration ~/ 60,
+                      initialValue: timerState.sessionDuration,
                       onChanged: (int mins) {
-                        setState(() => timerState.sessionDuration = mins * 60);
+                        setState(() => timerState.sessionDuration = mins);
 
                         // Update timer duration
                         _resetTimer(duration: mins * 60);
@@ -235,18 +238,22 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    timerStateInit();
     super.initState();
-    WidgetsBinding.instance!.addObserver(this); // Set up WidgetsBindingObserver
+    timerStateInit();
+
+    // Set up WidgetsBindingObserver (used to detect whether user leaves the app later)
+    WidgetsBinding.instance!.addObserver(this);
   }
 
+  /// Obtains user preferences related to the timer.
   void timerStateInit() async {
     minTimerDuration = await _minTimerDuration;
     maxTimerDuration = await _maxTimerDuration;
     await timerState.initialize();
-    setState(() {});
+    setState(() {}); // Rebuild the widget since we mutated timerState
   }
 
+  // Detects whether user leaves the app while Focus Mode is on
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
@@ -340,12 +347,12 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                     child: SleekCircularSlider(
                       min: minTimerDuration.toDouble(), // in minutes
                       max: maxTimerDuration.toDouble(),
-                      initialValue: timerState.sessionDuration / 60,
+                      initialValue: timerState.sessionDuration.toDouble(),
                       onChangeEnd: (double mins) {
-                        final duration = mins.toInt() * 60;
+                        final duration = mins.toInt();
                         setState(() => timerState.sessionDuration = duration);
                         // Update timer duration
-                        _resetTimer(duration: duration);
+                        _resetTimer(duration: duration * 60);
                       },
                       appearance: CircularSliderAppearance(
                         startAngle: 270,
@@ -385,7 +392,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                         const SizedBox(height: sliderWidth / 2),
                         CircularTimer(
                           controller: _timerController,
-                          duration: timerState.sessionDuration,
+                          duration: timerState.sessionDuration * 60,
                           size: timerSize,
                           fillColor: fillColor,
                           ringColor: ringColor,

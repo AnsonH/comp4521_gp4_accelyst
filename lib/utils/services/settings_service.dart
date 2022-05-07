@@ -1,7 +1,5 @@
 /// This file stores code for getting and storing key-value pair data from the local storage.
 /// It can be used to save user preferences in the app settings.
-///
-/// Try out this plugin: https://pub.dev/packages/shared_preferences
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,13 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// - Timer default time
 /// - To-do deadline notification time
 class SettingsService {
-  // static late SharedPreferences _prefs;
-  // //
-  // // / Call this function in `main()` before `runApp()` in `main.dart`.
-  // static Future<void> initialize() async {
-  //   _prefs = await SharedPreferences.getInstance();
-  // }
-
   // Timer
 
   // Timer min time, default = 10 minutes
