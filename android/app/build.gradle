@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.comp4521_gp4_accelyst"
+        applicationId "com.comp4521_gp4.accelyst"
         // minSdkVersion flutter.minSdkVersion
         minSdkVersion 21    // Required by awesome_notifications
         targetSdkVersion flutter.targetSdkVersion
