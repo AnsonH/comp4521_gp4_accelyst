@@ -49,8 +49,8 @@ class _SettingsState extends State<Settings> {
             ElevatedButton(
                 onPressed: () async {
                   await SettingsService.setTimerDefaultTime(40);
-                  await SettingsService.setTimerMinTime(20);
-                  await SettingsService.setTimerMaxTime(170);
+                  await SettingsService.setTimerMinTime(1);
+                  await SettingsService.setTimerMaxTime(180);
                   print(await SettingsService.getTimerMinTime());
                   print(await SettingsService.getTimerMaxTime());
                 },

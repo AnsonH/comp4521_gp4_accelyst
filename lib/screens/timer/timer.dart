@@ -235,8 +235,8 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    super.initState();
     timerStateInit();
+    super.initState();
     WidgetsBinding.instance!.addObserver(this); // Set up WidgetsBindingObserver
   }
 

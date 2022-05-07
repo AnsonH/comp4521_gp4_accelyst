@@ -5,14 +5,13 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// This class consists of a get-set pair of functions for each individual setting
+/// List of settings:
+/// - Timer minimum time
+/// - Timer maximum time
+/// - Timer default time
+/// - To-do deadline notification time
 class SettingsService {
-  /// This class consists of a get-set pair of functions for each individual setting
-  /// List of settings:
-  /// - Timer minimum time
-  /// - Timer maximum time
-  /// - Timer default time
-  /// - To-do deadline notification time
-
   // static late SharedPreferences _prefs;
   // //
   // // / Call this function in `main()` before `runApp()` in `main.dart`.
