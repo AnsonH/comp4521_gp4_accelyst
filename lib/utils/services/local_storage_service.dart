@@ -22,15 +22,15 @@ class StorageService {
   }
 
   /// This async function reads data from designated file and returns the data in a List.
-  // Future<List<dynamic>> _read() async {
-  //   final file = File(getFilePath);
-  //   List<T> data = jsonDecode(await file.readAsString());
-  //   return data;
-  // }
+  Future<List<dynamic>> _read() async {
+    final file = File(getFilePath);
+    List<dynamic> data = jsonDecode(await file.readAsString());
+    return data;
+  }
 
   /// This async function saves data to designated file.
-  // Future<void> _save(List data) async {
-  //   final file = File(getFilePath);
-  //   await file.writeAsString(await jsonEncode(data));
-  // }
+  Future<void> _save(List data) async {
+    final file = File(getFilePath);
+    await file.writeAsString(await jsonEncode(data));
+  }
 }
