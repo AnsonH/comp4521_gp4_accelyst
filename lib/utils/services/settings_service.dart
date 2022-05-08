@@ -54,6 +54,17 @@ class SettingsService {
     await _prefs.reload();
   }
 
+  static Future<bool> getTimerFocusMode() async {
+    final _prefs = await SharedPreferences.getInstance();
+    return _prefs.getBool('timer-focus-mode') ?? false;
+  }
+
+  static Future<void> setTimerFocusMode(bool value) async {
+    final _prefs = await SharedPreferences.getInstance();
+    await _prefs.setBool('timer-focus-mode', value);
+    await _prefs.reload();
+  }
+
   // To-do
 
   // To-do deadline notification hours before deadline, default = 15 hours

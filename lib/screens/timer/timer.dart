@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/timer_state.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/slider_with_label.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
@@ -15,8 +16,7 @@ import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/info_dialogs.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/pomodoro_label.dart';
-import 'package:comp4521_gp4_accelyst/widgets/timer/slider_setting.dart';
-import 'package:comp4521_gp4_accelyst/widgets/timer/switch_setting.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/switch_with_label.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -32,6 +32,7 @@ class Timer extends StatefulWidget {
 // which is useful when implementing Focus Mode.
 class _TimerState extends State<Timer> with WidgetsBindingObserver {
   // User preferences
+  // TODO: Min and max durations are no longer available in Settings page
   final Future<int> _minTimerDuration = SettingsService.getTimerMinTime();
   final Future<int> _maxTimerDuration = SettingsService.getTimerMaxTime();
   static int minTimerDuration = 10; // To be updated in `timerStateInit()`
@@ -178,37 +179,41 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                       ),
                     ),
                     const SizedBox(height: 25),
-                    SliderSetting(
+                    SliderWithLabel(
                       label: "Session Duration (mins)",
                       initialValue: timerState.sessionDuration,
                       onChanged: (int mins) {
                         setState(() => timerState.sessionDuration = mins);
-
+                      },
+                      onChangeEnd: (int mins) {
                         // Update timer duration
                         _resetTimer(duration: mins * 60);
                       },
                       min: minTimerDuration,
                       max: maxTimerDuration,
                       verticalPadding: 0.0,
+                      usePrimaryColor: false,
                     ),
-                    SwitchSetting(
+                    SwitchWithLabel(
                       label: "Focus Mode",
                       initialValue: timerState.focusMode,
                       onChanged: (value) {
                         setState(() => timerState.focusMode = value);
                       },
                       onPressedInfo: () => showFocusModeInfoDialog(context),
+                      usePrimaryColor: false,
                     ),
                     const Divider(thickness: 1),
-                    SwitchSetting(
+                    SwitchWithLabel(
                       label: "Pomodoro Mode",
                       initialValue: timerState.pomodoroMode,
                       onChanged: (value) {
                         setState(() => timerState.pomodoroMode = value);
                       },
                       onPressedInfo: () => showPomodoroModeInfoDialog(context),
+                      usePrimaryColor: false,
                     ),
-                    SliderSetting(
+                    SliderWithLabel(
                       label: "Sessions",
                       initialValue: timerState.pomodoroMaxSessions,
                       onChanged: (int mins) {
@@ -216,8 +221,9 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                       },
                       min: 2,
                       max: 10,
+                      usePrimaryColor: false,
                     ),
-                    SliderSetting(
+                    SliderWithLabel(
                       label: "Short Break Duration (mins)",
                       initialValue: timerState.pomodoroBreakDuration,
                       onChanged: (int mins) {
@@ -225,6 +231,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                       },
                       min: 3,
                       max: 15,
+                      usePrimaryColor: false,
                     ),
                   ],
                 ),
@@ -249,7 +256,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
   void timerStateInit() async {
     minTimerDuration = await _minTimerDuration;
     maxTimerDuration = await _maxTimerDuration;
-    await timerState.initialize();
+    await timerState.getSettings();
     setState(() {}); // Rebuild the widget since we mutated timerState
   }
 

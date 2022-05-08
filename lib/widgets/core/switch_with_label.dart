@@ -1,10 +1,8 @@
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:flutter/material.dart';
 
-/// A switch for setting a single timer property.
-///
-/// It is used in the timer page's settings bottom sheet.
-class SwitchSetting extends StatefulWidget {
+/// A switch with label.
+class SwitchWithLabel extends StatefulWidget {
   final String label;
   final bool initialValue;
   final void Function(bool) onChanged;
@@ -14,20 +12,28 @@ class SwitchSetting extends StatefulWidget {
   /// If set to null, the info button will be hidden.
   final void Function()? onPressedInfo;
 
-  /// Creates a switch for setting a single timer property.
-  const SwitchSetting({
+  /// If false, it uses the secondary color (yellow).
+  final bool usePrimaryColor;
+
+  /// Add an icon at the left.
+  final IconData? icon;
+
+  /// Creates a switch with label.
+  const SwitchWithLabel({
     Key? key,
     required this.label,
     required this.initialValue,
     required this.onChanged,
     this.onPressedInfo,
+    this.usePrimaryColor = true,
+    this.icon,
   }) : super(key: key);
 
   @override
-  State<SwitchSetting> createState() => _SwitchSettingState();
+  State<SwitchWithLabel> createState() => _SwitchWithLabelState();
 }
 
-class _SwitchSettingState extends State<SwitchSetting> {
+class _SwitchWithLabelState extends State<SwitchWithLabel> {
   late bool value;
 
   @override
@@ -45,6 +51,15 @@ class _SwitchSettingState extends State<SwitchSetting> {
         children: [
           Row(
             children: [
+              if (widget.icon != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Icon(
+                    widget.icon,
+                    size: 32,
+                    color: Colors.grey[600],
+                  ),
+                ),
               const SizedBox(width: 12),
               Text(
                 widget.label,
@@ -69,7 +84,7 @@ class _SwitchSettingState extends State<SwitchSetting> {
               setState(() => value = newValue);
               widget.onChanged(newValue);
             },
-            activeColor: secondaryColor,
+            activeColor: widget.usePrimaryColor ? primaryColor : secondaryColor,
           ),
         ],
       ),

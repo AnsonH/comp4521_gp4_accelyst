@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 final primaryColor = Colors.indigo[800];
+final primaryColorOpaque = primaryColor?.withAlpha(50);
 final secondaryColor = Colors.amber[600];
-final secondaryColorOpaque = Colors.amber[600]?.withAlpha(50);
+final secondaryColorOpaque = secondaryColor?.withAlpha(50);
 
 TextTheme proximaNovaTextTheme(BuildContext context, {bool lightTheme = true}) {
   return Theme.of(context).textTheme.apply(

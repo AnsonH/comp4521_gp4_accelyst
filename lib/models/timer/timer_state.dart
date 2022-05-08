@@ -5,16 +5,13 @@ import 'package:comp4521_gp4_accelyst/utils/services/settings_service.dart';
 /// Not to be confused with the state of the entire "Timer" page.
 class TimerState {
   final Future<int> _sessionDuration = SettingsService.getTimerDefaultTime();
+  final Future<bool> _focusMode = SettingsService.getTimerFocusMode();
 
   /// Duration of a session in minutes. Its value does not change while timer is counting.
   ///
-  /// Its value is updated in [initialize] to be equal to the value in user settings. The value
+  /// Its value is updated in [getSettings] to be equal to the value in user settings. The value
   /// `25` is simply a placeholder value.
   int sessionDuration = 25;
-
-  Future initialize() async {
-    sessionDuration = (await _sessionDuration);
-  }
 
   TimerStage stage = TimerStage.stop;
 
@@ -35,7 +32,13 @@ class TimerState {
 
   /// Initializes the state of the timer component.
   TimerState() {
-    initialize();
+    getSettings();
+  }
+
+  /// Gets timer-related user preferences and update the state accordingly.
+  Future<void> getSettings() async {
+    sessionDuration = await _sessionDuration;
+    focusMode = await _focusMode;
   }
 
   /// Gets a string showing current Pomodoro session out of max. Pomodoro sessions (eg. "1 / 5").
