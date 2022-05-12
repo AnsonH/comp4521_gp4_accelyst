@@ -22,15 +22,21 @@ class StorageService {
   }
 
   /// This async function reads data from designated file and returns the data in a List.
-  Future<List<T>> read<T>() async {
-    final file = File(getFilePath);
+  Future<List<T>> read<T>([String path = ""]) async {
+    if (path == "") {
+      path = getFilePath;
+    }
+    final file = File(path);
     List<T> data = jsonDecode(await file.readAsString());
     return data;
   }
 
   /// This async function saves data to designated file.
-  Future<void> save(List data) async {
-    final file = File(getFilePath);
+  Future<void> save(List data, [String path = ""]) async {
+    if (path == "") {
+      path = getFilePath;
+    }
+    final file = File(path);
     await file.writeAsString(jsonEncode(data));
   }
 }
