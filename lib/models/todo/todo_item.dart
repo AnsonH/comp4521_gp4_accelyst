@@ -78,31 +78,59 @@ class TodoItem {
     return dateStr;
   }
 
-  void set setName(String newName) {
+  get getName {
+    return name;
+  }
+
+  set setName(String newName) {
     name = newName;
   }
 
-  void set setPriority(TodoPriority newPriority) {
+  get getPriority {
+    return priority;
+  }
+
+  set setPriority(TodoPriority newPriority) {
     priority = newPriority;
   }
 
-  void set setStatus(TodoStatus newStatus) {
+  get getStatus {
+    return status;
+  }
+
+  set setStatus(TodoStatus newStatus) {
     status = newStatus;
   }
 
-  void set setCategory(String newCategory) {
+  get getCategory {
+    return category;
+  }
+
+  set setCategory(String newCategory) {
     category = newCategory;
   }
 
-  void set setDescription(String newDescription) {
+  get getDescription {
+    return description;
+  }
+
+  set setDescription(String newDescription) {
     description = newDescription;
   }
 
-  void set setDeadline(DateTime? newDeadline) {
+  get getDeadline {
+    return deadline;
+  }
+
+  set setDeadline(DateTime? newDeadline) {
     deadline = newDeadline;
   }
 
-  void set setSubtasks(List<TodoSubtask> newSubtasks) {
+  get getSubtasks {
+    return subtasks;
+  }
+
+  set setSubtasks(List<TodoSubtask> newSubtasks) {
     subtasks = newSubtasks;
   }
 }
