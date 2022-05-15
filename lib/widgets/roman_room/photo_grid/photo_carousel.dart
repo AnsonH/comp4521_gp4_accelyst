@@ -1,16 +1,23 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+
+// TODO: Unused widget. Can delete this as well as "photo_view" package.
 
 /// A photo carousel with zoom controls.
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.
 class PhotoCarousel extends StatefulWidget {
-  final List<PhotoGridItemData?> carouselItems;
+  /// List of image data stored in [RomanRoomItem] model class.
+  final List<RomanRoomItem?> carouselItems;
+
+  /// Index of the image from [carouselItems] to be shown initially.
   final int initialIndex;
 
-  // Parameters for PhotoViewGallery
+  /// Optional callback for deleting a photo from the grid.
+  final void Function(String id)? onDeletePhoto;
+
   final LoadingBuilder? loadingBuilder;
   final BoxDecoration? backgroundDecoration;
   final PageController pageController;
@@ -23,6 +30,7 @@ class PhotoCarousel extends StatefulWidget {
     this.carouselItems, {
     Key? key,
     this.initialIndex = 0,
+    this.onDeletePhoto,
     this.loadingBuilder,
     this.backgroundDecoration,
   })  : pageController = PageController(initialPage: initialIndex),
@@ -55,6 +63,33 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          if (widget.onDeletePhoto != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text("Delete photo?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        widget.onDeletePhoto!(
+                            widget.carouselItems[currentIndex]!.id);
+                        Navigator.pop(context); // Close dialogue
+                        Navigator.pop(context); // Exit photo carousel
+                      },
+                      child: const Text('Delete'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
       body: Container(
         decoration: widget.backgroundDecoration,
@@ -93,7 +128,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
   }
 
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
-    final PhotoGridItemData item = widget.carouselItems[index]!;
+    final RomanRoomItem item = widget.carouselItems[index]!;
 
     return PhotoViewGalleryPageOptions(
       imageProvider: FileImage(item.imageFile!),

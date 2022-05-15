@@ -1,7 +1,25 @@
-import 'package:comp4521_gp4_accelyst/models/photo_grid_item_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
+import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/http_service.dart';
-import 'package:comp4521_gp4_accelyst/widgets/photo/photo_grid.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid.dart';
 import 'package:flutter/material.dart';
+
+final roomData = RomanRoom(
+  id: "my-room",
+  name: "My Roman Room",
+  description: "Sample Text",
+
+  // TODO: Delete the following placeholder items if no longer needed.
+  items: List.generate(
+    9,
+    (index) => RomanRoomItem(
+      id: "picsum$index",
+      description: "Sample description of item ${index + 1}",
+      url: "https://picsum.photos/id/${index * 5}/1280/720.jpg",
+    ),
+  ),
+);
 
 class RoomRecall extends StatefulWidget {
   const RoomRecall({Key? key}) : super(key: key);
@@ -11,19 +29,46 @@ class RoomRecall extends StatefulWidget {
 }
 
 class _RoomRecallState extends State<RoomRecall> {
-  final List<PhotoGridItemData?> _imagesData =
-      List.filled(gridItems.length, null);
+  /// Data of roman room items to be rendered. We don't directly render roomData.items because
+  /// users may shuffle the order of items.
+  List<RomanRoomItem> itemsData = List.from(roomData.items);
+
+  bool _previewItems = true;
+  bool _randomOrder = false;
+
+  void _onReorder(int oldIndex, int newIndex) {
+    // Also update the roman room data
+    final element = roomData.items.removeAt(oldIndex);
+    roomData.items.insert(newIndex, element);
+
+    setState(() {
+      final element = itemsData.removeAt(oldIndex);
+      itemsData.insert(newIndex, element);
+    });
+  }
+
+  void _randomizeOrder(bool randomize) {
+    setState(() {
+      if (randomize) {
+        itemsData.shuffle();
+      } else {
+        itemsData = List.from(roomData.items);
+      }
+
+      _randomOrder = randomize;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
 
     // Downloads placeholder images
-    getImagesFromPhotoGridItemData(
-      data: gridItems,
+    getImagesFromRomanRoomItem(
+      data: roomData.items,
       saveSuccessCallback: (index, updatedImageData) {
         if (mounted) {
-          setState(() => _imagesData[index] = updatedImageData);
+          setState(() => itemsData[index] = updatedImageData);
         }
       },
     );
@@ -33,61 +78,50 @@ class _RoomRecallState extends State<RoomRecall> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Revise Roman Room"),
+        title: Text(roomData.name),
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
-        child: CustomScrollView(
+        child: Column(
           // Using slivers allow us to scroll the list and grid views together
           // See https://api.flutter.dev/flutter/widgets/SliverList-class.html
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate([
-                TextFormField(
-                  decoration: const InputDecoration(labelText: "Name"),
-                  initialValue: "My Room",
-                  readOnly: true,
-                ),
-                const SizedBox(height: 15),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: "Subject"),
-                  initialValue: "COMP4521",
-                  readOnly: true,
-                ),
-                const SizedBox(height: 15),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: "Description"),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null, // Take as much lines as the input value
-                  initialValue: "Sample Text\nMiddle Text\nBottom Text",
-                  readOnly: true,
-                ),
-                const SizedBox(height: 25),
-                Text(
-                  "Your Roman Room",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 10),
-              ]),
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(labelText: "Description"),
+              keyboardType: TextInputType.multiline,
+              maxLines: null, // Take as much lines as the input value
+              initialValue: roomData.description,
+              readOnly: true,
             ),
-            PhotoGrid(
-              imagesData: _imagesData,
-              imageCount: gridItems.length,
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate([
-                const SizedBox(height: 30),
-                Text(
-                  "Room Objects",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                  ),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _labelledSwitch(
+                  value: _previewItems,
+                  label: "Preview Items",
+                  onChanged: (value) {
+                    setState(() => _previewItems = value);
+                  },
                 ),
-              ]),
+                _labelledSwitch(
+                  value: _randomOrder,
+                  label: "Shuffle Items",
+                  onChanged: _randomizeOrder,
+                ),
+              ],
+            ),
+            const SizedBox(height: 25),
+            Expanded(
+              child: SingleChildScrollView(
+                child: PhotoGrid(
+                  roomData: roomData,
+                  itemsData: itemsData,
+                  itemCount: roomData.items.length,
+                  showImageThumbnail: _previewItems,
+                  onReorder: _onReorder,
+                ),
+              ),
             ),
           ],
         ),
@@ -96,42 +130,24 @@ class _RoomRecallState extends State<RoomRecall> {
   }
 }
 
-// TODO: Delete the following placeholder items if no longer needed.
-var gridItems = <PhotoGridItemData>[
-  PhotoGridItemData(
-    id: "item1",
-    url: "https://picsum.photos/id/237/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item2",
-    url: "https://picsum.photos/id/236/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item3",
-    url: "https://picsum.photos/id/235/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item4",
-    url: "https://picsum.photos/id/234/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item5",
-    url: "https://picsum.photos/id/233/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item6",
-    url: "https://picsum.photos/id/232/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item7",
-    url: "https://picsum.photos/id/231/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item8",
-    url: "https://picsum.photos/id/230/1280/720.jpg",
-  ),
-  PhotoGridItemData(
-    id: "item9",
-    url: "https://picsum.photos/id/237/1280/720.jpg",
-  ),
-];
+Widget _labelledSwitch({
+  required bool value,
+  required String label,
+  required void Function(bool) onChanged,
+}) {
+  return Row(
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      ),
+      Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: primaryColor,
+      ),
+    ],
+  );
+}

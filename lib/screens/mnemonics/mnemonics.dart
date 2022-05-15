@@ -36,6 +36,7 @@ class _MnemonicsState extends State<Mnemonics> {
         ],
       ),
       drawer: const NavDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -43,7 +44,7 @@ class _MnemonicsState extends State<Mnemonics> {
           children: <Widget>[
             const Text("Temporary links to forms:"),
             ElevatedButton.icon(
-              label: const Text("Roman Room: Recall"),
+              label: const Text("Roman Room: Recall Objects"),
               icon: const Icon(Icons.open_in_new),
               onPressed: () {
                 Navigator.push(

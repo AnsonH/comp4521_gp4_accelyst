@@ -49,6 +49,7 @@ class _TodoState extends State<Todo> {
         ],
       ),
       drawer: const NavDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
       body: Column(children: [
         (_todoView == TodoView.calendar)
             ? new TodoCalendar()
