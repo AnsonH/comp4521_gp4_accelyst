@@ -1,6 +1,7 @@
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/add_photo_button.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_carousel.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -83,14 +84,30 @@ class PhotoGrid extends StatelessWidget {
               oldIndex: oldIndex,
               itemData: roomItem,
               showImageThumbnail: showImageThumbnail,
-              onTap: () => _openItemDialog(context, oldIndex, roomItem),
+              onTap: () {
+                // Opens photo carousel
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (context) => PhotoCarousel(
+                      itemsData,
+                      roomData: roomData,
+                      initialIndex: index,
+                      onDeletePhoto: onDeletePhoto,
+                      backgroundDecoration: const BoxDecoration(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                );
+              },
             );
     }
 
     return allowReorder
         ? ReorderableGridView.builder(
             shrinkWrap: true,
-            onReorder: onReorder ?? (oldIndex, newIndex) {},
+            onReorder: onReorder ?? (i, j) {},
             itemCount: totalItemCount,
             itemBuilder: itemBuilder,
             gridDelegate: gridDelegate,
@@ -104,35 +121,4 @@ class PhotoGrid extends StatelessWidget {
             physics: const ScrollPhysics(),
           );
   }
-}
-
-void _openItemDialog(
-  BuildContext context,
-  int oldIndex,
-  RomanRoomItem roomItem,
-) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        "Item ${oldIndex + 1}",
-        textAlign: TextAlign.center,
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.file(roomItem.imageFile!),
-          if (roomItem.description != null) const SizedBox(height: 20),
-          if (roomItem.description != null) Text(roomItem.description!),
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text("Close"),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-      actionsAlignment: MainAxisAlignment.center,
-    ),
-  );
 }

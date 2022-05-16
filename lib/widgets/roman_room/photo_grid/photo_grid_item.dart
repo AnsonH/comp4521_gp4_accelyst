@@ -11,7 +11,7 @@ class PhotoGridItem extends StatelessWidget {
 
   /// Creates a single item in a photo grid.
   ///
-  /// Displays a loading spinner if [itemData] is null.
+  /// Displays a loading spinner if [itemData.imageFile] is null.
   const PhotoGridItem({
     Key? key,
     required this.itemData,
@@ -24,6 +24,7 @@ class PhotoGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final indexString = (oldIndex + 1).toString();
 
+    // Show spinner if item data is null
     if (itemData.imageFile == null) {
       return Container(
         color: Colors.grey[300],
@@ -36,30 +37,35 @@ class PhotoGridItem extends StatelessWidget {
       );
     }
 
-    return showImageThumbnail
-        ? Material(
-            child: Ink.image(
-              image: FileImage(itemData.imageFile!),
-              fit: BoxFit.cover,
-              child: InkWell(
-                onTap: () => onTap(),
+    // Wrap the button with Hero widget so that it creates a nice transition
+    // animation when it's pressed.
+    return Hero(
+      tag: itemData.id,
+      child: showImageThumbnail
+          ? Material(
+              child: Ink.image(
+                image: FileImage(itemData.imageFile!),
+                fit: BoxFit.cover,
+                child: InkWell(
+                  onTap: () => onTap(),
+                ),
+              ),
+            )
+          : ElevatedButton(
+              child: Text(
+                indexString,
+                style: const TextStyle(fontSize: 40),
+              ),
+              onPressed: () => onTap(),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.grey,
+                onPrimary: Colors.grey[100],
+                elevation: 0,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero,
+                ),
               ),
             ),
-          )
-        : ElevatedButton(
-            child: Text(
-              indexString,
-              style: const TextStyle(fontSize: 40),
-            ),
-            onPressed: () => onTap(),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.grey,
-              onPrimary: Colors.grey[100],
-              elevation: 0,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
-            ),
-          );
+    );
   }
 }

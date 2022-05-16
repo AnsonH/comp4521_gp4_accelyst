@@ -1,18 +1,23 @@
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
-
-// TODO: Unused widget. Can delete this as well as "photo_view" package.
 
 /// A photo carousel with zoom controls.
 ///
 /// Created using the [photo_view_gallery](https://pub.dev/documentation/photo_view/latest/photo_view_gallery/photo_view_gallery-library.html) package.
 class PhotoCarousel extends StatefulWidget {
   /// List of image data stored in [RomanRoomItem] model class.
-  final List<RomanRoomItem?> carouselItems;
+  final List<RomanRoomItem> carouselItems;
 
-  /// Index of the image from [carouselItems] to be shown initially.
+  /// Data of entire roman room.
+  ///
+  /// This is necessary because we need to know the original ordering of room items
+  /// in case the user shuffles the items during revision.
+  final RomanRoom roomData;
+
+  /// Index of the image from the [carouselItems] array to be shown initially.
   final int initialIndex;
 
   /// Optional callback for deleting a photo from the grid.
@@ -29,6 +34,7 @@ class PhotoCarousel extends StatefulWidget {
   PhotoCarousel(
     this.carouselItems, {
     Key? key,
+    required this.roomData,
     this.initialIndex = 0,
     this.onDeletePhoto,
     this.loadingBuilder,
@@ -41,6 +47,7 @@ class PhotoCarousel extends StatefulWidget {
 }
 
 class _PhotoCarouselState extends State<PhotoCarousel> {
+  // Index of the current shown item in `widget.carouselItems`
   late int currentIndex = widget.initialIndex;
 
   void _onPageChanged(int index) {
@@ -51,8 +58,10 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    // Since `widget.carouselItems` could contain null items, we count no. of non-null items
-    int itemCount = widget.carouselItems.where((item) => item != null).length;
+    final currentItem = widget.carouselItems[currentIndex];
+
+    // Original index of the current index in `roomData.items`
+    int currentOldIndex = widget.roomData.getItemIndex(currentItem.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -78,8 +87,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                     ),
                     TextButton(
                       onPressed: () {
-                        widget.onDeletePhoto!(
-                            widget.carouselItems[currentIndex]!.id);
+                        widget.onDeletePhoto!(currentItem.id);
                         Navigator.pop(context); // Close dialogue
                         Navigator.pop(context); // Exit photo carousel
                       },
@@ -100,7 +108,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
           alignment: AlignmentDirectional.bottomCenter,
           children: [
             PhotoViewGallery.builder(
-              itemCount: itemCount,
+              itemCount: widget.carouselItems.length,
               builder: _buildItem,
               onPageChanged: _onPageChanged,
               scrollPhysics: const BouncingScrollPhysics(),
@@ -112,13 +120,28 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
               padding: const EdgeInsets.all(20.0),
               width: MediaQuery.of(context).size.width,
               color: Colors.black.withOpacity(0.75),
-              child: Text(
-                "Image ${currentIndex + 1}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                ),
-                textAlign: TextAlign.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Image ${currentOldIndex + 1}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (currentItem.description != null)
+                    const SizedBox(height: 15),
+                  if (currentItem.description != null)
+                    Text(
+                      currentItem.description!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                ],
               ),
             ),
           ],
@@ -128,13 +151,15 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
   }
 
   PhotoViewGalleryPageOptions _buildItem(BuildContext context, int index) {
-    final RomanRoomItem item = widget.carouselItems[index]!;
+    final RomanRoomItem item = widget.carouselItems[index];
 
     return PhotoViewGalleryPageOptions(
       imageProvider: FileImage(item.imageFile!),
       initialScale: PhotoViewComputedScale.contained,
       minScale: PhotoViewComputedScale.contained * 0.8,
       maxScale: PhotoViewComputedScale.covered * 1.1,
+
+      // Enables a nice transition animation when photo carousel is opened
       heroAttributes: PhotoViewHeroAttributes(tag: item.id),
     );
   }
