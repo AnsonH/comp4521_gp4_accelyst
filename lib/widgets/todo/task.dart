@@ -6,6 +6,11 @@ class Task extends StatefulWidget {
 
   Task({required this.todoitem});
 
+  int getDeadlineHour() {
+    int? deadlineHour = todoitem.deadline?.hour;
+    return 10;
+  }
+
   @override
   State<Task> createState() => _TaskState();
 }
@@ -25,7 +30,20 @@ class _TaskState extends State<Task> {
         children: <Widget>[
           /// Checkbox
           SizedBox(
-              width: 20.0,
+            width: 20.0,
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                /// Checkbox: Color when box is unchecked
+                ///   High: Red, Medium: Yellow, Low: Green, None: Grey
+                unselectedWidgetColor:
+                    widget.todoitem.priority == TodoPriority.high
+                        ? Colors.red[700]
+                        : widget.todoitem.priority == TodoPriority.medium
+                            ? Colors.amber[800]
+                            : widget.todoitem.priority == TodoPriority.low
+                                ? Colors.green[700]
+                                : Colors.grey[800],
+              ),
               child: Checkbox(
                 /// Checkbox: Ticked or not depends on "Todoitem.status" is "complete" or "incomplete"
                 value: (widget.todoitem.status == TodoStatus.incomplete)
@@ -35,9 +53,9 @@ class _TaskState extends State<Task> {
                 onChanged: (bool? newValue) {
                   setState(() {
                     if (widget.todoitem.status == TodoStatus.incomplete)
-                      ;
+                      widget.todoitem.status = TodoStatus.complete;
                     else
-                      ;
+                      widget.todoitem.status = TodoStatus.incomplete;
                   });
                 },
 
@@ -50,7 +68,9 @@ class _TaskState extends State<Task> {
                         : widget.todoitem.priority == TodoPriority.low
                             ? Colors.green[700]
                             : Colors.grey[800],
-              )),
+              ),
+            ),
+          ),
 
           /// Below contains all Text Contents
           SizedBox(width: 10.0),
@@ -68,13 +88,19 @@ class _TaskState extends State<Task> {
                 Row(
                   children: <Widget>[
                     /// Task Deadline
+                    ///   If Deadline is NULL then do NOT display the deadline
                     /// Todo: Apply the Deadline variable (with DateTime Format)
-                    Text(
-                      //widget.todoitem.deadline
-                      "10:30pm",
-                      style: TextStyle(color: Colors.blue[800]),
-                    ),
-                    SizedBox(width: 10),
+                    (widget.todoitem.deadline != null)
+                        ? Row(
+                            children: [
+                              Text(
+                                "Deadline here",
+                                style: TextStyle(color: Colors.blue[800]),
+                              ),
+                              SizedBox(width: 10)
+                            ],
+                          )
+                        : SizedBox(width: 0),
 
                     /// Task Category (or Subject)
                     Text(

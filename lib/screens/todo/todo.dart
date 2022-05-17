@@ -25,7 +25,7 @@ class _TodoState extends State<Todo> {
       priority: TodoPriority.medium,
       category: "English",
       description: "Revise for Vocabulary Quiz",
-      deadline: null,
+      deadline: DateTime.parse('2022-05-06 20:00'),
     ),
     TodoItem(
       id: const Uuid().v4(),
