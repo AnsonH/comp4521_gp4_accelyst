@@ -1,9 +1,6 @@
 import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
 import 'package:flutter/material.dart';
 
-/// Represents status
-enum TodoStatus { incomplete, complete }
-
 class Task extends StatefulWidget {
   TodoItem todoitem;
 
@@ -31,11 +28,9 @@ class _TaskState extends State<Task> {
               width: 20.0,
               child: Checkbox(
                 /// Checkbox: Ticked or not depends on "Todoitem.status" is "complete" or "incomplete"
-                /// Todo: Fix the Checkbox part
-                value: true,
-                // (widget.todoitem.status == TodoStatus.incomplete)
-                //     ? true
-                //     : false,
+                value: (widget.todoitem.status == TodoStatus.incomplete)
+                    ? true
+                    : false,
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 onChanged: (bool? newValue) {
                   setState(() {
@@ -59,51 +54,37 @@ class _TaskState extends State<Task> {
 
           /// Below contains all Text Contents
           SizedBox(width: 10.0),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              /// Update the hardcoded value to proper variables
-              /// Task Name
-              Text(
-                widget.todoitem.name,
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 3.0),
-              Row(
-                children: <Widget>[
-                  /// Task Deadline
-                  /// Todo: Apply the Deadline variable (with DateTime Format)
-                  Text(
-                    //widget.todoitem.deadline
-                    "10:30pm",
-                    style: TextStyle(color: Colors.blue[800]),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                /// Update the hardcoded value to proper variables
+                /// Task Name
+                Text(
+                  widget.todoitem.name,
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 3.0),
+                Row(
+                  children: <Widget>[
+                    /// Task Deadline
+                    /// Todo: Apply the Deadline variable (with DateTime Format)
+                    Text(
+                      //widget.todoitem.deadline
+                      "10:30pm",
+                      style: TextStyle(color: Colors.blue[800]),
+                    ),
+                    SizedBox(width: 10),
 
-                  /// Task Category (or Subject)
-                  Text(
-                    widget.todoitem.category,
-                    style: TextStyle(color: Colors.grey[900]),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          /// Icon for each Task
-          /// Todo: Deal with the "Overflow by Pixels" Problem
-          /// Todo: Make the grey circle (pops up when button clicked) to be above the BoxDecoration()
-          /// TODO: Add a Sliding Animation to expose the menu for each task
-          Expanded(child: SizedBox()),
-          IconButton(
-            onPressed: () {},
-            iconSize: 20.0,
-            icon: Icon(Icons.more_vert),
-            splashColor: Colors.grey,
-            splashRadius: 20.0,
-            visualDensity: VisualDensity.compact,
+                    /// Task Category (or Subject)
+                    Text(
+                      widget.todoitem.category,
+                      style: TextStyle(color: Colors.grey[900]),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

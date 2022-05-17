@@ -2,7 +2,6 @@ import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/task.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -44,13 +43,6 @@ class _TodoState extends State<Todo> {
       description: "",
       deadline: null,
     ),
-  ];
-
-  List<String> tempTasksString = [
-    "Revise for Vocabulary Quiz",
-    "Complete Supplementary Exercise",
-    "Send Email to Your Professor",
-    "Workout"
   ];
 
   // default mode: list view
