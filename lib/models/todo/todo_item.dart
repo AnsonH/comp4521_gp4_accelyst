@@ -34,7 +34,7 @@ class TodoItem {
   String category;
 
   /// Priority level of to-do item
-  TodoPriority priority;
+  TodoPriority priority = TodoPriority.none;
 
   /// Description of to-do item
   String description;
@@ -52,8 +52,8 @@ class TodoItem {
   TodoItem({
     required this.id,
     required this.name,
-    required this.priority,
     required this.category,
+    required this.priority,
     required this.description,
     this.deadline,
   });
