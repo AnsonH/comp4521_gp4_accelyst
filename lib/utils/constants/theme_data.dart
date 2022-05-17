@@ -31,9 +31,20 @@ ThemeData lightThemeData(BuildContext context) {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: primaryColor,
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        primary: primaryColor,
+      ),
+    ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         primary: primaryColor,
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        primary: primaryColor,
+        side: BorderSide(color: primaryColor!),
       ),
     ),
   );

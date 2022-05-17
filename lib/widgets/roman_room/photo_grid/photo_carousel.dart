@@ -124,7 +124,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Image ${currentOldIndex + 1}",
+                    "Item ${currentOldIndex + 1}",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 22.0,

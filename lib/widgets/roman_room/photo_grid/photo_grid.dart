@@ -19,9 +19,6 @@ class PhotoGrid extends StatelessWidget {
   /// items in the grid during revision mode.
   final List<RomanRoomItem> itemsData;
 
-  /// Number of images
-  final int itemCount;
-
   /// Whether to show an "Add a photo" button at the last.
   ///
   /// You should supply [onAddPhotoSuccess] if this is set to true.
@@ -51,7 +48,6 @@ class PhotoGrid extends StatelessWidget {
     Key? key,
     required this.roomData,
     required this.itemsData,
-    required this.itemCount,
     this.showAddPhotoButton = false,
     this.onAddPhotoSuccess,
     this.onDeletePhoto,
@@ -68,40 +64,44 @@ class PhotoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int totalItemCount = itemCount + (showAddPhotoButton ? 1 : 0);
+    // int totalItemCount = itemCount + (showAddPhotoButton ? 1 : 0);
+    int totalItemCount = itemsData.length + (showAddPhotoButton ? 1 : 0);
 
     Widget itemBuilder(BuildContext context, int index) {
+      if (showAddPhotoButton && index == itemsData.length) {
+        // Add photo button at the last element
+        return AddPhotoButton(
+          key: const ValueKey("add-photo"),
+          onSuccess: onAddPhotoSuccess ?? (image) {},
+        );
+      }
+
       final RomanRoomItem roomItem = itemsData[index];
       final int oldIndex = roomData.getItemIndex(roomItem.id);
 
-      return (showAddPhotoButton && index == itemCount)
-          ? AddPhotoButton(
-              key: const ValueKey("add-photo"),
-              onSuccess: onAddPhotoSuccess ?? (image) {},
-            )
-          : PhotoGridItem(
-              key: ValueKey(const Uuid().v4()),
-              oldIndex: oldIndex,
-              itemData: roomItem,
-              showImageThumbnail: showImageThumbnail,
-              onTap: () {
-                // Opens photo carousel
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) => PhotoCarousel(
-                      itemsData,
-                      roomData: roomData,
-                      initialIndex: index,
-                      onDeletePhoto: onDeletePhoto,
-                      backgroundDecoration: const BoxDecoration(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
+      return PhotoGridItem(
+        key: ValueKey(const Uuid().v4()),
+        oldIndex: oldIndex,
+        itemData: roomItem,
+        showImageThumbnail: showImageThumbnail,
+        onTap: () {
+          // Opens photo carousel
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => PhotoCarousel(
+                itemsData,
+                roomData: roomData,
+                initialIndex: index,
+                onDeletePhoto: onDeletePhoto,
+                backgroundDecoration: const BoxDecoration(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          );
+        },
+      );
     }
 
     return allowReorder

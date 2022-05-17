@@ -81,7 +81,7 @@ class _RoomRecallState extends State<RoomRecall> {
         title: Text(roomData.name),
       ),
       body: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
         child: Column(
           // Using slivers allow us to scroll the list and grid views together
           // See https://api.flutter.dev/flutter/widgets/SliverList-class.html
@@ -93,7 +93,7 @@ class _RoomRecallState extends State<RoomRecall> {
               initialValue: roomData.description,
               readOnly: true,
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -111,15 +111,16 @@ class _RoomRecallState extends State<RoomRecall> {
                 ),
               ],
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
             Expanded(
-              child: SingleChildScrollView(
-                child: PhotoGrid(
-                  roomData: roomData,
-                  itemsData: itemsData,
-                  itemCount: roomData.items.length,
-                  showImageThumbnail: _previewItems,
-                  onReorder: _onReorder,
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  child: PhotoGrid(
+                    roomData: roomData,
+                    itemsData: itemsData,
+                    showImageThumbnail: _previewItems,
+                    onReorder: _onReorder,
+                  ),
                 ),
               ),
             ),
