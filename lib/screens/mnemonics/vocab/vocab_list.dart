@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_recall.dart';
 import 'package:flutter/material.dart';
 
@@ -48,6 +49,27 @@ class _VocabListViewState extends State<VocabListView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Vocabulary List"),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+              onSelected: (String value) {},
+              offset: const Offset(0, 52),
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    child: Text("Edit"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              VocabListEdit(id: vocablist.id),
+                        ),
+                      );
+                    },
+                  ),
+                ];
+              })
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
