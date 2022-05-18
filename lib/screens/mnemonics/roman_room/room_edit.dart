@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
@@ -94,7 +96,25 @@ class _RoomEditState extends State<RoomEdit> {
       final storageService = RomanRoomStorage(roomData.id);
       storageService.save(json);
 
-      // TODO: Append room into MnemonicsData
+      // Append room into MnemonicsData
+      late final MnemonicsStorage mnemonicsStorage;
+      mnemonicsStorage = MnemonicsStorage(callback: () {
+        mnemonicsStorage.loadJsonData().then((mnemonicsData) {
+          // Append this roman room to the mnemonicsData
+          mnemonicsData.appendNewRomanRoom(
+            subject: roomData.subject,
+            material: MnemonicMaterial(
+              type: MnemonicType.romanRoom,
+              title: roomData.name,
+              uuid: roomData.id,
+            ),
+          );
+
+          // Update actual mnemonics.json
+          final String updatedJson = jsonEncode(mnemonicsData);
+          mnemonicsStorage.save(updatedJson);
+        });
+      });
 
       showSaveSuccessfulSnackbar(context);
     }
