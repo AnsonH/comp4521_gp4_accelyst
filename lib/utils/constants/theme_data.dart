@@ -47,6 +47,12 @@ ThemeData lightThemeData(BuildContext context) {
         side: BorderSide(color: primaryColor!),
       ),
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: primaryColor!),
+      ),
+      floatingLabelStyle: TextStyle(color: primaryColor),
+    ),
   );
 }
 
