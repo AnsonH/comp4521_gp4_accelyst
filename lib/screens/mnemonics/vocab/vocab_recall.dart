@@ -12,7 +12,37 @@ class VocabRecall extends StatefulWidget {
 
 class _VocabRecallState extends State<VocabRecall> {
   late VocabList vocablist = widget.vocablist;
-  late Vocab currentVocab = vocablist.vocabs[0];
+  int vocabIdx = 0;
+  late Vocab currentVocab = vocablist.vocabs[vocabIdx];
+
+  bool _showSegments = false;
+  bool _showStory = false;
+  bool _showDescription = false;
+  bool _showAnswer = false;
+
+  List<Widget> getVocabSegmentList() {
+    List<Widget> childs = [];
+    for (int i = 0; i < currentVocab.vocabSegments.length; ++i) {
+      childs.add(Row(
+        children: [
+          Expanded(
+            child: Text(
+              currentVocab.vocabSegments[i].segment,
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              currentVocab.vocabSegments[i].word,
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+        mainAxisSize: MainAxisSize.max,
+      ));
+    }
+    return childs;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,55 +59,125 @@ class _VocabRecallState extends State<VocabRecall> {
             SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: 40),
-                TextFormField(
-                  decoration:
-                      const InputDecoration(labelText: "Vocab List Name"),
-                  initialValue: vocablist.name,
-                  readOnly: true,
+                Text(
+                  currentVocab.word,
+                  style: TextStyle(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 35),
+                ElevatedButton(
+                  child: Text("${_showSegments ? "Hide" : "Show"} Segments"),
+                  onPressed: () {
+                    setState(() {
+                      _showSegments = !_showSegments;
+                    });
+                  },
+                ),
+                Column(
+                  children: _showSegments
+                      ? [
+                          Row(
+                            children: const <Widget>[
+                              Expanded(
+                                  child: Text(
+                                "Segment",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                "Word",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              )),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          ...getVocabSegmentList(),
+                        ]
+                      : [],
                 ),
                 const SizedBox(height: 15),
-                TextFormField(
-                  decoration: const InputDecoration(labelText: "Description"),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null, // Take as much lines as the input value
-                  initialValue: vocablist.description,
-                  readOnly: true,
-                ),
-                const SizedBox(height: 30),
                 ElevatedButton(
-                    child: const Text("Revision"),
+                    child: Text("${_showStory ? "Hide" : "Show"} Story"),
                     onPressed: () {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute<void>(
-                      //     builder: (BuildContext context) =>
-                      //         const VocabListView(),
-                      //   ),
-                      // );
+                      setState(() {
+                        _showStory = !_showStory;
+                      });
                     }),
-                const SizedBox(height: 30),
-                Row(
-                  children: const <Widget>[
-                    Expanded(
-                        child: Text(
-                      "Words",
-                      textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-                    Expanded(
-                        child: Text(
-                      "Definition",
-                      textAlign: TextAlign.left,
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
-                  ],
+                Column(
+                  children: _showStory
+                      ? [
+                          Text("Story",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                        ]
+                      : [],
                 ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                    child: Text(
+                        "${_showDescription ? "Hide" : "Show"} Description"),
+                    onPressed: () {
+                      setState(() {
+                        _showDescription = !_showDescription;
+                      });
+                    }),
+                Column(
+                  children: _showDescription
+                      ? [
+                          Text("Description",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 10),
+                          Text(currentVocab.description),
+                        ]
+                      : [],
+                ),
+                const SizedBox(height: 15),
+                ElevatedButton(
+                    child: Text("${_showAnswer ? "Hide" : "Show"} Answer"),
+                    onPressed: () {
+                      setState(() {
+                        _showAnswer = !_showAnswer;
+                      });
+                    }),
                 const SizedBox(height: 15),
                 Column(
-                    // children: getVocabList(),
-                    ),
+                  children: _showAnswer
+                      ? [
+                          Text("Definition",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 10),
+                          Text(currentVocab.definition),
+                        ]
+                      : [],
+                ),
+                ElevatedButton(
+                    child: const Text("Next Word"),
+                    onPressed: () {
+                      setState(() {
+                        _showSegments = false;
+                        _showStory = false;
+                        _showDescription = false;
+                        _showAnswer = false;
+                        ++vocabIdx;
+                        if (vocabIdx == vocablist.vocabs.length) {
+                          Navigator.pop(context);
+                        } else {
+                          currentVocab = vocablist.vocabs[vocabIdx];
+                        }
+                      });
+                    }),
               ]),
             ),
           ],
