@@ -1,53 +1,115 @@
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_recall.dart';
 import 'package:flutter/material.dart';
 
-class VocabList extends StatefulWidget {
-  final String title;
-  const VocabList({Key? key, this.title = "Edit Task"}) : super(key: key);
+class VocabListView extends StatefulWidget {
+  final VocabList vocablist;
+  const VocabListView({
+    Key? key,
+    required this.vocablist,
+  }) : super(key: key);
 
   @override
-  State<VocabList> createState() => _VocabListState();
+  State<VocabListView> createState() => _VocabListViewState();
 }
 
-class _VocabListState extends State<VocabList> {
+class _VocabListViewState extends State<VocabListView> {
+  late VocabList vocablist = widget.vocablist;
+
+  List<Widget> getVocabList() {
+    List<Widget> childs = [];
+    for (int i = 0; i < vocablist.vocabs.length; ++i) {
+      childs.add(Row(
+        children: [
+          Expanded(
+            child: Text(
+              vocablist.vocabs[i].word,
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              vocablist.vocabs[i].definition,
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+        mainAxisSize: MainAxisSize.max,
+      ));
+      childs.add(
+        const SizedBox(height: 15),
+      );
+    }
+    return childs;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.teal[700],
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text("Delete event?"),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialogue
-                      // TODO: Delete the task
-                      Navigator.pop(context); // Exit "Edit task" screen
-                    },
-                    child: const Text('Delete'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        title: const Text("Vocabulary List"),
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
-        child: const Text("Edit task"),
+        child: CustomScrollView(
+          // Using slivers allow us to scroll the list and grid views together
+          // See https://api.flutter.dev/flutter/widgets/SliverList-class.html
+          slivers: [
+            SliverList(
+              delegate: SliverChildListDelegate([
+                TextFormField(
+                  decoration:
+                      const InputDecoration(labelText: "Vocab List Name"),
+                  initialValue: vocablist.name,
+                  readOnly: true,
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: "Description"),
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null, // Take as much lines as the input value
+                  initialValue: vocablist.description,
+                  readOnly: true,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                    child: const Text("Revision"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              VocabRecall(vocablist: vocablist),
+                        ),
+                      );
+                    }),
+                const SizedBox(height: 30),
+                Row(
+                  children: const <Widget>[
+                    Expanded(
+                        child: Text(
+                      "Words",
+                      textAlign: TextAlign.left,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )),
+                    Expanded(
+                        child: Text(
+                      "Definition",
+                      textAlign: TextAlign.left,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Column(
+                  children: getVocabList(),
+                ),
+              ]),
+            ),
+          ],
+        ),
       ),
     );
   }
