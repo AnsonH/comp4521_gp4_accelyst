@@ -27,7 +27,7 @@ class PhotoGrid extends StatelessWidget {
   /// Optional callback for successfully adding a photo.
   ///
   /// This is optional when [showAddPhotoButton] is false.
-  final void Function(XFile)? onAddPhotoSuccess;
+  final void Function(XFile image, String description)? onAddPhotoSuccess;
 
   /// Optional callback for deleting a photo from the grid.
   final void Function(String id)? onDeletePhoto;
@@ -72,7 +72,7 @@ class PhotoGrid extends StatelessWidget {
         // Add photo button at the last element
         return AddPhotoButton(
           key: const ValueKey("add-photo"),
-          onSuccess: onAddPhotoSuccess ?? (image) {},
+          onSuccess: onAddPhotoSuccess ?? (image, description) {},
         );
       }
 

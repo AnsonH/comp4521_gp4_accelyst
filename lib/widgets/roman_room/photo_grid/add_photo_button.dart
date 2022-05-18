@@ -4,9 +4,7 @@ import 'package:image_picker/image_picker.dart';
 /// A button to let user add photos via camera or photo gallery.
 class AddPhotoButton extends StatelessWidget {
   /// Callback to be called if user successfully picked a photo.
-  final void Function(XFile) onSuccess;
-
-  final _picker = ImagePicker();
+  final void Function(XFile image, String description) onSuccess;
 
   /// Creates an "Add a photo" button.
   ///
@@ -16,13 +14,42 @@ class AddPhotoButton extends StatelessWidget {
     required this.onSuccess,
   }) : super(key: key);
 
+  final _picker = ImagePicker();
+  final _descriptionController = TextEditingController();
+
   Future<void> _pickImage(ImageSource source, BuildContext context) async {
     try {
       final image = await _picker.pickImage(source: source);
       if (image == null) {
         return;
       }
-      onSuccess(image);
+
+      // Show dialog for entering the description of the photo.
+      final String description = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text("Input object description"),
+          content: TextField(
+            controller: _descriptionController,
+            decoration: const InputDecoration(
+              hintText: "Description of the object",
+            ),
+            keyboardType: TextInputType.multiline,
+            maxLines: null, // Take as much lines as the input value
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, _descriptionController.text);
+              },
+              child: const Text("DONE"),
+            ),
+          ],
+        ),
+      );
+
+      onSuccess(image, description);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
