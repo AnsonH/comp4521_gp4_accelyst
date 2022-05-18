@@ -163,7 +163,9 @@ class _VocabRecallState extends State<VocabRecall> {
             ),
             Expanded(child: Container()),
             ElevatedButton(
-                child: const Text("Next Word"),
+                child: Text((vocabIdx + 1 != vocablist.vocabs.length)
+                    ? "Next Word"
+                    : "Close"),
                 onPressed: () {
                   setState(() {
                     _showSegments = false;
