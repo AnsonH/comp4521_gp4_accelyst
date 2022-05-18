@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_recall.dart';
@@ -16,6 +19,9 @@ class VocabListView extends StatefulWidget {
 
 class _VocabListViewState extends State<VocabListView> {
   late VocabList vocablist = widget.vocablist;
+  late final _nameController = TextEditingController(text: vocablist.name);
+  late final _descriptionController =
+      TextEditingController(text: vocablist.description);
 
   List<Widget> getVocabList() {
     List<Widget> childs = [];
@@ -44,6 +50,19 @@ class _VocabListViewState extends State<VocabListView> {
     return childs;
   }
 
+  void editList(
+      {required String name,
+      required String description,
+      required List<Vocab> vocabs}) {
+    setState(() {
+      widget.vocablist.name = vocablist.name = name;
+      _nameController.value = TextEditingValue(text: name);
+      widget.vocablist.description = vocablist.description = description;
+      _descriptionController.value = TextEditingValue(text: description);
+      widget.vocablist.vocabs = vocablist.vocabs = vocabs;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +76,11 @@ class _VocabListViewState extends State<VocabListView> {
                     context,
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) =>
-                          VocabListEdit(id: vocablist.id),
+                          // VocabListEdit(id: vocablist.id),
+                          VocabListEdit(
+                        vocablist: vocablist,
+                        callback: editList,
+                      ),
                     ),
                   );
                 }
@@ -85,7 +108,7 @@ class _VocabListViewState extends State<VocabListView> {
                 TextFormField(
                   decoration:
                       const InputDecoration(labelText: "Vocab List Name"),
-                  initialValue: vocablist.name,
+                  controller: _nameController,
                   readOnly: true,
                 ),
                 const SizedBox(height: 15),
@@ -93,7 +116,7 @@ class _VocabListViewState extends State<VocabListView> {
                   decoration: const InputDecoration(labelText: "Description"),
                   keyboardType: TextInputType.multiline,
                   maxLines: null, // Take as much lines as the input value
-                  initialValue: vocablist.description,
+                  controller: _descriptionController,
                   readOnly: true,
                 ),
                 const SizedBox(height: 30),
