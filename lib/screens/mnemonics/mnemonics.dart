@@ -1,7 +1,10 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
+
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
-import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/create_mnemonic_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/subject_materials.dart';
@@ -115,7 +118,25 @@ class _MnemonicsState extends State<Mnemonics> {
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const VocabHome(),
+                          builder: (BuildContext context) => VocabListView(
+                              vocablist: VocabList(
+                                  id: "diu",
+                                  name: "ACCT4720",
+                                  description: "You Haifeng",
+                                  vocabs: [
+                                Vocab(
+                                  id: "diu1",
+                                  word: "Sharpe ratio",
+                                  definition: "Thanks Ian hard carry project",
+                                  description: "AHHHHHHHHHHHHHHHHH",
+                                ),
+                                Vocab(
+                                  id: "shit",
+                                  word: "Project",
+                                  definition: "Something without standards",
+                                  description: "Yay!",
+                                ),
+                              ])),
                         ),
                       );
                     },
