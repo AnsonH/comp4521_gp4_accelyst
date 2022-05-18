@@ -1,4 +1,4 @@
-import 'package:comp4521_gp4_accelyst/models/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 

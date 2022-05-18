@@ -1,31 +1,53 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_item.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/add_photo_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/roman_room/photo_grid/photo_grid.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/reorder_snackbar.dart';
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/save_successful_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class RoomEdit extends StatefulWidget {
-  const RoomEdit({Key? key}) : super(key: key);
+  /// True if we're creating a new room. False if we're editing an existing room.
+  final bool isNewRoom;
+
+  const RoomEdit({
+    Key? key,
+    this.isNewRoom = false,
+  }) : super(key: key);
 
   @override
   State<RoomEdit> createState() => _RoomEditState();
 }
 
 class _RoomEditState extends State<RoomEdit> {
+  // Form related states
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _subjectController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  late final RomanRoom roomData;
 
   /// Whether users can reorder the room object grid items.
   bool allowReorder = false;
 
-  // TODO: Load room data from storage service
-  final roomData = RomanRoom(
-    id: "foo",
-    items: [],
-  );
+  Future<void> _initializeRoomData() async {
+    if (widget.isNewRoom) {
+      roomData = RomanRoom(
+        id: const Uuid().v1(),
+        items: [],
+      );
+    } else {
+      // TODO: Load room data from storage service
+    }
+  }
 
   void _addImage(XFile image, String description, BuildContext context) {
     // TODO: Save the image to a persistent, non-cache folder
@@ -61,6 +83,42 @@ class _RoomEditState extends State<RoomEdit> {
     });
   }
 
+  void _saveRomanRoom(BuildContext context) {
+    // Validate form
+    if (_formKey.currentState!.validate()) {
+      // Encode `roomData` to JSON
+      final String json = jsonEncode(roomData);
+      debugPrint(json);
+
+      // Save room data to local storage
+      final storageService = RomanRoomStorage(roomData.id);
+      storageService.save(json);
+
+      // TODO: Append room into MnemonicsData
+
+      showSaveSuccessfulSnackbar(context);
+    }
+  }
+
+  void _addTextControllerListeners() {
+    _nameController.addListener(() {
+      setState(() => roomData.name = _nameController.text);
+    });
+    _subjectController.addListener(() {
+      setState(() => roomData.subject = _subjectController.text);
+    });
+    _descriptionController.addListener(() {
+      setState(() => roomData.description = _descriptionController.text);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeRoomData();
+    _addTextControllerListeners();
+  }
+
   /* TODO for room edit:
    * 1. Create a model class to represent form data
    * 2. Validate the form on save
@@ -69,7 +127,7 @@ class _RoomEditState extends State<RoomEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Roman Room"),
+        title: Text(widget.isNewRoom ? "New Roman Room" : "Edit Roman Room"),
       ),
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
@@ -79,14 +137,25 @@ class _RoomEditState extends State<RoomEdit> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: "Name"),
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: "Name*"),
+                validator: (value) {
+                  return (value == null || value.isEmpty)
+                      ? "Required field"
+                      : null;
+                },
               ),
-              const SizedBox(height: 5),
               TextFormField(
-                decoration: const InputDecoration(labelText: "Subject"),
+                controller: _subjectController,
+                decoration: const InputDecoration(labelText: "Subject*"),
+                validator: (value) {
+                  return (value == null || value.isEmpty)
+                      ? "Required field"
+                      : null;
+                },
               ),
-              const SizedBox(height: 5),
               TextFormField(
+                controller: _descriptionController,
                 decoration: const InputDecoration(labelText: "Description"),
                 keyboardType: TextInputType.multiline,
                 maxLines: null, // Take as much lines as the input value
@@ -111,7 +180,7 @@ class _RoomEditState extends State<RoomEdit> {
                         setState(() => allowReorder = !allowReorder);
 
                         if (allowReorder) {
-                          _showReorderSnackbar(context);
+                          showReorderSnackbar(context);
                         }
                       },
                       icon: Icon(
@@ -156,26 +225,31 @@ class _RoomEditState extends State<RoomEdit> {
                         ),
                       ),
                     ),
+              Expanded(child: Container()),
+              // "Save" button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 90),
+                child: ElevatedButton.icon(
+                  onPressed: () => _saveRomanRoom(context),
+                  icon: const Icon(Icons.save),
+                  label: const Text("Save"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[600],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-void _showReorderSnackbar(BuildContext context) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: const Text("Hold and drag a room object to reorder."),
-      action: SnackBarAction(
-        label: "OK",
-        textColor: secondaryColor,
-        onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        },
-      ),
-      behavior: SnackBarBehavior.floating,
-    ),
-  );
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+    _subjectController.dispose();
+    _descriptionController.dispose();
+  }
 }

@@ -1,8 +1,9 @@
-import 'package:comp4521_gp4_accelyst/models/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
+import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/create_mnemonic_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/subject_materials.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -43,10 +44,29 @@ class _MnemonicsState extends State<Mnemonics> {
       backgroundColor: Colors.grey[200],
       drawer: const NavDrawer(),
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
+      // Button to create new mnemonic material
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          // TODO: Add new roman room or vocab list
+        onPressed: () async {
+          // Show dialog to let users choose mnemonic type
+          final MnemonicType? type = await showCreateMnemonicDialog(context);
+          switch (type) {
+            case MnemonicType.romanRoom:
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => const RoomEdit(
+                    isNewRoom: true,
+                  ),
+                ),
+              );
+              break;
+            case MnemonicType.vocabList:
+              // TODO: Open create new vocab list page
+              break;
+            default:
+              return;
+          }
         },
       ),
       body: Container(
@@ -84,18 +104,6 @@ class _MnemonicsState extends State<Mnemonics> {
                         context,
                         MaterialPageRoute<void>(
                           builder: (BuildContext context) => const RoomRecall(),
-                        ),
-                      );
-                    },
-                  ),
-                  ElevatedButton.icon(
-                    label: const Text("Roman Room: Edit/Create New"),
-                    icon: const Icon(Icons.open_in_new),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const RoomEdit(),
                         ),
                       );
                     },
