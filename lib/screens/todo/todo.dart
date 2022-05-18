@@ -24,8 +24,16 @@ class _TodoState extends State<Todo> {
       name: "Revise for Vocabulary Quiz",
       priority: TodoPriority.medium,
       category: "English",
-      description: "Revise for Vocabulary Quiz",
+      description: "Memorize the top 1000 common English words",
       deadline: DateTime.parse('2022-05-06 20:00'),
+      subtasks: [
+        TodoSubtask(
+            id: const Uuid().v4(),
+            name: "Create a vocabulary list",
+            done: true),
+        TodoSubtask(
+            id: const Uuid().v4(), name: "Memorize all the words", done: false),
+      ],
     ),
     TodoItem(
       id: const Uuid().v4(),
@@ -34,19 +42,53 @@ class _TodoState extends State<Todo> {
       category: "Math",
       description: "",
       deadline: null,
+      subtasks: [
+        TodoSubtask(
+            id: const Uuid().v4(), name: "Exercise Part A", done: false),
+        TodoSubtask(
+            id: const Uuid().v4(), name: "Exercise Part B", done: false),
+      ],
     ),
     TodoItem(
       id: const Uuid().v4(),
-      name: "Send Email to Your Professor ",
+      name: "Send Email to Your Professor",
       priority: TodoPriority.high,
       category: "Humanities",
       description: "",
       deadline: null,
+      subtasks: [],
+    ),
+    TodoItem(
+      id: const Uuid().v4(),
+      name: "Workout",
+      priority: TodoPriority.none,
+      category: "",
+      description: "",
+      deadline: null,
+      subtasks: [],
+    ),
+    TodoItem(
+      id: const Uuid().v4(),
+      name: "Testing",
+      priority: TodoPriority.none,
+      category: "asdfjkl;asdfjaklsdfajsdkfl;asdfjaklsdfajskdf;asdfjakls;df",
+      description: "",
+      deadline: DateTime.parse('2022-05-06 22:00'),
+      subtasks: [],
     ),
   ];
 
   // default mode: list view
   TodoView _todoView = TodoView.list;
+
+  /// This function deletes the corresponding Task.
+  /// Called when the delete button in the bottom popup bar is clicked for each task
+  /// TODO: Change the tempTasks variable
+  void deleteTaskData(String id) {
+    setState(() {
+      tempTasks.removeWhere((element) => element.id == id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +133,10 @@ class _TodoState extends State<Todo> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 // TODO: Add the task.dart function into this part
-                return Task(todoitem: tempTasks[index]);
+                return Task(
+                  todoitem: tempTasks[index],
+                  onDelete: () => deleteTaskData(tempTasks[index].id),
+                );
               },
               childCount: tempTasks.length,
             ),
@@ -103,11 +148,29 @@ class _TodoState extends State<Todo> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
+          /// Create New Task
+          TodoItem newTask = TodoItem(
+            id: const Uuid().v4(),
+            name: "",
+            priority: TodoPriority.none,
+            category: "",
+            description: "",
+            deadline: DateTime.now(),
+            subtasks: [],
+          );
+
+          /// Append the New Task to the Task List
+          tempTasks.add(newTask);
+
+          /// Navigate to the Edit Task page
           Navigator.push(
             context,
             MaterialPageRoute<void>(
-              builder: (BuildContext context) =>
-                  const EditTask(title: "Add Task"),
+              builder: (BuildContext context) => EditTask(
+                title: "Add Task",
+                todoitem: newTask,
+                onDelete: () => deleteTaskData(newTask.id),
+              ),
             ),
           );
         },

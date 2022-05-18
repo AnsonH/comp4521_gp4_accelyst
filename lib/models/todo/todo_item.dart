@@ -6,10 +6,12 @@ enum TodoPriority { none, low, medium, high }
 
 /// Represents subtask
 class TodoSubtask {
+  final String id;
   bool done;
   String name;
 
   TodoSubtask({
+    required this.id,
     required this.name,
     this.done = false,
   });
@@ -55,7 +57,8 @@ class TodoItem {
     required this.category,
     required this.priority,
     required this.description,
-    this.deadline,
+    required this.deadline,
+    required this.subtasks,
   });
 
   /// Compares deadline with current time to decide if a to-do item is overdue
