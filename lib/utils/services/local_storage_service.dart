@@ -15,7 +15,14 @@ class StorageService {
     return "${directory.path}/$datapath/$filename";
   }
 
+  bool get isFilePathExist {
+    final file = File(getFilePath);
+    return file.existsSync();
+  }
+
   /// It should be called in the constructor of any classes that extends from [StorageService].
+  ///
+  /// [callback] is called after the document directory is successfully obtained.
   Future<void> initialize({
     required String datapath,
     required String filename,
@@ -26,13 +33,13 @@ class StorageService {
     print("App Docs Directory: ${directory.path}");
   }
 
-  /// This async function reads data from designated file and returns the data in a List.
-  Future<List<T>> read<T>([String path = ""]) async {
+  /// This async function reads data from designated file and decodes the data.
+  Future<Map<String, dynamic>> read([String path = ""]) async {
     if (path == "") {
       path = getFilePath;
     }
     final file = File(path);
-    List<T> data = jsonDecode(await file.readAsString());
+    Map<String, dynamic> data = jsonDecode(await file.readAsString());
     return data;
   }
 

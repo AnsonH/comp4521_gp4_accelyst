@@ -1,7 +1,7 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
-
+import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list.dart';
@@ -9,7 +9,6 @@ import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/create_mnemonic_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/subject_materials.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 
 class Mnemonics extends StatefulWidget {
   const Mnemonics({Key? key}) : super(key: key);
@@ -19,24 +18,28 @@ class Mnemonics extends StatefulWidget {
 }
 
 class _MnemonicsState extends State<Mnemonics> {
-  // TODO: Replace with data read from local storage
-  final data = MnemonicsData([
-    SubjectMaterialsData(
-      subjectName: "History",
-      materials: [
-        MnemonicMaterial(
-          type: MnemonicType.romanRoom,
-          title: "World War 2 Timeline",
-          uuid: const Uuid().v1(),
-        ),
-        MnemonicMaterial(
-          type: MnemonicType.vocabList,
-          title: "History vocab list",
-          uuid: const Uuid().v1(),
-        ),
-      ],
-    ),
-  ]);
+  // To be updated when we load from local storage
+  MnemonicsData data = const MnemonicsData([]);
+
+  // To be set in initState.
+  late final MnemonicsStorage mnemonicsStorage;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initializes storage service and load from JSON
+    mnemonicsStorage = MnemonicsStorage(callback: () {
+      loadMnemonicsData();
+    });
+  }
+
+  /// Loads from the latest JSON data file and re-renders.
+  void loadMnemonicsData() {
+    mnemonicsStorage.loadJsonData().then((loadedData) {
+      setState(() => data = loadedData);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class _MnemonicsState extends State<Mnemonics> {
                     isNewRoom: true,
                   ),
                 ),
-              );
+              ).then((_) => loadMnemonicsData());
               break;
             case MnemonicType.vocabList:
               // TODO: Open create new vocab list page

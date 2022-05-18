@@ -1,3 +1,4 @@
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'mnemonics_data.g.dart';
@@ -17,6 +18,27 @@ class MnemonicsData {
   final List<SubjectMaterialsData> subjectMaterials;
 
   const MnemonicsData(this.subjectMaterials);
+
+  /// Appends a roman room into [subjectMaterials].
+  void appendNewRomanRoom({
+    required String subject,
+    required MnemonicMaterial material,
+  }) {
+    // Insert to existing subject if exists
+    final sIndex = subjectMaterials.indexWhere((element) {
+      return element.subjectName == subject;
+    });
+    if (sIndex == -1) {
+      // Create a new subject
+      subjectMaterials.add(SubjectMaterialsData(
+        subjectName: subject,
+        materials: [material],
+      ));
+    } else {
+      // Append data into existing subject
+      subjectMaterials[sIndex].materials.add(material);
+    }
+  }
 
   factory MnemonicsData.fromJson(Map<String, dynamic> json) =>
       _$MnemonicsDataFromJson(json);
