@@ -1,0 +1,10 @@
+targets:
+  $default:
+    builders:
+      # Package that auto-generates to/form JSON code for a class
+      # https://pub.dev/packages/json_serializable#build-configuration
+      json_serializable:
+        options:
+          # Correctly generates code for nested classes
+          # https://docs.flutter.dev/development/data-and-backend/json#generating-code-for-nested-classes
+          explicit_to_json: true
