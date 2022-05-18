@@ -101,6 +101,7 @@ class _VocabRecallState extends State<VocabRecall> {
                           ...getVocabSegmentList(),
                         ]
                       : [],
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
@@ -119,6 +120,7 @@ class _VocabRecallState extends State<VocabRecall> {
                                   fontSize: 20, fontWeight: FontWeight.bold)),
                         ]
                       : [],
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
@@ -140,6 +142,7 @@ class _VocabRecallState extends State<VocabRecall> {
                           Text(currentVocab.description),
                         ]
                       : [],
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
                 const SizedBox(height: 15),
                 ElevatedButton(
@@ -149,7 +152,6 @@ class _VocabRecallState extends State<VocabRecall> {
                         _showAnswer = !_showAnswer;
                       });
                     }),
-                const SizedBox(height: 15),
                 Column(
                   children: _showAnswer
                       ? [
@@ -161,7 +163,9 @@ class _VocabRecallState extends State<VocabRecall> {
                           Text(currentVocab.definition),
                         ]
                       : [],
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 ),
+                const SizedBox(height: 15),
                 ElevatedButton(
                     child: const Text("Next Word"),
                     onPressed: () {
