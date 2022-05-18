@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 /// Represents status
 enum TodoStatus { incomplete, complete }
 
@@ -70,11 +72,7 @@ class TodoItem {
     if (priority == TodoPriority.none) return "";
     if (deadline == null) return "";
     DateTime d = deadline ?? DateTime.now();
-    String dateStr = d.month.toString().substring(0, 3);
-    dateStr = d.day.toString();
-    dateStr += d.hour.toString();
-    dateStr += ":";
-    dateStr += d.minute.toString();
+    String dateStr = DateFormat("MMM dd H:m").format(d);
     return dateStr;
   }
 
