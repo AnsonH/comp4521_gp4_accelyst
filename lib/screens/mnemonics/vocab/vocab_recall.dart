@@ -40,6 +40,9 @@ class _VocabRecallState extends State<VocabRecall> {
         ],
         mainAxisSize: MainAxisSize.max,
       ));
+      childs.add(const SizedBox(
+        height: 10,
+      ));
     }
     return childs;
   }
@@ -64,14 +67,16 @@ class _VocabRecallState extends State<VocabRecall> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 35),
-            ElevatedButton(
-              child: Text("${_showSegments ? "Hide" : "Show"} Segments"),
-              onPressed: () {
-                setState(() {
-                  _showSegments = !_showSegments;
-                });
-              },
-            ),
+            currentVocab.vocabSegments.length > 0
+                ? ElevatedButton(
+                    child: Text("${_showSegments ? "Hide" : "Show"} Segments"),
+                    onPressed: () {
+                      setState(() {
+                        _showSegments = !_showSegments;
+                      });
+                    },
+                  )
+                : Container(),
             Column(
               children: _showSegments
                   ? [

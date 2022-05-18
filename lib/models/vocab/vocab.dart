@@ -27,13 +27,15 @@ class Vocab {
   String definition;
   String description;
 
-  List<VocabSegment> vocabSegments = [];
+  List<VocabSegment> vocabSegments;
 
-  Vocab(
-      {required this.id,
-      required this.word,
-      required this.definition,
-      required this.description});
+  Vocab({
+    required this.id,
+    required this.word,
+    required this.definition,
+    required this.description,
+    required this.vocabSegments,
+  });
 
   get getWord {
     return word;

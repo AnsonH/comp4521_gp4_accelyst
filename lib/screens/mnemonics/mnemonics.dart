@@ -125,6 +125,7 @@ class _MnemonicsState extends State<Mnemonics> {
                               vocablist: VocabList(
                                   id: "diu",
                                   name: "ACCT4720",
+                                  subject: "History",
                                   description: "You Haifeng",
                                   vocabs: [
                                 Vocab(
@@ -132,12 +133,23 @@ class _MnemonicsState extends State<Mnemonics> {
                                   word: "Sharpe ratio",
                                   definition: "Thanks Ian hard carry project",
                                   description: "AHHHHHHHHHHHHHHHHH",
+                                  vocabSegments: [
+                                    VocabSegment(
+                                        segment: "Sharp", word: "sharp"),
+                                    VocabSegment(
+                                        segment: "e",
+                                        word:
+                                            "FFFFFFFFFFUUUUUUUUUUCCCCCCCCCCCKKKKKKKKKKK"),
+                                    VocabSegment(
+                                        segment: "ratio", word: "racist"),
+                                  ],
                                 ),
                                 Vocab(
                                   id: "shit",
                                   word: "Project",
                                   definition: "Something without standards",
                                   description: "Yay!",
+                                  vocabSegments: [],
                                 ),
                               ])),
                         ),
