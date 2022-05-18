@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part "mnemonics_data.g.dart";
+part 'mnemonics_data.g.dart';
 
 enum MnemonicType {
   @JsonValue("romanRoom")

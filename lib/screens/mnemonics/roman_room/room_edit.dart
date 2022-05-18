@@ -9,7 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class RoomEdit extends StatefulWidget {
-  const RoomEdit({Key? key}) : super(key: key);
+  /// True if we're creating a new room. False if we're editing an existing room.
+  final bool isNewRoom;
+
+  const RoomEdit({
+    Key? key,
+    this.isNewRoom = false,
+  }) : super(key: key);
 
   @override
   State<RoomEdit> createState() => _RoomEditState();
@@ -69,7 +75,7 @@ class _RoomEditState extends State<RoomEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Edit Roman Room"),
+        title: Text(widget.isNewRoom ? "New Roman Room" : "Edit Roman Room"),
       ),
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
