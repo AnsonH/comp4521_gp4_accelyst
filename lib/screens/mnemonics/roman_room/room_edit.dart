@@ -27,15 +27,15 @@ class _RoomEditState extends State<RoomEdit> {
     items: [],
   );
 
-  void _addImage(XFile image) {
+  void _addImage(XFile image, String description, BuildContext context) {
     // TODO: Save the image to a persistent, non-cache folder
     // Image is saved to `/data/data/com.example.comp4521_gp4_accelyst/cache`
     // Use "Device File Explorer" to view local files: https://developer.android.com/studio/debug/device-file-explorer
     final newRoomItem = RomanRoomItem(
       id: const Uuid().v4(),
       imageFile: File(image.path),
+      description: description,
     );
-    newRoomItem.description = newRoomItem.id;
 
     setState(() {
       roomData.items.add(newRoomItem);
@@ -132,7 +132,11 @@ class _RoomEditState extends State<RoomEdit> {
               ),
               const SizedBox(height: 10),
               roomData.items.isEmpty
-                  ? AddPhotoButton(onSuccess: _addImage)
+                  ? AddPhotoButton(
+                      onSuccess: (image, description) {
+                        _addImage(image, description, context);
+                      },
+                    )
                   : Expanded(
                       child: Scrollbar(
                         child: SingleChildScrollView(
@@ -142,7 +146,9 @@ class _RoomEditState extends State<RoomEdit> {
                             // Hide the "Add Photo" button if user pressed "Reorder" button
                             // Otherwise, users can reorder the "Add Photo" button and cause bugs
                             showAddPhotoButton: !allowReorder,
-                            onAddPhotoSuccess: _addImage,
+                            onAddPhotoSuccess: (image, description) {
+                              _addImage(image, description, context);
+                            },
                             onDeletePhoto: _deleteImage,
                             allowReorder: allowReorder,
                             onReorder: _onReorder,
