@@ -51,21 +51,24 @@ class _VocabListViewState extends State<VocabListView> {
         title: const Text("Vocabulary List"),
         actions: <Widget>[
           PopupMenuButton<String>(
-              onSelected: (String value) {},
+              onSelected: (value) {
+                if (value.toString() == "edit") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          VocabListEdit(id: vocablist.id),
+                    ),
+                  );
+                }
+                value = "";
+              },
               offset: const Offset(0, 52),
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     child: Text("Edit"),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              VocabListEdit(id: vocablist.id),
-                        ),
-                      );
-                    },
+                    value: "edit",
                   ),
                 ];
               })
