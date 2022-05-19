@@ -18,16 +18,21 @@ class MnemonicsStorage extends StorageService {
         const initialData = MnemonicsData([]);
         // final initialData = MnemonicsData([
         //   SubjectMaterialsData(
-        //     subjectName: "History",
+        //     subjectName: "English",
+        //     materials: [
+        //       MnemonicMaterial(
+        //         type: MnemonicType.vocabList,
+        //         title: "Top 1000 Most Common English Vocabularies",
+        //         uuid: const Uuid().v1(),
+        //       ),
+        //     ],
+        //   ),
+        //   SubjectMaterialsData(
+        //     subjectName: "Chemistry",
         //     materials: [
         //       MnemonicMaterial(
         //         type: MnemonicType.romanRoom,
-        //         title: "World War 2 Timeline",
-        //         uuid: const Uuid().v1(),
-        //       ),
-        //       MnemonicMaterial(
-        //         type: MnemonicType.vocabList,
-        //         title: "History vocab list",
+        //         title: "Periodic Table",
         //         uuid: const Uuid().v1(),
         //       ),
         //     ],

@@ -5,11 +5,16 @@ import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/local_storage_service.dart';
 
 class VocabStorage extends StorageService {
-  VocabStorage(String filenameNoExt, {void Function()? callback}) {
+  /// Constructor for Vocab Storage Service
+  /// [filenameNoExt]
+  /// [isAudio]: default value is false
+  /// [callback]
+  VocabStorage(String filenameNoExt,
+      {void Function()? callback, bool isAudio = false}) {
     super
         .initialize(
-      datapath: "vocab-list-data",
-      filename: "$filenameNoExt.json",
+      datapath: "vocab-list-data" + (isAudio ? "/audio" : ""),
+      filename: "$filenameNoExt.${isAudio ? "mp3" : "json"}",
     )
         .then((_) {
       if (callback != null) {
