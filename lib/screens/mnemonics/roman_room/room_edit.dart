@@ -113,10 +113,14 @@ class _RoomEditState extends State<RoomEdit> {
           // Update actual mnemonics.json
           final String updatedJson = jsonEncode(mnemonicsData);
           mnemonicsStorage.save(updatedJson);
+          showSaveSuccessfulSnackbar(context);
+
+          if (widget.isNewRoom) {
+            // Go back to Mnemonics home page
+            Navigator.pop(context);
+          }
         });
       });
-
-      showSaveSuccessfulSnackbar(context);
     }
   }
 
@@ -245,7 +249,9 @@ class _RoomEditState extends State<RoomEdit> {
                         ),
                       ),
                     ),
-              Expanded(child: Container()),
+              roomData.items.isEmpty
+                  ? Expanded(child: Container())
+                  : Container(),
               // "Save" button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 90),

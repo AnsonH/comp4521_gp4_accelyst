@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as path_provider;
 
+// TODO: This file is no longer used.
+
 /// Downloads an image from [imageUrl] and saves to a [File] instance.
 ///
 /// If [imageName] (eg. `"foo.jpg"`) is not provided, it's extracted from [imageUrl].

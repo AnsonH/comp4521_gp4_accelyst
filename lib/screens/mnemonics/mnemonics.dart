@@ -74,6 +74,7 @@ class _MnemonicsState extends State<Mnemonics> {
               return;
           }
         },
+        heroTag: null,
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
@@ -102,18 +103,6 @@ class _MnemonicsState extends State<Mnemonics> {
                 children: [
                   const SizedBox(height: 50),
                   const Text("Temporary links to forms:"),
-                  ElevatedButton.icon(
-                    label: const Text("Roman Room: Recall Objects"),
-                    icon: const Icon(Icons.open_in_new),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const RoomRecall(),
-                        ),
-                      );
-                    },
-                  ),
                   ElevatedButton.icon(
                     label: const Text("Vocabulary"),
                     icon: const Icon(Icons.open_in_new),
