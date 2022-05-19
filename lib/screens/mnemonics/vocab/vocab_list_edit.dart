@@ -23,18 +23,6 @@ class VocabListEdit extends StatefulWidget {
   const VocabListEdit({Key? key, required this.isNewList, required this.uuid})
       : super(key: key);
 
-  // VocabList vocablist;
-  // final void Function(
-  //     {required String name,
-  //     required String subject,
-  //     required String description,
-  //     required List<Vocab> vocabs}) callback;
-  // VocabListEdit({
-  //   Key? key,
-  //   required this.vocablist,
-  //   required this.callback,
-  // }) : super(key: key);
-
   @override
   State<VocabListEdit> createState() => _VocabListEditState();
 }
@@ -97,12 +85,12 @@ class _VocabListEditState extends State<VocabListEdit> {
     });
   }
 
-  void _saveVocabList(BuildContext context) {
+  void _saveVocabList(BuildContext context) async {
     // Validate data
     if (_nameController.text.trim() == "" ||
         _subjectController.text.trim() == "" ||
         _vocabs.isEmpty) return;
-    // TODO: Save updated vocab list
+    // Save updated vocab list
     vocabList = VocabList(
         id: widget.uuid,
         name: _nameController.text.trim(),
@@ -114,32 +102,52 @@ class _VocabListEditState extends State<VocabListEdit> {
 
     // Save to local storage
     final storageService = VocabStorage(vocabList.id);
-    storageService.save(json);
+    await storageService.save(json);
 
     // Save to mnemonics list
-    late final MnemonicsStorage mnemonicsStorage;
-    mnemonicsStorage = MnemonicsStorage(callback: () {
-      mnemonicsStorage.loadJsonData().then((mnemonicsData) {
-        // Append this vocab list to the mnemonicsData
-        mnemonicsData.appendNewMnemonic(
-          subject: vocabList.subject,
-          material: MnemonicMaterial(
-            type: MnemonicType.vocabList,
-            title: vocabList.name,
-            uuid: vocabList.id,
-          ),
-        );
+    final MnemonicsStorage mnemonicsStorage = MnemonicsStorage();
+    final mnemonicsData = await mnemonicsStorage.loadJsonData();
+    if (widget.isNewList) {
+      // Append this vocab list to mnemonicsData
+      mnemonicsData.appendNewMnemonic(
+        subject: vocabList.subject,
+        material: MnemonicMaterial(
+          type: MnemonicType.vocabList,
+          title: vocabList.name,
+          uuid: vocabList.id,
+        ),
+      );
+    } else {
+      // Update mnemonicsData
+      mnemonicsData.updateMaterial(
+          uuid: widget.uuid,
+          newSubject: _subjectController.text.trim(),
+          newTitle: _nameController.text.trim());
+    }
 
-        // Update actual mnemonics.json
-        final String updatedJson = jsonEncode(mnemonicsData);
-        mnemonicsStorage.save(updatedJson);
-      });
-    });
+    // Update actual mnemonics.json
+    final String updatedJson = jsonEncode(mnemonicsData);
+    mnemonicsStorage.save(updatedJson);
 
-    Navigator.pop(context); // Exit "Edit task" screen
-    // if (!widget.isNewList) {
-    //   Navigator.pop(context); // Exit "Vocab List View" screen
-    // }
+    Navigator.pop(context); // Exit "Edit Vocab List" screen
+  }
+
+  Future<void> _deleteVocabList(BuildContext context) async {
+    Navigator.pop(context); // Close dialogue
+
+    // Delete the vocab list JSON file from vocab directory
+    final vocabListStorage = VocabStorage(widget.uuid);
+    await vocabListStorage.deleteVocabList();
+
+    // Update mnemonics.json
+    final mnemonicsStorage = MnemonicsStorage();
+    final mnemonicsData = await mnemonicsStorage.loadJsonData();
+    mnemonicsData.deleteMaterial(widget.uuid);
+    final String updatedJson = jsonEncode(mnemonicsData);
+    await mnemonicsStorage.save(updatedJson);
+
+    Navigator.pop(context); // Exit "Edit Vocab List" screen
+    Navigator.pop(context); // Exit "Vocab List View" screen
   }
 
   @override
@@ -147,7 +155,7 @@ class _VocabListEditState extends State<VocabListEdit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal[700],
-        title: const Text("Edit Vocab List"),
+        title: Text("${widget.isNewList ? "Add New" : "Edit"} Vocab List"),
         leading: BackButton(
           onPressed: () {
             Navigator.pop(context);
@@ -158,29 +166,29 @@ class _VocabListEditState extends State<VocabListEdit> {
             icon: const Icon(Icons.save),
             onPressed: () => _saveVocabList(context),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                title: const Text("Delete vocab list?"),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+          widget.isNewList
+              ? Container()
+              : IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text("Delete vocab list?"),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _deleteVocabList(context);
+                          },
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialogue
-                      // TODO: Delete the task
-                      Navigator.pop(context); // Exit "Edit task" screen
-                    },
-                    child: const Text('Delete'),
-                  ),
-                ],
-              ),
-            ),
-          ),
+                ),
         ],
       ),
       body: Container(
