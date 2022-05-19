@@ -85,6 +85,10 @@ class PhotoGrid extends StatelessWidget {
         itemData: roomItem,
         showImageThumbnail: showImageThumbnail,
         onTap: () {
+          // Unfocus any text inputs. This prevents the keyboard from opening
+          // after the user exits the photo carousel.
+          FocusManager.instance.primaryFocus?.unfocus();
+
           // Opens photo carousel
           Navigator.push(
             context,

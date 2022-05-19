@@ -104,18 +104,6 @@ class _MnemonicsState extends State<Mnemonics> {
                   const SizedBox(height: 50),
                   const Text("Temporary links to forms:"),
                   ElevatedButton.icon(
-                    label: const Text("Roman Room: Recall Objects"),
-                    icon: const Icon(Icons.open_in_new),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => const RoomRecall(),
-                        ),
-                      );
-                    },
-                  ),
-                  ElevatedButton.icon(
                     label: const Text("Vocabulary"),
                     icon: const Icon(Icons.open_in_new),
                     onPressed: () {

@@ -41,6 +41,8 @@ class AddPhotoButton extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
+                // Remove keyboard focus from the text field
+                FocusManager.instance.primaryFocus?.unfocus();
                 Navigator.pop(context, _descriptionController.text);
               },
               child: const Text("DONE"),
