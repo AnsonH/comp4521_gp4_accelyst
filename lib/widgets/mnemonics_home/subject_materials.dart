@@ -1,7 +1,4 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
-import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
-import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
-import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -9,32 +6,15 @@ import 'package:flutter_svg/svg.dart';
 class SubjectMaterials extends StatelessWidget {
   final SubjectMaterialsData data;
   final void Function(int oldIndex, int newIndex) onReorder;
+  final void Function(String uuid, BuildContext) onTapTile;
 
   /// Creates a section for a subject and its respective mnemonics tiles.
   const SubjectMaterials({
     Key? key,
     required this.data,
     required this.onReorder,
+    required this.onTapTile,
   }) : super(key: key);
-
-  void _openRomanRoomRecall(String uuid, BuildContext context) {
-    late RomanRoomStorage rrStorage;
-    rrStorage = RomanRoomStorage(
-      uuid,
-      callback: () async {
-        final json = await rrStorage.read();
-        final romanRoom = RomanRoom.fromJson(json);
-        Navigator.push(
-          context,
-          MaterialPageRoute<void>(
-            builder: (context) => RoomRecall(
-              roomData: romanRoom,
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +41,7 @@ class SubjectMaterials extends StatelessWidget {
                 child: ListTile(
                   onTap: () {
                     final String uuid = data.materials[index].uuid;
-                    _openRomanRoomRecall(uuid, context);
+                    onTapTile(uuid, context);
                   },
                   title: Text(
                     data.materials[index].title,

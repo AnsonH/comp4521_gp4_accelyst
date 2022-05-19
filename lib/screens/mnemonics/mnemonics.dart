@@ -1,4 +1,6 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
@@ -35,10 +37,9 @@ class _MnemonicsState extends State<Mnemonics> {
   }
 
   /// Loads from the latest JSON data file and re-renders.
-  void loadMnemonicsData() {
-    mnemonicsStorage.loadJsonData().then((loadedData) {
-      setState(() => data = loadedData);
-    });
+  Future<void> loadMnemonicsData() async {
+    final MnemonicsData loadedData = await mnemonicsStorage.loadJsonData();
+    setState(() => data = loadedData);
   }
 
   @override
@@ -84,18 +85,33 @@ class _MnemonicsState extends State<Mnemonics> {
             children: <Widget>[
               ...data.subjectMaterials.map((subMaterials) {
                 return SubjectMaterials(
-                  data: subMaterials,
-                  onReorder: (int oldIndex, int newIndex) {
-                    setState(() {
-                      if (oldIndex < newIndex) {
-                        newIndex -= 1;
-                      }
-                      final materials = subMaterials.materials;
-                      final item = materials.removeAt(oldIndex);
-                      materials.insert(newIndex, item);
+                    data: subMaterials,
+                    onReorder: (int oldIndex, int newIndex) {
+                      setState(() {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        final materials = subMaterials.materials;
+                        final item = materials.removeAt(oldIndex);
+                        materials.insert(newIndex, item);
+                      });
+
+                      // Save to mnemonics.json
+                      mnemonicsStorage.saveToJson(data);
+                    },
+                    onTapTile: (String uuid, BuildContext context) async {
+                      final rrStorage = RomanRoomStorage(uuid);
+                      final json = await rrStorage.read();
+                      final romanRoom = RomanRoom.fromJson(json);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => RoomRecall(
+                            uuid: romanRoom.id,
+                          ),
+                        ),
+                      ).then((_) => loadMnemonicsData());
                     });
-                  },
-                );
               }).toList(),
               // Temporary links
               Column(
