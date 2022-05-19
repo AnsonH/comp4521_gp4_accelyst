@@ -1,4 +1,3 @@
-import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'mnemonics_data.g.dart';
@@ -20,9 +19,13 @@ class MnemonicsData {
   const MnemonicsData(this.subjectMaterials);
 
   /// Appends a roman room into [subjectMaterials].
+  ///
+  /// [materialLoc] is the index where [material] will be inserted to the `materials`
+  /// array of the matching subject's [SubjectMaterialsData] instance.
   void appendNewRomanRoom({
     required String subject,
     required MnemonicMaterial material,
+    int? materialLoc,
   }) {
     // Insert to existing subject if exists
     final sIndex = subjectMaterials.indexWhere((element) {
@@ -36,8 +39,50 @@ class MnemonicsData {
       ));
     } else {
       // Append data into existing subject
-      subjectMaterials[sIndex].materials.add(material);
+      if (materialLoc == null) {
+        subjectMaterials[sIndex].materials.add(material);
+      } else {
+        subjectMaterials[sIndex].materials.insert(materialLoc, material);
+      }
     }
+  }
+
+  /// A function to handle data changes to a [MnemonicMaterial] instance.
+  void updateMaterial({
+    required String uuid,
+    required String newSubject,
+    required String newTitle,
+  }) {
+    int sIndex = 0;
+    int mIndex = 0;
+
+    for (; sIndex < subjectMaterials.length; ++sIndex) {
+      final sMaterial = subjectMaterials[sIndex];
+      mIndex = sMaterial.materials.indexWhere((e) => e.uuid == uuid);
+
+      // Found the material with matching UUID
+      if (mIndex != -1) {
+        break;
+      }
+    }
+
+    // Delete the existing material object
+    final material = subjectMaterials[sIndex].materials.removeAt(mIndex);
+    final bool becomesEmptySubject = subjectMaterials[sIndex].materials.isEmpty;
+    if (becomesEmptySubject) {
+      // Delete the subject if it has no study materials
+      subjectMaterials.removeAt(sIndex);
+    }
+
+    // Update the material title
+    material.title = newTitle;
+
+    // Append the updated material back to the appropriate location
+    appendNewRomanRoom(
+      subject: newSubject,
+      material: material,
+      materialLoc: becomesEmptySubject ? null : mIndex,
+    );
   }
 
   factory MnemonicsData.fromJson(Map<String, dynamic> json) =>

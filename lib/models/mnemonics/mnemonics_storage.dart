@@ -46,4 +46,9 @@ class MnemonicsStorage extends StorageService {
     final Map<String, dynamic> json = await read();
     return MnemonicsData.fromJson(json);
   }
+
+  Future<void> saveToJson(MnemonicsData data) async {
+    final json = jsonEncode(data);
+    await save(json);
+  }
 }
