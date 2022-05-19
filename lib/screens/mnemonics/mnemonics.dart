@@ -74,6 +74,7 @@ class _MnemonicsState extends State<Mnemonics> {
               return;
           }
         },
+        heroTag: null,
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
