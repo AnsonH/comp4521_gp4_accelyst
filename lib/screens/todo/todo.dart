@@ -5,8 +5,6 @@ import 'package:comp4521_gp4_accelyst/widgets/todo/task.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-// TODO: Import todo_item.dart and use its function
-
 enum TodoView { list, calendar }
 
 class Todo extends StatefulWidget {
@@ -83,7 +81,6 @@ class _TodoState extends State<Todo> {
 
   /// This function deletes the corresponding Task.
   /// Called when the delete button in the bottom popup bar is clicked for each task
-  /// TODO: Change the tempTasks variable
   void deleteTaskData(String id) {
     setState(() {
       tempTasks.removeWhere((element) => element.id == id);
@@ -132,7 +129,6 @@ class _TodoState extends State<Todo> {
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
-                // TODO: Add the task.dart function into this part
                 return Task(
                   todoitem: tempTasks[index],
                   onDelete: () => deleteTaskData(tempTasks[index].id),
