@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 class MnemonicsStorage extends StorageService {
   /// [callback] is called after initializing the storage service.
-  MnemonicsStorage({required void Function() callback}) {
+  MnemonicsStorage({void Function()? callback}) {
     super
         .initialize(
       datapath: "mnemonics",
@@ -37,7 +37,9 @@ class MnemonicsStorage extends StorageService {
         await save(json);
       }
 
-      callback();
+      if (callback != null) {
+        callback();
+      }
     });
   }
 

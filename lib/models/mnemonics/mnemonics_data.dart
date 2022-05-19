@@ -18,11 +18,33 @@ class MnemonicsData {
 
   const MnemonicsData(this.subjectMaterials);
 
-  /// Appends a roman room into [subjectMaterials].
+  /// Searches a [MnemonicMaterial] instance by its UUID.
+  ///
+  /// For the return value (let's call it `result`):
+  ///  - `result[0]` - Index in [subjectMaterials] array
+  ///  - `result[1]` - Index in `materials` array of the nested [SubjectMaterialsData] instance.
+  List<int> searchMaterialByUUID(String uuid) {
+    int sIndex = 0;
+    int mIndex = 0;
+
+    for (; sIndex < subjectMaterials.length; ++sIndex) {
+      final sMaterial = subjectMaterials[sIndex];
+      mIndex = sMaterial.materials.indexWhere((e) => e.uuid == uuid);
+
+      // Found the material with matching UUID
+      if (mIndex != -1) {
+        break;
+      }
+    }
+
+    return [sIndex, mIndex];
+  }
+
+  /// Appends a material into [subjectMaterials].
   ///
   /// [materialLoc] is the index where [material] will be inserted to the `materials`
   /// array of the matching subject's [SubjectMaterialsData] instance.
-  void appendNewRomanRoom({
+  void appendNewMnemonic({
     required String subject,
     required MnemonicMaterial material,
     int? materialLoc,
@@ -53,20 +75,33 @@ class MnemonicsData {
     required String newSubject,
     required String newTitle,
   }) {
-    int sIndex = 0;
-    int mIndex = 0;
-
-    for (; sIndex < subjectMaterials.length; ++sIndex) {
-      final sMaterial = subjectMaterials[sIndex];
-      mIndex = sMaterial.materials.indexWhere((e) => e.uuid == uuid);
-
-      // Found the material with matching UUID
-      if (mIndex != -1) {
-        break;
-      }
-    }
+    final searchResults = searchMaterialByUUID(uuid);
+    int sIndex = searchResults[0];
+    int mIndex = searchResults[1];
 
     // Delete the existing material object
+    final MnemonicMaterial material = deleteMaterial(uuid);
+
+    // Update the material title
+    material.title = newTitle;
+
+    // Append the updated material back to the appropriate location
+    final bool becomesEmptySubject = subjectMaterials[sIndex].materials.isEmpty;
+    appendNewMnemonic(
+      subject: newSubject,
+      material: material,
+      materialLoc: becomesEmptySubject ? null : mIndex,
+    );
+  }
+
+  /// Deletes a study material from a subject.
+  ///
+  /// It returns the deleted study material.
+  MnemonicMaterial deleteMaterial(String uuid) {
+    final searchResults = searchMaterialByUUID(uuid);
+    int sIndex = searchResults[0];
+    int mIndex = searchResults[1];
+
     final material = subjectMaterials[sIndex].materials.removeAt(mIndex);
     final bool becomesEmptySubject = subjectMaterials[sIndex].materials.isEmpty;
     if (becomesEmptySubject) {
@@ -74,15 +109,7 @@ class MnemonicsData {
       subjectMaterials.removeAt(sIndex);
     }
 
-    // Update the material title
-    material.title = newTitle;
-
-    // Append the updated material back to the appropriate location
-    appendNewRomanRoom(
-      subject: newSubject,
-      material: material,
-      materialLoc: becomesEmptySubject ? null : mIndex,
-    );
+    return material;
   }
 
   factory MnemonicsData.fromJson(Map<String, dynamic> json) =>

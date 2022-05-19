@@ -40,12 +40,16 @@ class _RoomRecallState extends State<RoomRecall> {
     rrStorage = RomanRoomStorage(
       widget.uuid,
       callback: () async {
-        final json = await rrStorage.read();
-        setState(() {
-          roomData = RomanRoom.fromJson(json);
-          itemsData = List.from(roomData.items);
-        });
-        _updateDescriptionTextField();
+        try {
+          final json = await rrStorage.read();
+          setState(() {
+            roomData = RomanRoom.fromJson(json);
+            itemsData = List.from(roomData.items);
+          });
+          _updateDescriptionTextField();
+        } catch (e) {
+          debugPrint(e.toString());
+        }
       },
     );
   }

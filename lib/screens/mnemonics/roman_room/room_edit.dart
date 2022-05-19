@@ -115,7 +115,7 @@ class _RoomEditState extends State<RoomEdit> {
         mnemonicsStorage.loadJsonData().then((mnemonicsData) {
           if (widget.isNewRoom) {
             // Append this roman room to mnemonicsData
-            mnemonicsData.appendNewRomanRoom(
+            mnemonicsData.appendNewMnemonic(
               subject: roomData.subject,
               material: MnemonicMaterial(
                 type: MnemonicType.romanRoom,
@@ -145,6 +145,22 @@ class _RoomEditState extends State<RoomEdit> {
         });
       });
     }
+  }
+
+  Future<void> _deleteRomanRoom(BuildContext context) async {
+    // Delete Roman Room JSON file
+    final rrStorage = RomanRoomStorage(roomData.id);
+    await rrStorage.deleteRoom();
+
+    // Update mnemonics.json
+    final mnemonicsStorage = MnemonicsStorage();
+    final mnemonicsData = await mnemonicsStorage.loadJsonData();
+    mnemonicsData.deleteMaterial(roomData.id);
+    final String updatedJson = jsonEncode(mnemonicsData);
+    mnemonicsStorage.save(updatedJson);
+
+    // Return to Mnemonics home page
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void _addTextControllerListeners() {
@@ -180,6 +196,31 @@ class _RoomEditState extends State<RoomEdit> {
       appBar: AppBar(
         title: Text(widget.isNewRoom ? "New Roman Room" : "Edit Roman Room"),
         backgroundColor: Colors.green[700],
+        actions: [
+          if (!widget.isNewRoom)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              tooltip: "Delete this room",
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Delete this room?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => _deleteRomanRoom(context),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.fromLTRB(16, 5, 16, 16),
