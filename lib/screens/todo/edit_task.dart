@@ -137,13 +137,26 @@ class _EditTaskState extends State<EditTask> {
                     const Expanded(child: SizedBox()),
                     TextButton.icon(
                       icon: const Icon(Icons.date_range),
-                      label: const Text("Set Deadline"),
+                      label: const Text("Change"),
                       onPressed: () {
                         setState(() {
                           _selectDate(context);
                         });
                       },
                     ),
+                    if (widget.todoitem.deadline != null)
+                      TextButton.icon(
+                        icon: const Icon(Icons.delete),
+                        label: const Text("Delete"),
+                        onPressed: () {
+                          setState(() {
+                            widget.todoitem.deadline = null;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          primary: Colors.red[600],
+                        ),
+                      ),
                   ],
                 ),
 

@@ -44,11 +44,10 @@ class _TaskState extends State<Task> {
           child: Container(
             margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(
-                color: Colors.grey[200],
-                border: Border.all(color: Colors.black),
-                borderRadius:
-                    const BorderRadius.all(const Radius.circular(10))),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
             child: Row(
               children: <Widget>[
                 /// Checkbox
@@ -166,7 +165,7 @@ class _TaskState extends State<Task> {
                             ])
                           : const SizedBox(width: 0),
 
-                      (widget.todoitem.subtasks.length > 0)
+                      (widget.todoitem.subtasks.isNotEmpty)
                           ? const SizedBox(height: 10)
                           : const SizedBox(),
 
@@ -174,10 +173,11 @@ class _TaskState extends State<Task> {
                       ...widget.todoitem.subtasks.map((subtask) {
                         /// TODO: Pass the done value to the function
                         return ReadChecklist(
-                            id: subtask.id,
-                            checklistName: subtask.name,
-                            done: subtask.done,
-                            onChange: changeChecklistData);
+                          id: subtask.id,
+                          checklistName: subtask.name,
+                          done: subtask.done,
+                          onChange: changeChecklistData,
+                        );
                       }).toList(),
 
                       /// Edit and Delete button for each task

@@ -5,8 +5,6 @@ import 'package:comp4521_gp4_accelyst/widgets/todo/task.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-enum TodoView { list, calendar }
-
 class Todo extends StatefulWidget {
   const Todo({Key? key}) : super(key: key);
 
@@ -76,9 +74,6 @@ class _TodoState extends State<Todo> {
     ),
   ];
 
-  // default mode: list view
-  TodoView _todoView = TodoView.list;
-
   /// This function deletes the corresponding Task.
   /// Called when the delete button in the bottom popup bar is clicked for each task
   void deleteTaskData(String id) {
@@ -93,35 +88,10 @@ class _TodoState extends State<Todo> {
       /// Top AppBar
       appBar: AppBar(
         title: const Text("Todo"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon((_todoView == TodoView.list)
-                ? Icons.calendar_today
-                : Icons.sort),
-            tooltip: (_todoView == TodoView.list)
-                ? "Change to Calendar View"
-                : "Change to List View",
-            onPressed: () {
-              setState(() {
-                _todoView = (_todoView == TodoView.list)
-                    ? TodoView.calendar
-                    : TodoView.list;
-              });
-            },
-          ),
-          PopupMenuButton<String>(
-              onSelected: (String value) {},
-              offset: const Offset(0, 52),
-              itemBuilder: (BuildContext context) {
-                return ['Logout', 'Settings'].map((String choice) {
-                  return PopupMenuItem<String>(
-                      value: choice, child: Text(choice));
-                }).toList();
-              })
-        ],
       ),
       drawer: const NavDrawer(),
       drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
+      backgroundColor: Colors.grey[200],
 
       /// Body of the To-do Home Page
       body: CustomScrollView(
