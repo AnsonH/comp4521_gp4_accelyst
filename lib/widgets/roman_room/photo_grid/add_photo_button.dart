@@ -1,3 +1,4 @@
+import 'package:comp4521_gp4_accelyst/widgets/roman_room/room_object_description_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -25,33 +26,12 @@ class AddPhotoButton extends StatelessWidget {
       }
 
       // Show dialog for entering the description of the photo.
-      final String description = await showDialog(
+      final String? description = await showRoomObjectDescriptionDialog(
         context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: const Text("Input object description"),
-          content: TextField(
-            controller: _descriptionController,
-            decoration: const InputDecoration(
-              hintText: "Description of the object",
-            ),
-            keyboardType: TextInputType.multiline,
-            maxLines: null, // Take as much lines as the input value
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Remove keyboard focus from the text field
-                FocusManager.instance.primaryFocus?.unfocus();
-                Navigator.pop(context, _descriptionController.text);
-              },
-              child: const Text("DONE"),
-            ),
-          ],
-        ),
+        controller: _descriptionController,
       );
 
-      onSuccess(image, description);
+      onSuccess(image, description!);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar);
     }
