@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
+import 'package:comp4521_gp4_accelyst/models/todo/todo_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/task.dart';
@@ -13,46 +14,35 @@ class Todo extends StatefulWidget {
 }
 
 class _TodoState extends State<Todo> {
-  // TODO: Remove and Replace the Temporary task list
-  final data = TodoItems([
-    TodoItem(
-      id: const Uuid().v4(),
-      name: "Revise for Vocabulary Quiz",
-      priority: TodoPriority.medium,
-      category: "English",
-      description: "Memorize the top 1000 common English words",
-      deadline: DateTime.parse('2022-05-06 20:00'),
-      subtasks: [
-        TodoSubtask(
-            id: const Uuid().v4(),
-            name: "Create a vocabulary list",
-            done: true),
-        TodoSubtask(
-            id: const Uuid().v4(), name: "Memorize all the words", done: false),
-      ],
-    ),
-    TodoItem(
-      id: const Uuid().v4(),
-      name: "Complete Supplementary Exercise",
-      priority: TodoPriority.low,
-      category: "Math",
-      description: "",
-      deadline: null,
-      subtasks: [
-        TodoSubtask(
-            id: const Uuid().v4(), name: "Exercise Part A", done: false),
-        TodoSubtask(
-            id: const Uuid().v4(), name: "Exercise Part B", done: false),
-      ],
-    ),
-  ]);
+  // To be updated when we load from local storage
+  TodoItems data = const TodoItems([]);
+
+  // To be set in initState
+  late final TodoStorage todoStorage;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initializes storage service and load from JSON
+    todoStorage = TodoStorage(callback: () {
+      loadTodoData();
+    });
+  }
+
+  /// Loads from the latest JSON data file and re-renders.
+  Future<void> loadTodoData() async {
+    final TodoItems loadedData = await todoStorage.loadJsonData();
+    setState(() => data = loadedData);
+  }
 
   /// This function deletes the corresponding Task.
   /// Called when the delete button in the bottom popup bar is clicked for each task
-  void deleteTaskData(String id) {
+  Future<void> deleteTaskData(String id) async {
     setState(() {
       data.todoItems.removeWhere((element) => element.id == id);
     });
+    await todoStorage.saveToJson(data);
   }
 
   @override
@@ -86,8 +76,8 @@ class _TodoState extends State<Todo> {
       /// Button to Add New Task
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          /// Create New Task
+        onPressed: () async {
+          // Create New Task
           TodoItem newTask = TodoItem(
             id: const Uuid().v4(),
             name: "",
@@ -98,20 +88,30 @@ class _TodoState extends State<Todo> {
             subtasks: [],
           );
 
-          /// Append the New Task to the Task List
+          // Append the New Task to the Task List
           data.todoItems.add(newTask);
 
+          // Save the updated `data` to JSON first
+          await todoStorage.saveToJson(data);
+
           /// Navigate to the Edit Task page
-          Navigator.push(
+          Navigator.push<TodoItem?>(
             context,
-            MaterialPageRoute<void>(
+            MaterialPageRoute(
               builder: (BuildContext context) => EditTask(
                 title: "Add Task",
                 todoitem: newTask,
                 onDelete: () => deleteTaskData(newTask.id),
               ),
             ),
-          );
+          ).then((TodoItem? item) {
+            if (item != null) {
+              todoStorage.updateTodoItemAndSave(item);
+
+              // Force re-render as `todoitem` is mutated
+              setState(() {});
+            }
+          });
         },
         heroTag: null,
       ),

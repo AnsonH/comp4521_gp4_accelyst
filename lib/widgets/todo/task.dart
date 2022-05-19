@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
+import 'package:comp4521_gp4_accelyst/models/todo/todo_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/alert_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/read_checklist.dart';
@@ -16,19 +17,36 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> {
+  late TodoItem todoitem = widget.todoitem;
+
+  late final TodoStorage todoStorage;
+
   /// Expand the bottom popup bar when expandInfo is True
   bool expandInfo = false;
 
   void changeChecklistData(String id, bool done) {
     setState(() {
-      int index =
-          widget.todoitem.subtasks.indexWhere((element) => element.id == id);
-      widget.todoitem.subtasks[index].done = done;
+      int index = todoitem.subtasks.indexWhere((element) => element.id == id);
+      todoitem.subtasks[index].done = done;
     });
+    todoStorage.updateTodoItemAndSave(todoitem);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    todoStorage = TodoStorage();
   }
 
   @override
   Widget build(BuildContext context) {
+    // When widget.todoitem receives a brand new todoitem, we should update
+    // the internal state `todoItem` to use the latest `widget.todoitem`.
+    // This is necessary for the delete item to work.
+    if (todoitem.id != widget.todoitem.id) {
+      todoitem = widget.todoitem;
+    }
+
     /// Column used to separate the two Large Widget ("Main Task Bar" vs. "Popup Task info & subtasks")
     return Column(
       /// GestureDetector used to detect user interaction with the Task Item
@@ -58,32 +76,32 @@ class _TaskState extends State<Task> {
                       /// Checkbox: Color when box is unchecked
                       ///   High: Red, Medium: Yellow, Low: Green, None: Grey
                       unselectedWidgetColor:
-                          widget.todoitem.priority == TodoPriority.high
+                          todoitem.priority == TodoPriority.high
                               ? Colors.red[700]
-                              : widget.todoitem.priority == TodoPriority.medium
+                              : todoitem.priority == TodoPriority.medium
                                   ? Colors.amber[800]
-                                  : widget.todoitem.priority == TodoPriority.low
+                                  : todoitem.priority == TodoPriority.low
                                       ? Colors.green[700]
                                       : Colors.grey[800],
                     ),
                     child: Checkbox(
                       /// Checkbox: Ticked or not depends on "Todoitem.status" is "complete" or "incomplete"
-                      value: widget.todoitem.isComplete,
+                      value: todoitem.isComplete,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      onChanged: (bool? newValue) {
+                      onChanged: (bool? newValue) async {
                         setState(() {
-                          widget.todoitem.isComplete =
-                              !widget.todoitem.isComplete;
+                          todoitem.isComplete = !todoitem.isComplete;
                         });
+                        await todoStorage.updateTodoItemAndSave(todoitem);
                       },
 
                       /// Checkbox: Different color with different priorities
                       ///   High: Red, Medium: Yellow, Low: Green, None: Grey
-                      activeColor: widget.todoitem.priority == TodoPriority.high
+                      activeColor: todoitem.priority == TodoPriority.high
                           ? Colors.red[700]
-                          : widget.todoitem.priority == TodoPriority.medium
+                          : todoitem.priority == TodoPriority.medium
                               ? Colors.amber[800]
-                              : widget.todoitem.priority == TodoPriority.low
+                              : todoitem.priority == TodoPriority.low
                                   ? Colors.green[700]
                                   : Colors.grey[800],
                     ),
@@ -99,21 +117,23 @@ class _TaskState extends State<Task> {
                       /// Update the hardcoded value to proper variables
                       /// Task Name
                       Text(
-                        widget.todoitem.name,
+                        todoitem.name,
                         style: const TextStyle(fontSize: 20),
                       ),
-                      const SizedBox(height: 3.0),
+                      if (todoitem.deadline != null || todoitem.category != "")
+                        const SizedBox(height: 3.0),
                       Row(
                         children: <Widget>[
                           /// Task Deadline
                           ///   If Deadline is NULL then do NOT display the deadline
                           /// Todo: Apply the Deadline variable (with the Format below)
-                          (widget.todoitem.deadline != null)
+                          (todoitem.deadline != null)
                               ? Row(
                                   children: [
                                     Text(
                                       DateFormat.MMMMd()
-                                          .format(widget.todoitem.deadline!),
+                                          .format(todoitem.deadline!),
+                                      // todoitem.deadline!.toString(),
                                       style: TextStyle(color: Colors.blue[800]),
                                     ),
                                     const SizedBox(width: 10)
@@ -122,12 +142,13 @@ class _TaskState extends State<Task> {
                               : const SizedBox(width: 0),
 
                           /// Task Category (or Subject)
-                          Expanded(
-                            child: Text(
-                              widget.todoitem.category,
-                              style: TextStyle(color: Colors.grey[900]),
+                          if (todoitem.category != "")
+                            Expanded(
+                              child: Text(
+                                todoitem.category,
+                                style: TextStyle(color: Colors.grey[900]),
+                              ),
                             ),
-                          ),
                         ],
                       )
                     ],
@@ -151,22 +172,22 @@ class _TaskState extends State<Task> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       /// Shows Description Text if it's not blank
-                      (widget.todoitem.description != "")
+                      (todoitem.description != "")
                           ? Column(children: [
                               const SizedBox(height: 15),
                               Text(
-                                widget.todoitem.description,
+                                todoitem.description,
                                 style: TextStyle(color: Colors.grey[800]),
                               )
                             ])
                           : const SizedBox(width: 0),
 
-                      (widget.todoitem.subtasks.isNotEmpty)
+                      (todoitem.subtasks.isNotEmpty)
                           ? const SizedBox(height: 10)
                           : const SizedBox(),
 
                       /// Shows the Existing/Created Checklists/Subtasks
-                      ...widget.todoitem.subtasks.map((subtask) {
+                      ...todoitem.subtasks.map((subtask) {
                         /// TODO: Pass the done value to the function
                         return ReadChecklist(
                           id: subtask.id,
@@ -183,18 +204,27 @@ class _TaskState extends State<Task> {
                           /// Click to Edit the data of that task
                           TextButton(
                             onPressed: () {
-                              dynamic returnedValue = Navigator.push(
+                              Navigator.push<TodoItem?>(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => EditTask(
-                                          title: "Edit Task",
-                                          todoitem: widget.todoitem,
-                                          onDelete: widget.onDelete,
-                                        )),
-                              );
+                                  builder: (context) => EditTask(
+                                    title: "Edit Task",
+                                    todoitem: todoitem,
+                                    onDelete: () {
+                                      widget.onDelete();
+                                      // Close expand info panel after deleting
+                                      setState(() => expandInfo = false);
+                                    },
+                                  ),
+                                ),
+                              ).then((TodoItem? item) {
+                                if (item != null) {
+                                  todoStorage.updateTodoItemAndSave(item);
 
-                              if (returnedValue == null) return;
-                              widget.todoitem = returnedValue;
+                                  // Force re-render as `todoitem` is mutated
+                                  setState(() {});
+                                }
+                              });
                             },
                             child: const Text("Edit"),
                           ),
