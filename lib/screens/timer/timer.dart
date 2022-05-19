@@ -1,10 +1,8 @@
 import 'dart:ui';
 
-import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/ambient_sound.dart';
 import 'package:comp4521_gp4_accelyst/models/timer/timer_state.dart';
-import 'package:comp4521_gp4_accelyst/widgets/core/slider_with_label.dart';
-import 'package:comp4521_gp4_accelyst/widgets/timer/ambient_bottom_sheet.dart';
+import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/audio_player_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
@@ -12,11 +10,13 @@ import 'package:comp4521_gp4_accelyst/utils/services/settings_service.dart';
 import 'package:comp4521_gp4_accelyst/utils/time_utils.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/dark_theme_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/slider_with_label.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/switch_with_label.dart';
+import 'package:comp4521_gp4_accelyst/widgets/timer/ambient_bottom_sheet.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/circular_timer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/icon_button.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/info_dialogs.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/pomodoro_label.dart';
-import 'package:comp4521_gp4_accelyst/widgets/core/switch_with_label.dart';
 import 'package:comp4521_gp4_accelyst/widgets/timer/timer_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
@@ -310,6 +310,7 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
             ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -416,25 +417,6 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
                 onPressedStopAlarm: _stopAlarmOnComplete,
               ),
               const SizedBox(height: 25),
-              const Divider(
-                thickness: 1,
-                height: 20,
-                color: ringColor,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    "Upcoming To-dos",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 19,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text("Timer Stage: ${timerState.stage.toString()}")
-                ],
-              ),
             ],
           ),
         ),
