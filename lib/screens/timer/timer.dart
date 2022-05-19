@@ -298,12 +298,6 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Timer"),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.bar_chart),
-              onPressed: () {},
-            )
-          ],
         ),
         drawer: const NavDrawer(),
         drawerEdgeDragWidth: MediaQuery.of(context).size.width * 0.4,
