@@ -47,7 +47,6 @@ dependencies:
   shared_preferences: ^2.0.13
   flutter_svg: ^1.0.3
   json_annotation: ^4.4.0
-  intl: ^0.17.0
 
 dependency_overrides:
   # `photo_view` throws "Looking up a deactivated widget's ancestor is unsafe" error when closing the gallery.
