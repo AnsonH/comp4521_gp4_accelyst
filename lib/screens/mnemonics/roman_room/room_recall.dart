@@ -35,23 +35,18 @@ class _RoomRecallState extends State<RoomRecall> {
   bool _previewItems = true;
   bool _randomOrder = false;
 
-  void _loadRomanRoomData() {
-    late final RomanRoomStorage rrStorage;
-    rrStorage = RomanRoomStorage(
-      widget.uuid,
-      callback: () async {
-        try {
-          final json = await rrStorage.read();
-          setState(() {
-            roomData = RomanRoom.fromJson(json);
-            itemsData = List.from(roomData.items);
-          });
-          _updateDescriptionTextField();
-        } catch (e) {
-          debugPrint(e.toString());
-        }
-      },
-    );
+  Future<void> _loadRomanRoomData() async {
+    final rrStorage = RomanRoomStorage(widget.uuid);
+    try {
+      final json = await rrStorage.read();
+      setState(() {
+        roomData = RomanRoom.fromJson(json);
+        itemsData = List.from(roomData.items);
+      });
+      _updateDescriptionTextField();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   void _onReorder(int oldIndex, int newIndex) {

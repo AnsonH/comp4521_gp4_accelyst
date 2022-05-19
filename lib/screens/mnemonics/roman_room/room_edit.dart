@@ -47,20 +47,15 @@ class _RoomEditState extends State<RoomEdit> {
   /// Whether users can reorder the room object grid items.
   bool allowReorder = false;
 
-  void _initializeRoomData() {
+  Future<void> _initializeRoomData() async {
     if (widget.uuid != null) {
       // Load room data from storage service
-      late RomanRoomStorage rrStorage;
-      rrStorage = RomanRoomStorage(
-        widget.uuid!,
-        callback: () async {
-          final json = await rrStorage.read();
-          setState(() {
-            roomData = RomanRoom.fromJson(json);
-          });
-          _updateTextFields();
-        },
-      );
+      final rrStorage = RomanRoomStorage(widget.uuid!);
+      final json = await rrStorage.read();
+      setState(() {
+        roomData = RomanRoom.fromJson(json);
+      });
+      _updateTextFields();
     }
   }
 
@@ -98,7 +93,7 @@ class _RoomEditState extends State<RoomEdit> {
     });
   }
 
-  void _saveRomanRoom(BuildContext context) {
+  Future<void> _saveRomanRoom(BuildContext context) async {
     // Validate form
     if (_formKey.currentState!.validate()) {
       // Encode `roomData` to JSON
@@ -110,40 +105,37 @@ class _RoomEditState extends State<RoomEdit> {
       storageService.save(json);
 
       // Append room into MnemonicsData
-      late final MnemonicsStorage mnemonicsStorage;
-      mnemonicsStorage = MnemonicsStorage(callback: () {
-        mnemonicsStorage.loadJsonData().then((mnemonicsData) {
-          if (widget.isNewRoom) {
-            // Append this roman room to mnemonicsData
-            mnemonicsData.appendNewMnemonic(
-              subject: roomData.subject,
-              material: MnemonicMaterial(
-                type: MnemonicType.romanRoom,
-                title: roomData.name,
-                uuid: roomData.id,
-              ),
-            );
-          } else {
-            // Update mnemonics.json
-            mnemonicsData.updateMaterial(
-              uuid: roomData.id,
-              newSubject: _subjectController.text,
-              newTitle: _nameController.text,
-            );
-          }
+      final mnemonicsStorage = MnemonicsStorage();
+      final mnemonicsData = await mnemonicsStorage.loadJsonData();
+      if (widget.isNewRoom) {
+        // Append this roman room to mnemonicsData
+        mnemonicsData.appendNewMnemonic(
+          subject: roomData.subject,
+          material: MnemonicMaterial(
+            type: MnemonicType.romanRoom,
+            title: roomData.name,
+            uuid: roomData.id,
+          ),
+        );
+      } else {
+        // Update mnemonics.json
+        mnemonicsData.updateMaterial(
+          uuid: roomData.id,
+          newSubject: _subjectController.text,
+          newTitle: _nameController.text,
+        );
+      }
 
-          // Update actual mnemonics.json
-          final String updatedJson = jsonEncode(mnemonicsData);
-          mnemonicsStorage.save(updatedJson);
+      // Update actual mnemonics.json
+      final String updatedJson = jsonEncode(mnemonicsData);
+      mnemonicsStorage.save(updatedJson);
 
-          showSaveSuccessfulSnackbar(context);
+      showSaveSuccessfulSnackbar(context);
 
-          if (widget.isNewRoom) {
-            // Go back to Mnemonics home page
-            Navigator.pop(context);
-          }
-        });
-      });
+      if (widget.isNewRoom) {
+        // Go back to Mnemonics home page
+        Navigator.pop(context);
+      }
     }
   }
 

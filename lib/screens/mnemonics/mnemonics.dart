@@ -37,10 +37,9 @@ class _MnemonicsState extends State<Mnemonics> {
   }
 
   /// Loads from the latest JSON data file and re-renders.
-  void loadMnemonicsData() {
-    mnemonicsStorage.loadJsonData().then((loadedData) {
-      setState(() => data = loadedData);
-    });
+  Future<void> loadMnemonicsData() async {
+    final MnemonicsData loadedData = await mnemonicsStorage.loadJsonData();
+    setState(() => data = loadedData);
   }
 
   @override
@@ -100,23 +99,18 @@ class _MnemonicsState extends State<Mnemonics> {
                       // Save to mnemonics.json
                       mnemonicsStorage.saveToJson(data);
                     },
-                    onTapTile: (String uuid, BuildContext context) {
-                      late RomanRoomStorage rrStorage;
-                      rrStorage = RomanRoomStorage(
-                        uuid,
-                        callback: () async {
-                          final json = await rrStorage.read();
-                          final romanRoom = RomanRoom.fromJson(json);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (context) => RoomRecall(
-                                uuid: romanRoom.id,
-                              ),
-                            ),
-                          ).then((_) => loadMnemonicsData());
-                        },
-                      );
+                    onTapTile: (String uuid, BuildContext context) async {
+                      final rrStorage = RomanRoomStorage(uuid);
+                      final json = await rrStorage.read();
+                      final romanRoom = RomanRoom.fromJson(json);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => RoomRecall(
+                            uuid: romanRoom.id,
+                          ),
+                        ),
+                      ).then((_) => loadMnemonicsData());
                     });
               }).toList(),
               // Temporary links

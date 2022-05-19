@@ -86,7 +86,8 @@ class MnemonicsData {
     material.title = newTitle;
 
     // Append the updated material back to the appropriate location
-    final bool becomesEmptySubject = subjectMaterials[sIndex].materials.isEmpty;
+    final bool becomesEmptySubject =
+        subjectMaterials.isEmpty || subjectMaterials[sIndex].materials.isEmpty;
     appendNewMnemonic(
       subject: newSubject,
       material: material,
