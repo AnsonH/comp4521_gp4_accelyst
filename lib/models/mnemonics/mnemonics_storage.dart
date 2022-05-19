@@ -49,6 +49,7 @@ class MnemonicsStorage extends StorageService {
     return MnemonicsData.fromJson(json);
   }
 
+  /// Save data into JSON file.
   Future<void> saveToJson(MnemonicsData data) async {
     final json = jsonEncode(data);
     await save(json);
