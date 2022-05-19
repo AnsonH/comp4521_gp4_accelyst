@@ -80,8 +80,11 @@ class _VocabListEditState extends State<VocabListEdit> {
 
   void _onReorder(int oldIndex, int newIndex) {
     setState(() {
-      final element = _vocabs.removeAt(oldIndex);
-      _vocabs.insert(newIndex, element);
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final Vocab vocab = _vocabs.removeAt(oldIndex);
+      _vocabs.insert(newIndex, vocab);
     });
   }
 
@@ -235,35 +238,40 @@ class _VocabListEditState extends State<VocabListEdit> {
               ],
             ),
             const SizedBox(height: 15),
-            Column(
+            ReorderableListView(
+              onReorder: _onReorder,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // Disable scroll
               children: _vocabs
-                  .map((Vocab vocab) => Column(children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                vocab.word,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 18,
+                  .map((Vocab vocab) => Card(
+                        key: Key(vocab.id),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  vocab.word,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                vocab.definition,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  fontSize: 18,
+                              Expanded(
+                                child: Text(
+                                  vocab.definition,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                      ]))
+                      ))
                   .toList(),
             ),
             const SizedBox(height: 20),
