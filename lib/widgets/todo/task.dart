@@ -16,7 +16,16 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> {
+  /// Expand the bottom popup bar when expandInfo is True
   bool expandInfo = false;
+
+  void changeChecklistData(String id, bool done) {
+    setState(() {
+      int index =
+          widget.todoitem.subtasks.indexWhere((element) => element.id == id);
+      widget.todoitem.subtasks[index].done = done;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +117,8 @@ class _TaskState extends State<Task> {
                               ? Row(
                                   children: [
                                     Text(
-                                      DateFormat.MMMMd().format(DateTime.now()),
+                                      DateFormat.MMMMd()
+                                          .format(widget.todoitem.deadline!),
                                       style: TextStyle(color: Colors.blue[800]),
                                     ),
                                     const SizedBox(width: 10)
@@ -162,10 +172,12 @@ class _TaskState extends State<Task> {
 
                       /// Shows the Existing/Created Checklists/Subtasks
                       ...widget.todoitem.subtasks.map((subtask) {
+                        /// TODO: Pass the done value to the function
                         return ReadChecklist(
                             id: subtask.id,
                             checklistName: subtask.name,
-                            done: subtask.done);
+                            done: subtask.done,
+                            onChange: changeChecklistData);
                       }).toList(),
 
                       /// Edit and Delete button for each task
@@ -175,7 +187,7 @@ class _TaskState extends State<Task> {
                           /// Click to Edit the data of that task
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
+                              dynamic returnedValue = Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => EditTask(
@@ -184,6 +196,9 @@ class _TaskState extends State<Task> {
                                           onDelete: widget.onDelete,
                                         )),
                               );
+
+                              if (returnedValue == null) return;
+                              widget.todoitem = returnedValue;
                             },
                             child: const Text("Edit"),
                           ),

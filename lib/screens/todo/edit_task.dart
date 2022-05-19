@@ -9,6 +9,7 @@ class EditTask extends StatefulWidget {
   final String title;
   TodoItem todoitem;
   final void Function() onDelete;
+
   EditTask(
       {required this.title, required this.todoitem, required this.onDelete});
 
@@ -17,15 +18,20 @@ class EditTask extends StatefulWidget {
 }
 
 class _EditTaskState extends State<EditTask> {
-  /// Today's Date
-  /// Todo: Change it to "widget.todoitem.deadline" if it's NOT null
-  DateTime selectedDate = DateTime.now();
-
   /// This function deletes the corresponding ChecklistData.
   /// Called when the delete icon on the right side is clicked for each checklist
   void deleteChecklistData(String id) {
     setState(() {
       widget.todoitem.subtasks.removeWhere((element) => element.id == id);
+    });
+  }
+
+  void changeChecklistData(String id, String name, bool done) {
+    setState(() {
+      int index =
+          widget.todoitem.subtasks.indexWhere((element) => element.id == id);
+      widget.todoitem.subtasks[index].name = name;
+      widget.todoitem.subtasks[index].done = done;
     });
   }
 
@@ -37,9 +43,12 @@ class _EditTaskState extends State<EditTask> {
         title: Text(widget.title),
         backgroundColor: Colors.teal[700],
         actions: <Widget>[
+          /// TODO: Make the Back button prompt the alert dialog for discarding the changes
           IconButton(
             icon: const Icon(Icons.save),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context, widget.todoitem);
+            },
           ),
           IconButton(
             icon: const Icon(Icons.delete),
@@ -56,7 +65,7 @@ class _EditTaskState extends State<EditTask> {
                     onPressed: () {
                       widget.onDelete();
                       Navigator.pop(context); // Close dialogue
-                      Navigator.pop(context); // Exit "Edit task" screen
+                      Navigator.pop(context, null); // Exit "Edit task" screen
                     },
                     child: const Text('Delete'),
                   ),
@@ -82,9 +91,8 @@ class _EditTaskState extends State<EditTask> {
                   decoration: const InputDecoration(labelText: "Task Name"),
                   readOnly: false,
                   initialValue: widget.todoitem.name,
-                  onSaved: (String? value) {
-                    // This optional block of code can be used to run
-                    // code when the user saves the form.
+                  onChanged: (String value) {
+                    widget.todoitem.name = value;
                   },
                 ),
 
@@ -94,9 +102,8 @@ class _EditTaskState extends State<EditTask> {
                   decoration: const InputDecoration(labelText: "Subject"),
                   readOnly: false,
                   initialValue: widget.todoitem.category,
-                  onSaved: (String? value) {
-                    // This optional block of code can be used to run
-                    // code when the user saves the form.
+                  onChanged: (String value) {
+                    widget.todoitem.category = value;
                   },
                 ),
 
@@ -108,9 +115,8 @@ class _EditTaskState extends State<EditTask> {
                   maxLines: null, // Take as much lines as the input value
                   initialValue: widget.todoitem.description,
                   readOnly: false,
-                  onSaved: (String? value) {
-                    // This optional block of code can be used to run
-                    // code when the user saves the form.
+                  onChanged: (String value) {
+                    widget.todoitem.description = value;
                   },
                 ),
 
@@ -123,7 +129,9 @@ class _EditTaskState extends State<EditTask> {
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
                     Text(
-                      "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
+                      (widget.todoitem.deadline != null)
+                          ? "${widget.todoitem.deadline!.day}/${widget.todoitem.deadline!.month}/${widget.todoitem.deadline!.year}"
+                          : "",
                       style: const TextStyle(fontSize: 17),
                     ),
                     const Expanded(child: SizedBox()),
@@ -131,7 +139,9 @@ class _EditTaskState extends State<EditTask> {
                       icon: const Icon(Icons.date_range),
                       label: const Text("Set Deadline"),
                       onPressed: () {
-                        _selectDate(context);
+                        setState(() {
+                          _selectDate(context);
+                        });
                       },
                     ),
                   ],
@@ -160,6 +170,7 @@ class _EditTaskState extends State<EditTask> {
                     done: widget.todoitem.subtasks[index].done,
                     onDelete: () =>
                         deleteChecklistData(widget.todoitem.subtasks[index].id),
+                    onChange: changeChecklistData,
                   );
                 },
                 childCount:
@@ -196,6 +207,15 @@ class _EditTaskState extends State<EditTask> {
   /// Used to pick a date for the deadline of a task
   /// TODO: Update "selectedDate" to a variable that contains "widget.todoitem.deadline" when it's not null
   _selectDate(BuildContext context) async {
+    DateTime selectedDate;
+
+    /// Pass the set deadline OR today's date if deadline is null
+    if (widget.todoitem.deadline == null) {
+      selectedDate = DateTime.now();
+    } else {
+      selectedDate = widget.todoitem.deadline!;
+    }
+
     final DateTime? selected = await showDatePicker(
         context: context,
         initialDate: selectedDate,
@@ -204,9 +224,10 @@ class _EditTaskState extends State<EditTask> {
         helpText: "SELECT DEADLINE",
         cancelText: "CANCEL",
         confirmText: "SET DEADLINE");
+
     if (selected != null && selected != selectedDate) {
       setState(() {
-        selectedDate = selected;
+        widget.todoitem.deadline = selected;
       });
     }
   }
