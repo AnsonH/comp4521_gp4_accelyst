@@ -15,6 +15,7 @@ showAlertDialog(BuildContext context, final void Function() onDelete) {
     child: const Text("Delete"),
     onPressed: () {
       onDelete();
+      Navigator.of(context).pop();
     },
   );
   // set up the AlertDialog

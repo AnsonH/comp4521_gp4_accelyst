@@ -1,4 +1,6 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
+import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
@@ -37,10 +39,9 @@ class _MnemonicsState extends State<Mnemonics> {
   }
 
   /// Loads from the latest JSON data file and re-renders.
-  void loadMnemonicsData() {
-    mnemonicsStorage.loadJsonData().then((loadedData) {
-      setState(() => data = loadedData);
-    });
+  Future<void> loadMnemonicsData() async {
+    final MnemonicsData loadedData = await mnemonicsStorage.loadJsonData();
+    setState(() => data = loadedData);
   }
 
   @override

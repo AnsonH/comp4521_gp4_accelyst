@@ -8,12 +8,14 @@ class ReadChecklist extends StatefulWidget {
   final String id;
   final String checklistName;
   bool done;
+  final void Function(String, bool) onChange;
 
   ReadChecklist({
     Key? key,
     required this.id,
     required this.checklistName,
     this.done = false,
+    required this.onChange,
   });
 
   @override
@@ -34,9 +36,9 @@ class _ReadChecklistState extends State<ReadChecklist> {
             value: widget.done,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (bool? newValue) {
-              /// TODO: Make sure the Checkbox value retains when it the section is closed then opened again
               setState(() {
                 widget.done = newValue!;
+                widget.onChange(widget.id, widget.done);
               });
             },
           ),

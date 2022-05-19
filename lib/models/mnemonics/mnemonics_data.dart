@@ -1,4 +1,3 @@
-import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'mnemonics_data.g.dart';
@@ -19,10 +18,36 @@ class MnemonicsData {
 
   const MnemonicsData(this.subjectMaterials);
 
-  /// Appends a roman room / vocab list into [subjectMaterials].
+  /// Searches a [MnemonicMaterial] instance by its UUID.
+  ///
+  /// For the return value (let's call it `result`):
+  ///  - `result[0]` - Index in [subjectMaterials] array
+  ///  - `result[1]` - Index in `materials` array of the nested [SubjectMaterialsData] instance.
+  List<int> searchMaterialByUUID(String uuid) {
+    int sIndex = 0;
+    int mIndex = 0;
+
+    for (; sIndex < subjectMaterials.length; ++sIndex) {
+      final sMaterial = subjectMaterials[sIndex];
+      mIndex = sMaterial.materials.indexWhere((e) => e.uuid == uuid);
+
+      // Found the material with matching UUID
+      if (mIndex != -1) {
+        break;
+      }
+    }
+
+    return [sIndex, mIndex];
+  }
+
+  /// Appends a material into [subjectMaterials].
+  ///
+  /// [materialLoc] is the index where [material] will be inserted to the `materials`
+  /// array of the matching subject's [SubjectMaterialsData] instance.
   void appendNewMnemonic({
     required String subject,
     required MnemonicMaterial material,
+    int? materialLoc,
   }) {
     // Insert to existing subject if exists
     final sIndex = subjectMaterials.indexWhere((element) {
@@ -36,8 +61,56 @@ class MnemonicsData {
       ));
     } else {
       // Append data into existing subject
-      subjectMaterials[sIndex].materials.add(material);
+      if (materialLoc == null) {
+        subjectMaterials[sIndex].materials.add(material);
+      } else {
+        subjectMaterials[sIndex].materials.insert(materialLoc, material);
+      }
     }
+  }
+
+  /// A function to handle data changes to a [MnemonicMaterial] instance.
+  void updateMaterial({
+    required String uuid,
+    required String newSubject,
+    required String newTitle,
+  }) {
+    final searchResults = searchMaterialByUUID(uuid);
+    int sIndex = searchResults[0];
+    int mIndex = searchResults[1];
+
+    // Delete the existing material object
+    final MnemonicMaterial material = deleteMaterial(uuid);
+
+    // Update the material title
+    material.title = newTitle;
+
+    // Append the updated material back to the appropriate location
+    final bool becomesEmptySubject =
+        subjectMaterials.isEmpty || subjectMaterials[sIndex].materials.isEmpty;
+    appendNewMnemonic(
+      subject: newSubject,
+      material: material,
+      materialLoc: becomesEmptySubject ? null : mIndex,
+    );
+  }
+
+  /// Deletes a study material from a subject.
+  ///
+  /// It returns the deleted study material.
+  MnemonicMaterial deleteMaterial(String uuid) {
+    final searchResults = searchMaterialByUUID(uuid);
+    int sIndex = searchResults[0];
+    int mIndex = searchResults[1];
+
+    final material = subjectMaterials[sIndex].materials.removeAt(mIndex);
+    final bool becomesEmptySubject = subjectMaterials[sIndex].materials.isEmpty;
+    if (becomesEmptySubject) {
+      // Delete the subject if it has no study materials
+      subjectMaterials.removeAt(sIndex);
+    }
+
+    return material;
   }
 
   factory MnemonicsData.fromJson(Map<String, dynamic> json) =>

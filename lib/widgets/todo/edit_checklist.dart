@@ -6,15 +6,18 @@ import 'package:flutter/material.dart';
 class EditChecklist extends StatefulWidget {
   // TODO: Remove `id` and `checklistName` fields with:
   final String id;
-  final String checklistName;
-  final void Function() onDelete;
+  String checklistName;
   bool done;
+  final void Function() onDelete;
+  final void Function(String, String, bool) onChange;
 
+  ///Constructor
   EditChecklist({
     Key? key,
     required this.id,
     required this.checklistName,
     required this.onDelete,
+    required this.onChange,
     this.done = false,
   });
 
@@ -48,7 +51,8 @@ class _EditChecklistState extends State<EditChecklist> {
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (bool? newValue) {
               setState(() {
-                widget.done = newValue!;
+                widget.done = !widget.done;
+                widget.onChange(widget.id, widget.checklistName, widget.done);
               });
             },
           ),
@@ -58,10 +62,10 @@ class _EditChecklistState extends State<EditChecklist> {
           child: TextFormField(
             controller: _controller,
             decoration: const InputDecoration(),
-            onSaved: (String? value) {
-              // This optional block of code can be used to run
-              // code when the user saves the form.
-              /// TODO: Change the Checklist name variable stored in "edit_task.dart"
+
+            /// TODO: Replace onChanged. Currently, every word input will update the TextForm which makes it buggy
+            onChanged: (String value) {
+              widget.onChange(widget.id, value, widget.done);
             },
           ),
         ),
