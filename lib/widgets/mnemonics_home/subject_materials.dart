@@ -1,7 +1,10 @@
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room.dart';
 import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -36,6 +39,25 @@ class SubjectMaterials extends StatelessWidget {
     );
   }
 
+  void _openVocabList(String uuid, BuildContext context) {
+    late VocabStorage vocabListStorage;
+    vocabListStorage = VocabStorage(
+      uuid,
+      callback: () async {
+        final json = await vocabListStorage.read();
+        final vocabList = VocabList.fromJson(json);
+        Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (context) => VocabListView(
+              vocablist: vocabList,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -61,7 +83,12 @@ class SubjectMaterials extends StatelessWidget {
                 child: ListTile(
                   onTap: () {
                     final String uuid = data.materials[index].uuid;
-                    _openRomanRoomRecall(uuid, context);
+                    if (data.materials[index].type == MnemonicType.romanRoom) {
+                      _openRomanRoomRecall(uuid, context);
+                    } else if (data.materials[index].type ==
+                        MnemonicType.vocabList) {
+                      _openVocabList(uuid, context);
+                    }
                   },
                   title: Text(
                     data.materials[index].title,
