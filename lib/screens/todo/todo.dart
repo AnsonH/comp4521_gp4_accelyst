@@ -14,7 +14,7 @@ class Todo extends StatefulWidget {
 
 class _TodoState extends State<Todo> {
   // TODO: Remove and Replace the Temporary task list
-  List<TodoItem> tempTasks = [
+  final data = TodoItems([
     TodoItem(
       id: const Uuid().v4(),
       name: "Revise for Vocabulary Quiz",
@@ -45,40 +45,13 @@ class _TodoState extends State<Todo> {
             id: const Uuid().v4(), name: "Exercise Part B", done: false),
       ],
     ),
-    TodoItem(
-      id: const Uuid().v4(),
-      name: "Send Email to Your Professor",
-      priority: TodoPriority.high,
-      category: "Humanities",
-      description: "",
-      deadline: null,
-      subtasks: [],
-    ),
-    TodoItem(
-      id: const Uuid().v4(),
-      name: "Workout",
-      priority: TodoPriority.none,
-      category: "",
-      description: "",
-      deadline: null,
-      subtasks: [],
-    ),
-    TodoItem(
-      id: const Uuid().v4(),
-      name: "Testing",
-      priority: TodoPriority.none,
-      category: "asdfjkl;asdfjaklsdfajsdkfl;asdfjaklsdfajskdf;asdfjakls;df",
-      description: "",
-      deadline: DateTime.parse('2022-05-06 22:00'),
-      subtasks: [],
-    ),
-  ];
+  ]);
 
   /// This function deletes the corresponding Task.
   /// Called when the delete button in the bottom popup bar is clicked for each task
   void deleteTaskData(String id) {
     setState(() {
-      tempTasks.removeWhere((element) => element.id == id);
+      data.todoItems.removeWhere((element) => element.id == id);
     });
   }
 
@@ -100,11 +73,11 @@ class _TodoState extends State<Todo> {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 return Task(
-                  todoitem: tempTasks[index],
-                  onDelete: () => deleteTaskData(tempTasks[index].id),
+                  todoitem: data.todoItems[index],
+                  onDelete: () => deleteTaskData(data.todoItems[index].id),
                 );
               },
-              childCount: tempTasks.length,
+              childCount: data.todoItems.length,
             ),
           ),
         ],
@@ -126,7 +99,7 @@ class _TodoState extends State<Todo> {
           );
 
           /// Append the New Task to the Task List
-          tempTasks.add(newTask);
+          data.todoItems.add(newTask);
 
           /// Navigate to the Edit Task page
           Navigator.push(

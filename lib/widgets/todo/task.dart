@@ -68,16 +68,12 @@ class _TaskState extends State<Task> {
                     ),
                     child: Checkbox(
                       /// Checkbox: Ticked or not depends on "Todoitem.status" is "complete" or "incomplete"
-                      value: (widget.todoitem.status == TodoStatus.incomplete)
-                          ? true
-                          : false,
+                      value: widget.todoitem.isComplete,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       onChanged: (bool? newValue) {
                         setState(() {
-                          if (widget.todoitem.status == TodoStatus.incomplete)
-                            widget.todoitem.status = TodoStatus.complete;
-                          else
-                            widget.todoitem.status = TodoStatus.incomplete;
+                          widget.todoitem.isComplete =
+                              !widget.todoitem.isComplete;
                         });
                       },
 

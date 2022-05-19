@@ -1,12 +1,38 @@
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-/// Represents status
-enum TodoStatus { incomplete, complete }
+part "todo_item.g.dart";
 
 /// Represents priority level
-enum TodoPriority { none, low, medium, high }
+enum TodoPriority {
+  @JsonValue("none")
+  none,
+
+  @JsonValue("low")
+  low,
+
+  @JsonValue("medium")
+  medium,
+
+  @JsonValue("high")
+  high,
+}
+
+/// Stores a list of all todo items. Used in the "Todo" homepage.
+@JsonSerializable()
+class TodoItems {
+  final List<TodoItem> todoItems;
+
+  const TodoItems(this.todoItems);
+
+  factory TodoItems.fromJson(Map<String, dynamic> json) =>
+      _$TodoItemsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoItemsToJson(this);
+}
 
 /// Represents subtask
+@JsonSerializable()
 class TodoSubtask {
   final String id;
   bool done;
@@ -21,15 +47,21 @@ class TodoSubtask {
   void click() {
     done = !done;
   }
+
+  factory TodoSubtask.fromJson(Map<String, dynamic> json) =>
+      _$TodoSubtaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoSubtaskToJson(this);
 }
 
 /// Represents a To-do List Item
+@JsonSerializable()
 class TodoItem {
   /// UUID of item
   final String id;
 
   /// Status of to-do item
-  TodoStatus status = TodoStatus.incomplete;
+  bool isComplete = false;
 
   /// Name of to-do item
   String name;
@@ -79,59 +111,8 @@ class TodoItem {
     return dateStr;
   }
 
-  get getName {
-    return name;
-  }
+  factory TodoItem.fromJson(Map<String, dynamic> json) =>
+      _$TodoItemFromJson(json);
 
-  set setName(String newName) {
-    name = newName;
-  }
-
-  get getPriority {
-    return priority;
-  }
-
-  set setPriority(TodoPriority newPriority) {
-    priority = newPriority;
-  }
-
-  get getStatus {
-    return status;
-  }
-
-  set setStatus(TodoStatus newStatus) {
-    status = newStatus;
-  }
-
-  get getCategory {
-    return category;
-  }
-
-  set setCategory(String newCategory) {
-    category = newCategory;
-  }
-
-  get getDescription {
-    return description;
-  }
-
-  set setDescription(String newDescription) {
-    description = newDescription;
-  }
-
-  get getDeadline {
-    return deadline;
-  }
-
-  set setDeadline(DateTime? newDeadline) {
-    deadline = newDeadline;
-  }
-
-  get getSubtasks {
-    return subtasks;
-  }
-
-  set setSubtasks(List<TodoSubtask> newSubtasks) {
-    subtasks = newSubtasks;
-  }
+  Map<String, dynamic> toJson() => _$TodoItemToJson(this);
 }
