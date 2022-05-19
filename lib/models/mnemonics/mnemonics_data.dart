@@ -19,8 +19,8 @@ class MnemonicsData {
 
   const MnemonicsData(this.subjectMaterials);
 
-  /// Appends a roman room into [subjectMaterials].
-  void appendNewRomanRoom({
+  /// Appends a roman room / vocab list into [subjectMaterials].
+  void appendNewMnemonic({
     required String subject,
     required MnemonicMaterial material,
   }) {

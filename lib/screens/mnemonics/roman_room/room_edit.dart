@@ -101,7 +101,7 @@ class _RoomEditState extends State<RoomEdit> {
       mnemonicsStorage = MnemonicsStorage(callback: () {
         mnemonicsStorage.loadJsonData().then((mnemonicsData) {
           // Append this roman room to the mnemonicsData
-          mnemonicsData.appendNewRomanRoom(
+          mnemonicsData.appendNewMnemonic(
             subject: roomData.subject,
             material: MnemonicMaterial(
               type: MnemonicType.romanRoom,
