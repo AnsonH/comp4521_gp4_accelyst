@@ -4,26 +4,28 @@ import 'package:flutter/material.dart';
 /// This is used in the "edit_task.dart"
 class EditChecklist extends StatefulWidget {
   final String id;
-  String checklistName;
-  bool done;
+  final bool initCheckboxVal;
   final void Function() onDelete;
   final TextEditingController controller;
+  final void Function(bool) onChangeCheckbox;
 
   ///Constructor
-  EditChecklist({
+  const EditChecklist({
     Key? key,
     required this.id,
-    required this.checklistName,
     required this.onDelete,
-    this.done = false,
+    this.initCheckboxVal = false,
     required this.controller,
-  });
+    required this.onChangeCheckbox,
+  }) : super(key: key);
 
   @override
   State<EditChecklist> createState() => _EditChecklistState();
 }
 
 class _EditChecklistState extends State<EditChecklist> {
+  late bool checkboxVal = widget.initCheckboxVal;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -31,11 +33,12 @@ class _EditChecklistState extends State<EditChecklist> {
         SizedBox(
           width: 20.0,
           child: Checkbox(
-            value: widget.done,
+            value: checkboxVal,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (bool? newValue) {
               setState(() {
-                widget.done = !widget.done;
+                checkboxVal = newValue!;
+                widget.onChangeCheckbox(checkboxVal);
               });
             },
           ),
@@ -54,7 +57,10 @@ class _EditChecklistState extends State<EditChecklist> {
             onPressed: () {
               widget.onDelete();
             },
-            child: const Icon(Icons.delete),
+            child: Icon(
+              Icons.delete,
+              color: Colors.red[600],
+            ),
           ),
         ),
       ],

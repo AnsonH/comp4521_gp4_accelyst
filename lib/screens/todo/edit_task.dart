@@ -248,10 +248,12 @@ class _EditTaskState extends State<EditTask> {
 
                   return EditChecklist(
                     id: subtask.id,
-                    checklistName: subtask.name,
-                    done: subtask.done,
+                    initCheckboxVal: subtask.done,
                     onDelete: () => deleteChecklistData(subtask.id),
                     controller: subtasksControllers[subtask.id]!,
+                    onChangeCheckbox: (bool newVal) {
+                      subtask.done = newVal;
+                    },
                   );
                 },
                 childCount:
