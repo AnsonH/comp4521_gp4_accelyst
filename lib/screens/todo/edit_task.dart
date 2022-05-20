@@ -5,19 +5,51 @@ import 'package:uuid/uuid.dart';
 
 /// EditTask class which returns the Edit/Add Task Page
 class EditTask extends StatefulWidget {
-  /// Input varialbes for EditTask Class
   final String title;
-  TodoItem todoitem;
+
+  /// We directly mutate this object. This object will be saved to JSON once we
+  /// pop the "Edit Task" route and return back to Mnemonics home page.
+  final TodoItem todoitem;
+
   final void Function() onDelete;
 
-  EditTask(
-      {required this.title, required this.todoitem, required this.onDelete});
+  EditTask({
+    Key? key,
+    required this.title,
+    required this.todoitem,
+    required this.onDelete,
+  });
 
   @override
   State<EditTask> createState() => _EditTaskState();
 }
 
 class _EditTaskState extends State<EditTask> {
+  /// A map of the UUID of each subtask to its corresponding text controller.
+  ///
+  /// To be initialized in initState.
+  final Map<String, TextEditingController> subtasksControllers = {};
+
+  void _initializeSubtasksControllers() {
+    for (var subtask in widget.todoitem.subtasks) {
+      subtasksControllers[subtask.id] = TextEditingController();
+
+      // Initial value of the text field
+      subtasksControllers[subtask.id]!.text = subtask.name;
+    }
+  }
+
+  /// Updates each [TodoSubtask] instance in `widget.todoitem.subtask` array.
+  ///
+  /// This is called only when we press the save button, so that any changes will
+  /// be discarded if we leave this page without saving.
+  void _updateSubtasks() {
+    for (var subtask in widget.todoitem.subtasks) {
+      int i = widget.todoitem.subtasks.indexWhere((e) => e.id == subtask.id);
+      widget.todoitem.subtasks[i].name = subtasksControllers[subtask.id]!.text;
+    }
+  }
+
   /// This function deletes the corresponding ChecklistData.
   /// Called when the delete icon on the right side is clicked for each checklist
   void deleteChecklistData(String id) {
@@ -36,6 +68,12 @@ class _EditTaskState extends State<EditTask> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initializeSubtasksControllers();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       /// Universal AppBar at the top of each page
@@ -50,7 +88,7 @@ class _EditTaskState extends State<EditTask> {
               builder: (context) => AlertDialog(
                 title: const Text("Leave page?"),
                 content: const Text(
-                  "Unsaved changes will be discard. Press the save button at the top right to save.",
+                  "Unsaved changes will be deleted. Press the save button at the top right to save.",
                 ),
                 actions: [
                   TextButton(
@@ -72,10 +110,10 @@ class _EditTaskState extends State<EditTask> {
           },
         ),
         actions: <Widget>[
-          /// TODO: Make the Back button prompt the alert dialog for discarding the changes
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
+              _updateSubtasks();
               Navigator.pop(context, widget.todoitem);
             },
           ),
@@ -206,13 +244,14 @@ class _EditTaskState extends State<EditTask> {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
+                  final TodoSubtask subtask = widget.todoitem.subtasks[index];
+
                   return EditChecklist(
-                    id: widget.todoitem.subtasks[index].id,
-                    checklistName: widget.todoitem.subtasks[index].name,
-                    done: widget.todoitem.subtasks[index].done,
-                    onDelete: () =>
-                        deleteChecklistData(widget.todoitem.subtasks[index].id),
-                    onChange: changeChecklistData,
+                    id: subtask.id,
+                    checklistName: subtask.name,
+                    done: subtask.done,
+                    onDelete: () => deleteChecklistData(subtask.id),
+                    controller: subtasksControllers[subtask.id]!,
                   );
                 },
                 childCount:
@@ -225,13 +264,18 @@ class _EditTaskState extends State<EditTask> {
               delegate: SliverChildListDelegate([
                 TextButton.icon(
                   onPressed: () {
-                    /// Add a new checklist to the todoitem
+                    final newSubtask = TodoSubtask(
+                      /// Create a new id for new Checklist
+                      id: const Uuid().v4(),
+                      name: "",
+                    );
+
+                    // Create new text controller
+                    subtasksControllers[newSubtask.id] =
+                        TextEditingController();
+
                     setState(() {
-                      widget.todoitem.subtasks.add(TodoSubtask(
-                        /// Create a new id for new Checklist
-                        id: const Uuid().v4(),
-                        name: "",
-                      ));
+                      widget.todoitem.subtasks.add(newSubtask);
                     });
                   },
                   icon: const Icon(Icons.add),
@@ -245,9 +289,19 @@ class _EditTaskState extends State<EditTask> {
     );
   }
 
+  @override
+  void dispose() {
+    // Dispose text controllers
+    // NOTE: This is run AFTER saving the mutated widget.todoitem is saved back to JSON
+    for (var controller in subtasksControllers.values) {
+      controller.dispose();
+    }
+
+    super.dispose();
+  }
+
   /// Select Date Function
   /// Used to pick a date for the deadline of a task
-  /// TODO: Update "selectedDate" to a variable that contains "widget.todoitem.deadline" when it's not null
   _selectDate(BuildContext context) async {
     DateTime selectedDate;
 

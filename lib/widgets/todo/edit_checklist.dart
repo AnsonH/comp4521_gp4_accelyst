@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 /// EditChecklist() returns a Row() of checklist for read and write
 /// This is used in the "edit_task.dart"
-
 class EditChecklist extends StatefulWidget {
-  // TODO: Remove `id` and `checklistName` fields with:
   final String id;
   String checklistName;
   bool done;
   final void Function() onDelete;
-  final void Function(String, String, bool) onChange;
+  final TextEditingController controller;
 
   ///Constructor
   EditChecklist({
@@ -17,8 +15,8 @@ class EditChecklist extends StatefulWidget {
     required this.id,
     required this.checklistName,
     required this.onDelete,
-    required this.onChange,
     this.done = false,
+    required this.controller,
   });
 
   @override
@@ -26,23 +24,9 @@ class EditChecklist extends StatefulWidget {
 }
 
 class _EditChecklistState extends State<EditChecklist> {
-  final _controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller.addListener(() {
-      // TODO: Update ChecklistData instance here
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    _controller.text = widget.checklistName;
-
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         SizedBox(
           width: 20.0,
@@ -52,7 +36,6 @@ class _EditChecklistState extends State<EditChecklist> {
             onChanged: (bool? newValue) {
               setState(() {
                 widget.done = !widget.done;
-                widget.onChange(widget.id, widget.checklistName, widget.done);
               });
             },
           ),
@@ -60,13 +43,8 @@ class _EditChecklistState extends State<EditChecklist> {
         const SizedBox(width: 15),
         Expanded(
           child: TextFormField(
-            controller: _controller,
+            controller: widget.controller,
             decoration: const InputDecoration(),
-
-            /// TODO: Replace onChanged. Currently, every word input will update the TextForm which makes it buggy
-            onChanged: (String value) {
-              widget.onChange(widget.id, value, widget.done);
-            },
           ),
         ),
         SizedBox(
@@ -74,7 +52,6 @@ class _EditChecklistState extends State<EditChecklist> {
           width: 40,
           child: TextButton(
             onPressed: () {
-              //Todo: Delete the checklist
               widget.onDelete();
             },
             child: const Icon(Icons.delete),
@@ -82,11 +59,5 @@ class _EditChecklistState extends State<EditChecklist> {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
