@@ -1,6 +1,7 @@
 import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
 import 'package:comp4521_gp4_accelyst/models/todo/todo_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
+import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/alert_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/read_checklist.dart';
 import 'package:flutter/material.dart';
@@ -109,7 +110,7 @@ class _TaskState extends State<Task> {
                 ),
 
                 /// Below contains all Text Contents
-                const SizedBox(width: 10.0),
+                const SizedBox(width: 15.0),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +119,10 @@ class _TaskState extends State<Task> {
                       /// Task Name
                       Text(
                         todoitem.name,
-                        style: const TextStyle(fontSize: 20),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       if (todoitem.deadline != null || todoitem.category != "")
                         const SizedBox(height: 3.0),
@@ -134,7 +138,7 @@ class _TaskState extends State<Task> {
                                       DateFormat.MMMMd()
                                           .format(todoitem.deadline!),
                                       // todoitem.deadline!.toString(),
-                                      style: TextStyle(color: Colors.blue[800]),
+                                      style: TextStyle(color: primaryColor),
                                     ),
                                     const SizedBox(width: 10)
                                   ],

@@ -2,6 +2,7 @@ import 'package:comp4521_gp4_accelyst/models/todo/todo_item.dart';
 import 'package:comp4521_gp4_accelyst/models/todo/todo_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/todo/edit_task.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
+import 'package:comp4521_gp4_accelyst/widgets/todo/empty_todo_hint.dart';
 import 'package:comp4521_gp4_accelyst/widgets/todo/task.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -36,8 +37,7 @@ class _TodoState extends State<Todo> {
     setState(() => data = loadedData);
   }
 
-  /// This function deletes the corresponding Task.
-  /// Called when the delete button in the bottom popup bar is clicked for each task
+  /// Deletes the corresponding task in `data` and saves to JSON.
   Future<void> deleteTaskData(String id) async {
     setState(() {
       data.todoItems.removeWhere((element) => element.id == id);
@@ -57,21 +57,24 @@ class _TodoState extends State<Todo> {
       backgroundColor: Colors.grey[200],
 
       /// Body of the To-do Home Page
-      body: CustomScrollView(
-        slivers: [
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return Task(
-                  todoitem: data.todoItems[index],
-                  onDelete: () => deleteTaskData(data.todoItems[index].id),
-                );
-              },
-              childCount: data.todoItems.length,
-            ),
-          ),
-        ],
-      ),
+      body: (data.todoItems.isNotEmpty)
+          ? CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return Task(
+                        todoitem: data.todoItems[index],
+                        onDelete: () =>
+                            deleteTaskData(data.todoItems[index].id),
+                      );
+                    },
+                    childCount: data.todoItems.length,
+                  ),
+                ),
+              ],
+            )
+          : const EmptyTodoHint(),
 
       /// Button to Add New Task
       floatingActionButton: FloatingActionButton(
@@ -110,6 +113,9 @@ class _TodoState extends State<Todo> {
 
               // Force re-render as `todoitem` is mutated
               setState(() {});
+            } else {
+              // Delete the `newTask` from JSON
+              deleteTaskData(newTask.id);
             }
           });
         },

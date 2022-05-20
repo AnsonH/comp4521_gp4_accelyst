@@ -27,25 +27,40 @@ Future<void> initSampleFiles() async {
             "$path/roman-room-data/f84325f0-d792-11ec-a0e4-6d428c57a67e.json");
     // Roman room pic 1
     copyFile(
-        oldPath: "assets/samples/romanroom/image_picker2558513802704829566.jpg",
+        oldPath:
+            "assets/samples/romanroom/79c0e7f7-b391-4b5d-8766-352aa9368cf62696330061257438831.jpg",
         newPath:
-            "$path/roman-room-data/img/image_picker2558513802704829566.jpg");
+            "$path/roman-room-data/img/79c0e7f7-b391-4b5d-8766-352aa9368cf62696330061257438831.jpg");
     // Roman room pic 2
     copyFile(
-        oldPath: "assets/samples/romanroom/image_picker5041454899599093914.jpg",
+        oldPath:
+            "assets/samples/romanroom/e5af6d64-ce43-4131-848b-f320baa7de3d273754246337822292.jpg",
         newPath:
-            "$path/roman-room-data/img/image_picker5041454899599093914.jpg");
+            "$path/roman-room-data/img/e5af6d64-ce43-4131-848b-f320baa7de3d273754246337822292.jpg");
   }
   // Check vocab list
   ss.datapath = "vocab-list-data";
   ss.filename = "74230f80-d790-11ec-8f19-fd5579bc56a7.json";
   if (!ss.isFilePathExist) {
     // TODO: import vocab list files to ~/vocab-list-data/
+    // Vocab list JSON
     copyFile(
         oldPath:
             "assets/samples/vocablist/74230f80-d790-11ec-8f19-fd5579bc56a7.json",
         newPath:
             "$path/vocab-list-data/74230f80-d790-11ec-8f19-fd5579bc56a7.json");
+    // Vocab 1 audio
+    copyFile(
+        oldPath:
+            "assets/samples/vocablist/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3",
+        newPath:
+            "$path/vocab-list-data/audio/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3");
+    // Vocab 2 audio
+    copyFile(
+        oldPath:
+            "assets/samples/vocablist/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3",
+        newPath:
+            "$path/vocab-list-data/audio/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3");
   }
 }
 

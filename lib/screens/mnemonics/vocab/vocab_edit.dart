@@ -1,4 +1,5 @@
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -49,8 +50,16 @@ class _VocabEditState extends State<VocabEdit> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () {
-              if (_wordController.text.trim() == "" ||
-                  _definitionController.text.trim() == "") return;
+              if (_wordController.text.trim() == "") {
+                showSnackbarMessage(context,
+                    success: false, message: "Vocab is required!");
+                return;
+              }
+              if (_definitionController.text.trim() == "") {
+                showSnackbarMessage(context,
+                    success: false, message: "Definition is required!");
+                return;
+              }
               // TODO: Add new vocab
               widget.callback(
                   vocab: Vocab(
@@ -64,6 +73,8 @@ class _VocabEditState extends State<VocabEdit> {
                                   segment: controllerPair[0].text.trim(),
                                   word: controllerPair[1].text.trim()))
                           .toList()));
+              showSnackbarMessage(context,
+                  success: true, message: "Vocab added successfully!");
               Navigator.pop(context); // Exit "Edit task" screen
             },
           ),
@@ -178,33 +189,47 @@ class _VocabEditState extends State<VocabEdit> {
             const SizedBox(height: 20),
             ElevatedButton(
               child: const Text("Add Segment"),
-              onPressed: () {
-                if (_vocabSegmentsControllers.length > 0 &&
-                    _vocabSegmentsControllers[
-                                _vocabSegmentsControllers.length - 1][0]
-                            .text
-                            .trim() ==
-                        "" &&
-                    _vocabSegmentsControllers[
-                                _vocabSegmentsControllers.length - 1][1]
-                            .text
-                            .trim() ==
-                        "") return;
-                setState(() {
-                  _vocabSegmentsControllers
-                      .add([TextEditingController(), TextEditingController()]);
-                });
-              },
+              onPressed: (_vocabSegmentsControllers.length > 0 &&
+                      _vocabSegmentsControllers[
+                                  _vocabSegmentsControllers.length - 1][0]
+                              .text
+                              .trim() ==
+                          "" &&
+                      _vocabSegmentsControllers[
+                                  _vocabSegmentsControllers.length - 1][1]
+                              .text
+                              .trim() ==
+                          "")
+                  ? null
+                  : () {
+                      if (_vocabSegmentsControllers.length > 0 &&
+                          _vocabSegmentsControllers[
+                                      _vocabSegmentsControllers.length - 1][0]
+                                  .text
+                                  .trim() ==
+                              "" &&
+                          _vocabSegmentsControllers[
+                                      _vocabSegmentsControllers.length - 1][1]
+                                  .text
+                                  .trim() ==
+                              "") return;
+                      setState(() {
+                        _vocabSegmentsControllers.add(
+                            [TextEditingController(), TextEditingController()]);
+                      });
+                    },
             ),
             ElevatedButton(
               child: const Text("Delete Segment"),
-              onPressed: () {
-                // Delete segment
-                if (_vocabSegmentsControllers.length == 0) return;
-                setState(() {
-                  _vocabSegmentsControllers.removeLast();
-                });
-              },
+              onPressed: _vocabSegmentsControllers.isEmpty
+                  ? null
+                  : () {
+                      // Delete segment
+                      if (_vocabSegmentsControllers.length == 0) return;
+                      setState(() {
+                        _vocabSegmentsControllers.removeLast();
+                      });
+                    },
             ),
           ],
           // crossAxisAlignment: CrossAxisAlignment.stretch,

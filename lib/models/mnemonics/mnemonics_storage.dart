@@ -15,31 +15,7 @@ class MnemonicsStorage extends StorageService {
         .then((_) async {
       // Create the JSON file if not exist
       if (!isFilePathExist) {
-        const initialData = MnemonicsData([]);
-        // final initialData = MnemonicsData([
-        //   SubjectMaterialsData(
-        //     subjectName: "English",
-        //     materials: [
-        //       MnemonicMaterial(
-        //         type: MnemonicType.vocabList,
-        //         title: "Top 1000 Most Common English Vocabularies",
-        //         uuid: const Uuid().v1(),
-        //       ),
-        //     ],
-        //   ),
-        //   SubjectMaterialsData(
-        //     subjectName: "Chemistry",
-        //     materials: [
-        //       MnemonicMaterial(
-        //         type: MnemonicType.romanRoom,
-        //         title: "Periodic Table",
-        //         uuid: const Uuid().v1(),
-        //       ),
-        //     ],
-        //   ),
-        // ]);
-        String json = jsonEncode(initialData);
-        await save(json);
+        save("");
       }
 
       if (callback != null) {

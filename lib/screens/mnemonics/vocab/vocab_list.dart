@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
@@ -51,22 +53,21 @@ class _VocabListViewState extends State<VocabListView> {
     return childs;
   }
 
-  void editList(
-      {required String name,
-      required String subject,
-      required String description,
-      required List<Vocab> vocabs}) {
-    // TODO: Save vocab list to files
-    setState(() {
-      widget.vocablist.name = vocablist.name = name;
-      _nameController.value = TextEditingValue(text: name);
-      widget.vocablist.subject = vocablist.subject = subject;
-      _subjectController.value = TextEditingValue(text: subject);
-      widget.vocablist.description = vocablist.description = description;
-      _descriptionController.value = TextEditingValue(text: description);
-      widget.vocablist.vocabs = vocablist.vocabs = vocabs;
-    });
-  }
+  // void editList(
+  //     {required String name,
+  //     required String subject,
+  //     required String description,
+  //     required List<Vocab> vocabs}) {
+  //   setState(() {
+  //     widget.vocablist.name = vocablist.name = name;
+  //     _nameController.value = TextEditingValue(text: name);
+  //     widget.vocablist.subject = vocablist.subject = subject;
+  //     _subjectController.value = TextEditingValue(text: subject);
+  //     widget.vocablist.description = vocablist.description = description;
+  //     _descriptionController.value = TextEditingValue(text: description);
+  //     widget.vocablist.vocabs = vocablist.vocabs = vocabs;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +90,21 @@ class _VocabListViewState extends State<VocabListView> {
                     ),
                   ).then((_) async {
                     final storageService = VocabStorage(vocablist.id);
-                    vocablist = VocabList.fromJson(await storageService.read());
-                  }).then((_) {
-                    setState(() {});
+                    final json = await storageService.read();
+                    debugPrint(jsonEncode(json));
+
+                    setState(() {
+                      vocablist = VocabList.fromJson(json);
+                      widget.vocablist.name = vocablist.name;
+                      _nameController.value =
+                          TextEditingValue(text: vocablist.name);
+                      widget.vocablist.subject = vocablist.subject;
+                      _subjectController.value =
+                          TextEditingValue(text: vocablist.subject);
+                      widget.vocablist.description = vocablist.description;
+                      _descriptionController.value =
+                          TextEditingValue(text: vocablist.description);
+                    });
                   });
                 }
                 value = "";

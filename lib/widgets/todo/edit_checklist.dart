@@ -2,57 +2,43 @@ import 'package:flutter/material.dart';
 
 /// EditChecklist() returns a Row() of checklist for read and write
 /// This is used in the "edit_task.dart"
-
 class EditChecklist extends StatefulWidget {
-  // TODO: Remove `id` and `checklistName` fields with:
   final String id;
-  String checklistName;
-  bool done;
+  final bool initCheckboxVal;
   final void Function() onDelete;
-  final void Function(String, String, bool) onChange;
+  final TextEditingController controller;
+  final void Function(bool) onChangeCheckbox;
 
   ///Constructor
-  EditChecklist({
+  const EditChecklist({
     Key? key,
     required this.id,
-    required this.checklistName,
     required this.onDelete,
-    required this.onChange,
-    this.done = false,
-  });
+    this.initCheckboxVal = false,
+    required this.controller,
+    required this.onChangeCheckbox,
+  }) : super(key: key);
 
   @override
   State<EditChecklist> createState() => _EditChecklistState();
 }
 
 class _EditChecklistState extends State<EditChecklist> {
-  final _controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller.addListener(() {
-      // TODO: Update ChecklistData instance here
-    });
-  }
+  late bool checkboxVal = widget.initCheckboxVal;
 
   @override
   Widget build(BuildContext context) {
-    _controller.text = widget.checklistName;
-
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         SizedBox(
           width: 20.0,
           child: Checkbox(
-            value: widget.done,
+            value: checkboxVal,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (bool? newValue) {
               setState(() {
-                widget.done = !widget.done;
-                widget.onChange(widget.id, widget.checklistName, widget.done);
+                checkboxVal = newValue!;
+                widget.onChangeCheckbox(checkboxVal);
               });
             },
           ),
@@ -60,13 +46,8 @@ class _EditChecklistState extends State<EditChecklist> {
         const SizedBox(width: 15),
         Expanded(
           child: TextFormField(
-            controller: _controller,
+            controller: widget.controller,
             decoration: const InputDecoration(),
-
-            /// TODO: Replace onChanged. Currently, every word input will update the TextForm which makes it buggy
-            onChanged: (String value) {
-              widget.onChange(widget.id, value, widget.done);
-            },
           ),
         ),
         SizedBox(
@@ -74,19 +55,16 @@ class _EditChecklistState extends State<EditChecklist> {
           width: 40,
           child: TextButton(
             onPressed: () {
-              //Todo: Delete the checklist
               widget.onDelete();
             },
-            child: const Icon(Icons.delete),
+            child: Icon(
+              Icons.delete,
+              color: Colors.red[600],
+            ),
           ),
         ),
+        const SizedBox(width: 4),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

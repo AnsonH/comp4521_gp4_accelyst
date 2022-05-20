@@ -5,19 +5,48 @@ import 'package:uuid/uuid.dart';
 
 /// EditTask class which returns the Edit/Add Task Page
 class EditTask extends StatefulWidget {
-  /// Input varialbes for EditTask Class
   final String title;
-  TodoItem todoitem;
+
+  /// We directly mutate this object. This object will be saved to JSON once we
+  /// pop the "Edit Task" route and return back to Mnemonics home page.
+  final TodoItem todoitem;
+
   final void Function() onDelete;
 
-  EditTask(
-      {required this.title, required this.todoitem, required this.onDelete});
+  EditTask({
+    Key? key,
+    required this.title,
+    required this.todoitem,
+    required this.onDelete,
+  });
 
   @override
   State<EditTask> createState() => _EditTaskState();
 }
 
 class _EditTaskState extends State<EditTask> {
+  /// A map of the UUID of each subtask to its corresponding text controller.
+  ///
+  /// To be initialized in initState.
+  final Map<String, TextEditingController> subtasksControllers = {};
+
+  void _initializeSubtasksControllers() {
+    for (var subtask in widget.todoitem.subtasks) {
+      subtasksControllers[subtask.id] = TextEditingController();
+
+      // Initial value of the text field
+      subtasksControllers[subtask.id]!.text = subtask.name;
+    }
+  }
+
+  /// Updates each [TodoSubtask] instance in `widget.todoitem.subtask` array.
+  void _updateSubtasks() {
+    for (var subtask in widget.todoitem.subtasks) {
+      int i = widget.todoitem.subtasks.indexWhere((e) => e.id == subtask.id);
+      widget.todoitem.subtasks[i].name = subtasksControllers[subtask.id]!.text;
+    }
+  }
+
   /// This function deletes the corresponding ChecklistData.
   /// Called when the delete icon on the right side is clicked for each checklist
   void deleteChecklistData(String id) {
@@ -36,6 +65,12 @@ class _EditTaskState extends State<EditTask> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _initializeSubtasksControllers();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       /// Universal AppBar at the top of each page
@@ -45,40 +80,11 @@ class _EditTaskState extends State<EditTask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Leave page?"),
-                content: const Text(
-                  "Unsaved changes will be discard. Press the save button at the top right to save.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialog
-                    },
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialog
-                      Navigator.pop(context, null);
-                    },
-                    child: const Text("LEAVE"),
-                  ),
-                ],
-              ),
-            );
+            _updateSubtasks();
+            Navigator.pop(context, widget.todoitem);
           },
         ),
         actions: <Widget>[
-          /// TODO: Make the Back button prompt the alert dialog for discarding the changes
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              Navigator.pop(context, widget.todoitem);
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () => showDialog(
@@ -149,42 +155,79 @@ class _EditTaskState extends State<EditTask> {
                   },
                 ),
 
-                /// Add/Edit Deadline of the Task
+                /// Priority level
                 const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Text(
+                      "Priority: ",
+                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(width: 5),
+                    DropdownButton<TodoPriority>(
+                      value: widget.todoitem.priority,
+                      items: const [
+                        TodoPriority.none,
+                        TodoPriority.low,
+                        TodoPriority.medium,
+                        TodoPriority.high,
+                      ].map<DropdownMenuItem<TodoPriority>>((value) {
+                        return DropdownMenuItem<TodoPriority>(
+                          value: value,
+                          child: Text(todoPriorityMap[value]!),
+                        );
+                      }).toList(),
+                      onChanged: (TodoPriority? newValue) {
+                        setState(() => widget.todoitem.priority = newValue!);
+                      },
+                    ),
+                  ],
+                ),
+
+                /// Add/Edit Deadline of the Task
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     Text(
                       "Deadline: ",
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
-                    Text(
-                      (widget.todoitem.deadline != null)
-                          ? "${widget.todoitem.deadline!.day}/${widget.todoitem.deadline!.month}/${widget.todoitem.deadline!.year}"
-                          : "",
-                      style: const TextStyle(fontSize: 17),
-                    ),
-                    const Expanded(child: SizedBox()),
-                    TextButton.icon(
-                      icon: const Icon(Icons.date_range),
-                      label: const Text("Change"),
+                    TextButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            widget.todoitem.deadline != null
+                                ? widget.todoitem.getDeadlineDate()
+                                : "None",
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey[600],
+                          ),
+                        ],
+                      ),
                       onPressed: () {
                         setState(() {
                           _selectDate(context);
                         });
                       },
+                      style: TextButton.styleFrom(primary: Colors.black),
                     ),
+                    const Expanded(child: SizedBox()),
                     if (widget.todoitem.deadline != null)
-                      TextButton.icon(
+                      IconButton(
                         icon: const Icon(Icons.delete),
-                        label: const Text("Delete"),
+                        color: Colors.red[600],
                         onPressed: () {
                           setState(() {
                             widget.todoitem.deadline = null;
                           });
                         },
-                        style: TextButton.styleFrom(
-                          primary: Colors.red[600],
-                        ),
                       ),
                   ],
                 ),
@@ -206,13 +249,16 @@ class _EditTaskState extends State<EditTask> {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
+                  final TodoSubtask subtask = widget.todoitem.subtasks[index];
+
                   return EditChecklist(
-                    id: widget.todoitem.subtasks[index].id,
-                    checklistName: widget.todoitem.subtasks[index].name,
-                    done: widget.todoitem.subtasks[index].done,
-                    onDelete: () =>
-                        deleteChecklistData(widget.todoitem.subtasks[index].id),
-                    onChange: changeChecklistData,
+                    id: subtask.id,
+                    initCheckboxVal: subtask.done,
+                    onDelete: () => deleteChecklistData(subtask.id),
+                    controller: subtasksControllers[subtask.id]!,
+                    onChangeCheckbox: (bool newVal) {
+                      subtask.done = newVal;
+                    },
                   );
                 },
                 childCount:
@@ -225,13 +271,18 @@ class _EditTaskState extends State<EditTask> {
               delegate: SliverChildListDelegate([
                 TextButton.icon(
                   onPressed: () {
-                    /// Add a new checklist to the todoitem
+                    final newSubtask = TodoSubtask(
+                      /// Create a new id for new Checklist
+                      id: const Uuid().v4(),
+                      name: "",
+                    );
+
+                    // Create new text controller
+                    subtasksControllers[newSubtask.id] =
+                        TextEditingController();
+
                     setState(() {
-                      widget.todoitem.subtasks.add(TodoSubtask(
-                        /// Create a new id for new Checklist
-                        id: const Uuid().v4(),
-                        name: "",
-                      ));
+                      widget.todoitem.subtasks.add(newSubtask);
                     });
                   },
                   icon: const Icon(Icons.add),
@@ -245,9 +296,19 @@ class _EditTaskState extends State<EditTask> {
     );
   }
 
+  @override
+  void dispose() {
+    // Dispose text controllers
+    // NOTE: This is run AFTER saving the mutated widget.todoitem is saved back to JSON
+    for (var controller in subtasksControllers.values) {
+      controller.dispose();
+    }
+
+    super.dispose();
+  }
+
   /// Select Date Function
   /// Used to pick a date for the deadline of a task
-  /// TODO: Update "selectedDate" to a variable that contains "widget.todoitem.deadline" when it's not null
   _selectDate(BuildContext context) async {
     DateTime selectedDate;
 

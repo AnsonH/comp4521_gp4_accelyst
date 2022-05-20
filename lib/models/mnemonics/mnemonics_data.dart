@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'mnemonics_data.g.dart';
@@ -86,8 +87,9 @@ class MnemonicsData {
     material.title = newTitle;
 
     // Append the updated material back to the appropriate location
-    final bool becomesEmptySubject =
-        subjectMaterials.isEmpty || subjectMaterials[sIndex].materials.isEmpty;
+    final bool becomesEmptySubject = subjectMaterials.isEmpty ||
+        subjectMaterials.length >= sIndex ||
+        subjectMaterials[sIndex].materials.isEmpty;
     appendNewMnemonic(
       subject: newSubject,
       material: material,

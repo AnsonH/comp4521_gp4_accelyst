@@ -18,6 +18,13 @@ enum TodoPriority {
   high,
 }
 
+const Map<TodoPriority, String> todoPriorityMap = {
+  TodoPriority.none: "None",
+  TodoPriority.low: "Low",
+  TodoPriority.medium: "Medium",
+  TodoPriority.high: "High",
+};
+
 /// Stores a list of all todo items. Used in the "Todo" homepage.
 @JsonSerializable()
 class TodoItems {
@@ -102,13 +109,20 @@ class TodoItem {
         : false;
   }
 
-  /// Get: returns deadline in formatted String
-  String getDeadlineString() {
-    if (priority == TodoPriority.none) return "";
-    if (deadline == null) return "";
+  /// Gets a nicely formatted deadline date (e.g., `"Wed, May 18"`)
+  String getDeadlineDate({bool showWeekday = true}) {
+    if (deadline == null) {
+      return "";
+    }
+
+    // https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
+    String dateFormat = "MMM dd";
+    if (showWeekday) {
+      dateFormat = "E, $dateFormat";
+    }
+
     DateTime d = deadline ?? DateTime.now();
-    String dateStr = DateFormat("MMM dd H:m").format(d);
-    return dateStr;
+    return DateFormat(dateFormat).format(d);
   }
 
   factory TodoItem.fromJson(Map<String, dynamic> json) =>
