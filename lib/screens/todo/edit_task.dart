@@ -40,9 +40,6 @@ class _EditTaskState extends State<EditTask> {
   }
 
   /// Updates each [TodoSubtask] instance in `widget.todoitem.subtask` array.
-  ///
-  /// This is called only when we press the save button, so that any changes will
-  /// be discarded if we leave this page without saving.
   void _updateSubtasks() {
     for (var subtask in widget.todoitem.subtasks) {
       int i = widget.todoitem.subtasks.indexWhere((e) => e.id == subtask.id);
@@ -83,40 +80,11 @@ class _EditTaskState extends State<EditTask> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Leave page?"),
-                content: const Text(
-                  "Unsaved changes will be deleted. Press the save button at the top right to save.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialog
-                    },
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close dialog
-                      Navigator.pop(context, null);
-                    },
-                    child: const Text("LEAVE"),
-                  ),
-                ],
-              ),
-            );
+            _updateSubtasks();
+            Navigator.pop(context, widget.todoitem);
           },
         ),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.save),
-            onPressed: () {
-              _updateSubtasks();
-              Navigator.pop(context, widget.todoitem);
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.delete),
             onPressed: () => showDialog(
@@ -187,8 +155,36 @@ class _EditTaskState extends State<EditTask> {
                   },
                 ),
 
-                /// Add/Edit Deadline of the Task
+                /// Priority level
                 const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Text(
+                      "Priority: ",
+                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
+                    ),
+                    DropdownButton<TodoPriority>(
+                      value: widget.todoitem.priority,
+                      items: const [
+                        TodoPriority.none,
+                        TodoPriority.low,
+                        TodoPriority.medium,
+                        TodoPriority.high,
+                      ].map<DropdownMenuItem<TodoPriority>>((value) {
+                        return DropdownMenuItem<TodoPriority>(
+                          value: value,
+                          child: Text(todoPriorityMap[value]!),
+                        );
+                      }).toList(),
+                      onChanged: (TodoPriority? newValue) {
+                        setState(() => widget.todoitem.priority = newValue!);
+                      },
+                    ),
+                  ],
+                ),
+
+                /// Add/Edit Deadline of the Task
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     Text(
