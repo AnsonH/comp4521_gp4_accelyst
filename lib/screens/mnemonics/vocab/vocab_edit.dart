@@ -54,7 +54,7 @@ class _VocabEditState extends State<VocabEdit> {
               // TODO: Add new vocab
               widget.callback(
                   vocab: Vocab(
-                      id: "Yo",
+                      id: Uuid().v1(),
                       word: _wordController.text.trim(),
                       definition: _definitionController.text.trim(),
                       description: _descriptionController.text.trim(),
@@ -98,13 +98,13 @@ class _VocabEditState extends State<VocabEdit> {
           shrinkWrap: true,
           children: [
             TextFormField(
-              decoration: const InputDecoration(labelText: "Vocab Input"),
+              decoration: const InputDecoration(labelText: "Vocab*"),
               readOnly: false,
               controller: _wordController,
             ),
             const SizedBox(height: 15),
             TextFormField(
-              decoration: const InputDecoration(labelText: "Definition"),
+              decoration: const InputDecoration(labelText: "Definition*"),
               keyboardType: TextInputType.multiline,
               maxLines: null, // Take as much lines as the input value
               readOnly: false,

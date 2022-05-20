@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 class SubjectMaterials extends StatelessWidget {
   final SubjectMaterialsData data;
   final void Function(int oldIndex, int newIndex) onReorder;
-  final void Function(String uuid, BuildContext) onTapTile;
+  final void Function(MnemonicType type, String uuid, BuildContext) onTapTile;
 
   /// Creates a section for a subject and its respective mnemonics tiles.
   const SubjectMaterials({
@@ -41,7 +41,8 @@ class SubjectMaterials extends StatelessWidget {
                 child: ListTile(
                   onTap: () {
                     final String uuid = data.materials[index].uuid;
-                    onTapTile(uuid, context);
+                    final MnemonicType type = data.materials[index].type;
+                    onTapTile(type, uuid, context);
                   },
                   title: Text(
                     data.materials[index].title,

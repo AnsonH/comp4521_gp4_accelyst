@@ -4,13 +4,16 @@ import 'package:comp4521_gp4_accelyst/models/roman_room/roman_room_storage.dart'
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/roman_room/room_recall.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list.dart';
+import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list_edit.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/nav_drawer.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/create_mnemonic_dialog.dart';
 import 'package:comp4521_gp4_accelyst/widgets/mnemonics_home/subject_materials.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class Mnemonics extends StatefulWidget {
   const Mnemonics({Key? key}) : super(key: key);
@@ -70,6 +73,15 @@ class _MnemonicsState extends State<Mnemonics> {
               break;
             case MnemonicType.vocabList:
               // TODO: Open create new vocab list page
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => VocabListEdit(
+                    isNewList: true,
+                    uuid: Uuid().v1(),
+                  ),
+                ),
+              ).then((_) => loadMnemonicsData());
               break;
             default:
               return;
@@ -79,93 +91,72 @@ class _MnemonicsState extends State<Mnemonics> {
       ),
       body: Container(
         padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ...data.subjectMaterials.map((subMaterials) {
-                return SubjectMaterials(
-                    data: subMaterials,
-                    onReorder: (int oldIndex, int newIndex) {
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        final materials = subMaterials.materials;
-                        final item = materials.removeAt(oldIndex);
-                        materials.insert(newIndex, item);
-                      });
-
-                      // Save to mnemonics.json
-                      mnemonicsStorage.saveToJson(data);
-                    },
-                    onTapTile: (String uuid, BuildContext context) async {
-                      final rrStorage = RomanRoomStorage(uuid);
-                      final json = await rrStorage.read();
-                      final romanRoom = RomanRoom.fromJson(json);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => RoomRecall(
-                            uuid: romanRoom.id,
-                          ),
-                        ),
-                      ).then((_) => loadMnemonicsData());
-                    });
-              }).toList(),
-              // Temporary links
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 50),
-                  const Text("Temporary links to forms:"),
-                  ElevatedButton.icon(
-                    label: const Text("Vocabulary"),
-                    icon: const Icon(Icons.open_in_new),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => VocabListView(
-                              vocablist: VocabList(
-                                  id: "diu",
-                                  name: "ACCT4720",
-                                  subject: "History",
-                                  description: "You Haifeng",
-                                  vocabs: [
-                                Vocab(
-                                  id: "diu1",
-                                  word: "Sharpe ratio",
-                                  definition: "Thanks Ian hard carry project",
-                                  description: "AHHHHHHHHHHHHHHHHH",
-                                  vocabSegments: [
-                                    VocabSegment(
-                                        segment: "Sharp", word: "sharp"),
-                                    VocabSegment(
-                                        segment: "e",
-                                        word:
-                                            "FFFFFFFFFFUUUUUUUUUUCCCCCCCCCCCKKKKKKKKKKK"),
-                                    VocabSegment(
-                                        segment: "ratio", word: "racist"),
-                                  ],
-                                ),
-                                Vocab(
-                                  id: "shit",
-                                  word: "Project",
-                                  definition: "Something without standards",
-                                  description: "Yay!",
-                                  vocabSegments: [],
-                                ),
-                              ])),
-                        ),
-                      );
-                    },
-                  )
+        child: (data.subjectMaterials.isEmpty)
+            ? Column(
+                children: const [
+                  Center(
+                    child: Text(
+                      "Press the + button to add new study materials!",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              )
+            : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ...data.subjectMaterials.map((subMaterials) {
+                      return SubjectMaterials(
+                          data: subMaterials,
+                          onReorder: (int oldIndex, int newIndex) {
+                            setState(() {
+                              if (oldIndex < newIndex) {
+                                newIndex -= 1;
+                              }
+                              final materials = subMaterials.materials;
+                              final item = materials.removeAt(oldIndex);
+                              materials.insert(newIndex, item);
+                            });
+
+                            // Save to mnemonics.json
+                            mnemonicsStorage.saveToJson(data);
+                          },
+                          onTapTile: (MnemonicType type, String uuid,
+                              BuildContext context) async {
+                            switch (type) {
+                              case MnemonicType.romanRoom:
+                                final rrStorage = RomanRoomStorage(uuid);
+                                final json = await rrStorage.read();
+                                final romanRoom = RomanRoom.fromJson(json);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) => RoomRecall(
+                                      uuid: romanRoom.id,
+                                    ),
+                                  ),
+                                ).then((_) => loadMnemonicsData());
+                                break;
+                              case MnemonicType.vocabList:
+                                final vocabListStorage = VocabStorage(uuid);
+                                final json = await vocabListStorage.read();
+                                final vocabList = VocabList.fromJson(json);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (context) =>
+                                        VocabListView(vocablist: vocabList),
+                                  ),
+                                ).then((_) => loadMnemonicsData());
+                                break;
+                            }
+                          });
+                    }).toList(),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

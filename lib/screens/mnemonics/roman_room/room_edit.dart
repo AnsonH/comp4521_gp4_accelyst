@@ -105,6 +105,7 @@ class _RoomEditState extends State<RoomEdit> {
       storageService.save(json);
 
       // Append room into MnemonicsData
+
       final mnemonicsStorage = MnemonicsStorage();
       final mnemonicsData = await mnemonicsStorage.loadJsonData();
       if (widget.isNewRoom) {

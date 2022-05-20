@@ -42,6 +42,35 @@ class _EditTaskState extends State<EditTask> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.teal[700],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Leave page?"),
+                content: const Text(
+                  "Unsaved changes will be discard. Press the save button at the top right to save.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                    },
+                    child: const Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close dialog
+                      Navigator.pop(context, null);
+                    },
+                    child: const Text("LEAVE"),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
         actions: <Widget>[
           /// TODO: Make the Back button prompt the alert dialog for discarding the changes
           IconButton(
@@ -137,13 +166,26 @@ class _EditTaskState extends State<EditTask> {
                     const Expanded(child: SizedBox()),
                     TextButton.icon(
                       icon: const Icon(Icons.date_range),
-                      label: const Text("Set Deadline"),
+                      label: const Text("Change"),
                       onPressed: () {
                         setState(() {
                           _selectDate(context);
                         });
                       },
                     ),
+                    if (widget.todoitem.deadline != null)
+                      TextButton.icon(
+                        icon: const Icon(Icons.delete),
+                        label: const Text("Delete"),
+                        onPressed: () {
+                          setState(() {
+                            widget.todoitem.deadline = null;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          primary: Colors.red[600],
+                        ),
+                      ),
                   ],
                 ),
 

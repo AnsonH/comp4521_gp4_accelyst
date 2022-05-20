@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:comp4521_gp4_accelyst/screens/app_screen.dart';
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
+import 'package:comp4521_gp4_accelyst/utils/init_samples_files.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/notification_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/indexed_transition_switcher.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    // Initialize sample files for mnemonics and to-do list
+    initSampleFiles();
+
     super.initState();
 
     NotificationService.listenActions((notification) {

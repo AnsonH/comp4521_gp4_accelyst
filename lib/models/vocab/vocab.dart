@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'vocab.g.dart';
+
+@JsonSerializable()
 class VocabSegment {
   String segment;
   String word;
@@ -19,8 +24,14 @@ class VocabSegment {
   }
 
   VocabSegment({required this.segment, required this.word});
+
+  factory VocabSegment.fromJson(Map<String, dynamic> json) =>
+      _$VocabSegmentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VocabSegmentToJson(this);
 }
 
+@JsonSerializable()
 class Vocab {
   final String id;
   String word;
@@ -36,6 +47,10 @@ class Vocab {
     required this.description,
     required this.vocabSegments,
   });
+
+  factory Vocab.fromJson(Map<String, dynamic> json) => _$VocabFromJson(json);
+
+  Map<String, dynamic> toJson() => _$VocabToJson(this);
 
   get getWord {
     return word;

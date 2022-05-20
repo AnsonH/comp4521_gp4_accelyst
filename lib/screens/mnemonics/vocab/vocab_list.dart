@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
+import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_list_edit.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_recall.dart';
 import 'package:flutter/material.dart';
@@ -84,11 +83,16 @@ class _VocabListViewState extends State<VocabListView> {
                       builder: (BuildContext context) =>
                           // VocabListEdit(id: vocablist.id),
                           VocabListEdit(
-                        vocablist: vocablist,
-                        callback: editList,
+                        isNewList: false,
+                        uuid: vocablist.id,
                       ),
                     ),
-                  );
+                  ).then((_) async {
+                    final storageService = VocabStorage(vocablist.id);
+                    vocablist = VocabList.fromJson(await storageService.read());
+                  }).then((_) {
+                    setState(() {});
+                  });
                 }
                 value = "";
               },
