@@ -30,10 +30,20 @@ class VocabStorage extends StorageService {
 
     // TODO: Delete all vocab audio
     for (Vocab vocab in vocabList.vocabs) {
-      // vocab.imageFile?.deleteSync();
+      File(StorageService.directory.path +
+          "/" +
+          datapath +
+          "/audio/" +
+          vocab.id +
+          ".mp3");
     }
 
     final jsonFile = File(getFilePath);
     jsonFile.deleteSync();
+  }
+
+  void deleteVocabAudio() {
+    File(StorageService.directory.path + "/" + datapath + "/" + getFilePath)
+        .deleteSync();
   }
 }

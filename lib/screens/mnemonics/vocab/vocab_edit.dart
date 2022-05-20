@@ -1,5 +1,6 @@
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
+import 'package:comp4521_gp4_accelyst/widgets/vocab_list/audio/audio_recorder.dart';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -19,6 +20,7 @@ class VocabEdit extends StatefulWidget {
 }
 
 class _VocabEditState extends State<VocabEdit> {
+  final String id = const Uuid().v1();
   final _wordController = TextEditingController();
   final _subjectController = TextEditingController();
   final _definitionController = TextEditingController();
@@ -63,7 +65,7 @@ class _VocabEditState extends State<VocabEdit> {
               // TODO: Add new vocab
               widget.callback(
                   vocab: Vocab(
-                      id: Uuid().v1(),
+                      id: id,
                       word: _wordController.text.trim(),
                       definition: _definitionController.text.trim(),
                       description: _descriptionController.text.trim(),
@@ -136,6 +138,7 @@ class _VocabEditState extends State<VocabEdit> {
                   fontWeight: FontWeight.bold,
                 )),
             // Story audio
+            VocabAudioRecorder(vocabAudioPath: "/audio/$id.mp3"),
             const SizedBox(height: 20),
             Row(
               children: const <Widget>[

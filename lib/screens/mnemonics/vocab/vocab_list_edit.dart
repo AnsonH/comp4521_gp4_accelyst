@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_data.dart';
 import 'package:comp4521_gp4_accelyst/models/mnemonics/mnemonics_storage.dart';
@@ -6,6 +7,7 @@ import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_edit.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/local_storage_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
 
 import 'package:flutter/material.dart';
@@ -170,6 +172,15 @@ class _VocabListEditState extends State<VocabListEdit> {
     Navigator.pop(context); // Exit "Vocab List View" screen
   }
 
+  void _deleteLastVocab() {
+    final lastVocab = _vocabs.last;
+    final vocabAudioStorage = VocabStorage(lastVocab.id, isAudio: true);
+    vocabAudioStorage.deleteVocabAudio();
+    setState(() {
+      _vocabs.removeLast();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -299,9 +310,7 @@ class _VocabListEditState extends State<VocabListEdit> {
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) =>
-                        // VocabListEdit(id: vocablist.id),
-                        VocabEdit(
+                    builder: (BuildContext context) => VocabEdit(
                       callback: addVocab,
                     ),
                   ),
@@ -313,10 +322,7 @@ class _VocabListEditState extends State<VocabListEdit> {
               onPressed: (_vocabs.isEmpty)
                   ? null
                   : () {
-                      if (_vocabs.length == 0) return;
-                      setState(() {
-                        _vocabs.removeLast();
-                      });
+                      _deleteLastVocab();
                     },
             ),
           ],
