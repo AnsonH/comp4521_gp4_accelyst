@@ -5,26 +5,72 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:comp4521_gp4_accelyst/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:comp4521_gp4_accelyst/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Main Test Cases',
+
+      /// 'Test Case 1: Timer Page (Home + Timer Settings)'
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Testing
+    expect(find.text('Timer'), findsOneWidget);
+    expect(find.text('START'), findsOneWidget);
+    expect(find.byIcon(Icons.tune), findsOneWidget);
+    expect(find.byIcon(Icons.music_note), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    /// 'Test Case 3: Navigation Drawer'
+    // Open the Navigation Drawer
+    //await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byIcon(Icons.menu));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Testing
+    expect(find.text('Todo'), findsOneWidget);
+    expect(find.text('Mnemonics'), findsOneWidget);
+    expect(find.text('Settings'), findsOneWidget);
+
+    ///'Test Case 4: To-do (To-do Page)'
+    // Goes to the To-do Page
+    await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pump();
+    await tester.tap(find.text('Todo'));
+    await tester.pump();
+
+    Widget checkbox = Checkbox(
+        value: false,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        onChanged: (bool? newValue) {});
+
+    // Testing
+    expect(find.text('Todo'), findsOneWidget);
+
+    ///'Test Case 5: Mnemonics'
+    // Goes to the To-do Page
+    await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pump();
+    await tester.tap(find.text('Mnemonics'));
+    await tester.pump();
+
+    // Testing
+    expect(find.text('Mnemonics'), findsOneWidget);
+
+    ///'Test Case 6: Settings'
+    // Goes to the To-do Page
+    await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byIcon(Icons.menu));
+    await tester.pump();
+    await tester.tap(find.text('Settings'));
+    await tester.pump();
+
+    // Testing
+    expect(find.text('Settings'), findsOneWidget);
   });
 }

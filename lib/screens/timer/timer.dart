@@ -309,115 +309,120 @@ class _TimerState extends State<Timer> with WidgetsBindingObserver {
               fit: BoxFit.cover,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TimerIconButton(
-                    icon: Icons.tune,
-                    onPressed: timerState.stage == TimerStage.stop
-                        ? () => _showSettingsBottomSheet()
-                        : null,
-                  ),
-                  const SizedBox(width: 50),
-                  TimerIconButton(
-                    icon: Icons.music_note,
-                    onPressed: () => showModalBottomSheet(
-                      context: context,
-                      builder: (context) => AmbientBottomSheet(
-                        initialIndex: ambientIndex,
-                        onPressed: (index) => _playAmbientSound(index),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TimerIconButton(
+                        icon: Icons.tune,
+                        onPressed: timerState.stage == TimerStage.stop
+                            ? () => _showSettingsBottomSheet()
+                            : null,
                       ),
-                    ),
+                      const SizedBox(width: 50),
+                      TimerIconButton(
+                        icon: Icons.music_note,
+                        onPressed: () => showModalBottomSheet(
+                          context: context,
+                          builder: (context) => AmbientBottomSheet(
+                            initialIndex: ambientIndex,
+                            onPressed: (index) => _playAmbientSound(index),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 15),
-              Stack(
-                alignment: AlignmentDirectional.center,
-                children: <Widget>[
-                  if (timerState.pomodoroMode)
-                    PomodoroLabel(
-                      timerState: timerState,
-                      timerSize: timerSize,
-                    ),
-                  Offstage(
-                    offstage: timerState.stage != TimerStage.stop,
-                    // https://pub.dev/packages/sleek_circular_slider
-                    child: SleekCircularSlider(
-                      min: minTimerDuration.toDouble(), // in minutes
-                      max: maxTimerDuration.toDouble(),
-                      initialValue: timerState.sessionDuration.toDouble(),
-                      onChangeEnd: (double mins) {
-                        final duration = mins.toInt();
-                        setState(() => timerState.sessionDuration = duration);
-                        // Update timer duration
-                        _resetTimer(duration: duration * 60);
-                      },
-                      appearance: CircularSliderAppearance(
-                        startAngle: 270,
-                        angleRange: 350,
-                        size: timerSize + sliderWidth,
-                        animationEnabled: false,
-                        customWidths: CustomSliderWidths(
-                          trackWidth: 5,
-                          progressBarWidth: sliderWidth,
-                          shadowWidth: sliderWidth * 2,
+                  const SizedBox(height: 15),
+                  Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: <Widget>[
+                      if (timerState.pomodoroMode)
+                        PomodoroLabel(
+                          timerState: timerState,
+                          timerSize: timerSize,
                         ),
-                        customColors: CustomSliderColors(
-                          dotColor: Colors.black,
-                          trackColor: ringColor,
-                          progressBarColors: [
-                            fillColor,
-                            Colors.amber.shade800,
-                          ],
-                          dynamicGradient: true,
-                          shadowColor: Colors.amber,
-                          shadowMaxOpacity: 0.05,
-                        ),
-                        // Slider value
-                        infoProperties: InfoProperties(
-                          mainLabelStyle: timerTextStyles,
-                          modifier: (double mins) {
-                            return constructTime(mins.toInt() * 60);
+                      Offstage(
+                        offstage: timerState.stage != TimerStage.stop,
+                        // https://pub.dev/packages/sleek_circular_slider
+                        child: SleekCircularSlider(
+                          min: minTimerDuration.toDouble(), // in minutes
+                          max: maxTimerDuration.toDouble(),
+                          initialValue: timerState.sessionDuration.toDouble(),
+                          onChangeEnd: (double mins) {
+                            final duration = mins.toInt();
+                            setState(
+                                () => timerState.sessionDuration = duration);
+                            // Update timer duration
+                            _resetTimer(duration: duration * 60);
                           },
+                          appearance: CircularSliderAppearance(
+                            startAngle: 270,
+                            angleRange: 350,
+                            size: timerSize + sliderWidth,
+                            animationEnabled: false,
+                            customWidths: CustomSliderWidths(
+                              trackWidth: 5,
+                              progressBarWidth: sliderWidth,
+                              shadowWidth: sliderWidth * 2,
+                            ),
+                            customColors: CustomSliderColors(
+                              dotColor: Colors.black,
+                              trackColor: ringColor,
+                              progressBarColors: [
+                                fillColor,
+                                Colors.amber.shade800,
+                              ],
+                              dynamicGradient: true,
+                              shadowColor: Colors.amber,
+                              shadowMaxOpacity: 0.05,
+                            ),
+                            // Slider value
+                            infoProperties: InfoProperties(
+                              mainLabelStyle: timerTextStyles,
+                              modifier: (double mins) {
+                                return constructTime(mins.toInt() * 60);
+                              },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  Offstage(
-                    offstage: timerState.stage == TimerStage.stop,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: sliderWidth / 2),
-                        CircularTimer(
-                          controller: _timerController,
-                          duration: timerState.sessionDuration * 60,
-                          size: timerSize,
-                          fillColor: fillColor,
-                          ringColor: ringColor,
-                          textStyle: timerTextStyles,
-                          onComplete: _onTimerComplete,
+                      Offstage(
+                        offstage: timerState.stage == TimerStage.stop,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: sliderWidth / 2),
+                            CircularTimer(
+                              controller: _timerController,
+                              duration: timerState.sessionDuration * 60,
+                              size: timerSize,
+                              fillColor: fillColor,
+                              ringColor: ringColor,
+                              textStyle: timerTextStyles,
+                              onComplete: _onTimerComplete,
+                            ),
+                            const SizedBox(height: sliderWidth / 2),
+                          ],
                         ),
-                        const SizedBox(height: sliderWidth / 2),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 30),
+                  TimerControls(
+                    timerState: timerState,
+                    onPressedStart: _startTimer,
+                    onPressedPause: _pauseTimer,
+                    onPressedResume: _resumeTimer,
+                    onPressedReset: _showResetTimerDialog,
+                    onPressedStopAlarm: _stopAlarmOnComplete,
+                  ),
+                  const SizedBox(height: 25),
                 ],
               ),
-              const SizedBox(height: 30),
-              TimerControls(
-                timerState: timerState,
-                onPressedStart: _startTimer,
-                onPressedPause: _pauseTimer,
-                onPressedResume: _resumeTimer,
-                onPressedReset: _showResetTimerDialog,
-                onPressedStopAlarm: _stopAlarmOnComplete,
-              ),
-              const SizedBox(height: 25),
-            ],
+            ),
           ),
         ),
       ),
