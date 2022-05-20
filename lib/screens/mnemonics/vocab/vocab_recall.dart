@@ -55,127 +55,147 @@ class _VocabRecallState extends State<VocabRecall> {
       appBar: AppBar(
         title: Text("Revision - ${vocablist.name}"),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 40),
-            Text(
-              currentVocab.word,
-              style: TextStyle(
-                fontSize: 50,
-                fontWeight: FontWeight.bold,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 40),
+                    Text(
+                      currentVocab.word,
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 35),
+                    currentVocab.vocabSegments.length > 0
+                        ? ElevatedButton(
+                            child: Text(
+                                "${_showSegments ? "Hide" : "Show"} Segments"),
+                            onPressed: () {
+                              setState(() {
+                                _showSegments = !_showSegments;
+                              });
+                            },
+                          )
+                        : Container(),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _showSegments
+                          ? [
+                              Row(
+                                children: const <Widget>[
+                                  Expanded(
+                                      child: Text(
+                                    "Segment",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                  Expanded(
+                                      child: Text(
+                                    "Word",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                ],
+                              ),
+                              const SizedBox(height: 15),
+                              ...getVocabSegmentList(),
+                            ]
+                          : [],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    const SizedBox(height: 15),
+                    ElevatedButton(
+                        child: Text("${_showStory ? "Hide" : "Show"} Story"),
+                        onPressed: () {
+                          setState(() {
+                            _showStory = !_showStory;
+                          });
+                        }),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _showStory
+                          ? [
+                              Text(
+                                "Story",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              VocabAudioPlayer(
+                                vocabAudioPath: currentVocab.getStoryAudioPath,
+                              ),
+                            ]
+                          : [],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    const SizedBox(height: 15),
+                    ElevatedButton(
+                        child: Text(
+                            "${_showDescription ? "Hide" : "Show"} Description"),
+                        onPressed: () {
+                          setState(() {
+                            _showDescription = !_showDescription;
+                          });
+                        }),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _showDescription
+                          ? [
+                              Text("Description",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 10),
+                              Text(currentVocab.description),
+                            ]
+                          : [],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    const SizedBox(height: 15),
+                    ElevatedButton(
+                        child: Text("${_showAnswer ? "Hide" : "Show"} Answer"),
+                        onPressed: () {
+                          setState(() {
+                            _showAnswer = !_showAnswer;
+                          });
+                        }),
+                    Column(
+                      children: _showAnswer
+                          ? [
+                              Text("Definition",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 10),
+                              Text(currentVocab.definition),
+                            ]
+                          : [],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                  ],
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 35),
-            currentVocab.vocabSegments.length > 0
-                ? ElevatedButton(
-                    child: Text("${_showSegments ? "Hide" : "Show"} Segments"),
-                    onPressed: () {
-                      setState(() {
-                        _showSegments = !_showSegments;
-                      });
-                    },
-                  )
-                : Container(),
-            Column(
-              children: _showSegments
-                  ? [
-                      Row(
-                        children: const <Widget>[
-                          Expanded(
-                              child: Text(
-                            "Segment",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          )),
-                          Expanded(
-                              child: Text(
-                            "Word",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          )),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      ...getVocabSegmentList(),
-                    ]
-                  : [],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
-            const SizedBox(height: 15),
-            ElevatedButton(
-                child: Text("${_showStory ? "Hide" : "Show"} Story"),
-                onPressed: () {
-                  setState(() {
-                    _showStory = !_showStory;
-                  });
-                }),
-            Column(
-              children: _showStory
-                  ? [
-                      Text(
-                        "Story",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      VocabAudioPlayer(
-                        vocabAudioPath: currentVocab.getStoryAudioPath,
-                      ),
-                    ]
-                  : [],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
-            const SizedBox(height: 15),
-            ElevatedButton(
-                child:
-                    Text("${_showDescription ? "Hide" : "Show"} Description"),
-                onPressed: () {
-                  setState(() {
-                    _showDescription = !_showDescription;
-                  });
-                }),
-            Column(
-              children: _showDescription
-                  ? [
-                      Text("Description",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 10),
-                      Text(currentVocab.description),
-                    ]
-                  : [],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
-            const SizedBox(height: 15),
-            ElevatedButton(
-                child: Text("${_showAnswer ? "Hide" : "Show"} Answer"),
-                onPressed: () {
-                  setState(() {
-                    _showAnswer = !_showAnswer;
-                  });
-                }),
-            Column(
-              children: _showAnswer
-                  ? [
-                      Text("Definition",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 10),
-                      Text(currentVocab.definition),
-                    ]
-                  : [],
-              crossAxisAlignment: CrossAxisAlignment.start,
-            ),
-            Expanded(child: Container()),
-            ElevatedButton(
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
                 child: Text((vocabIdx + 1 != vocablist.vocabs.length)
                     ? "Next Word"
                     : "Close"),
@@ -193,10 +213,8 @@ class _VocabRecallState extends State<VocabRecall> {
                     }
                   });
                 }),
-          ],
-          // mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-        ),
+          ),
+        ],
       ),
     );
   }
