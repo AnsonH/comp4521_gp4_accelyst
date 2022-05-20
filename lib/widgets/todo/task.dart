@@ -130,14 +130,12 @@ class _TaskState extends State<Task> {
                         children: <Widget>[
                           /// Task Deadline
                           ///   If Deadline is NULL then do NOT display the deadline
-                          /// Todo: Apply the Deadline variable (with the Format below)
                           (todoitem.deadline != null)
                               ? Row(
                                   children: [
                                     Text(
                                       DateFormat.MMMMd()
                                           .format(todoitem.deadline!),
-                                      // todoitem.deadline!.toString(),
                                       style: TextStyle(color: primaryColor),
                                     ),
                                     const SizedBox(width: 10)
@@ -192,7 +190,6 @@ class _TaskState extends State<Task> {
 
                       /// Shows the Existing/Created Checklists/Subtasks
                       ...todoitem.subtasks.map((subtask) {
-                        /// TODO: Pass the done value to the function
                         return ReadChecklist(
                           id: subtask.id,
                           checklistName: subtask.name,
@@ -233,7 +230,6 @@ class _TaskState extends State<Task> {
                             child: const Text("Edit"),
                           ),
 
-                          /// TODO: Add the Delete function to each task (similar to subtask)
                           TextButton(
                             onPressed: () {
                               showAlertDialog(context, widget.onDelete);
