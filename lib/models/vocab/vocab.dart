@@ -85,6 +85,6 @@ class Vocab {
   }
 
   get getStoryAudioPath {
-    return "audio/" + id + ".mp3";
+    return "audio/" + id + ".m4a";
   }
 }

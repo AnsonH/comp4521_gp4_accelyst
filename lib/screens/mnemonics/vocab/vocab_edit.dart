@@ -138,7 +138,7 @@ class _VocabEditState extends State<VocabEdit> {
                   fontWeight: FontWeight.bold,
                 )),
             // Story audio
-            VocabAudioRecorder(vocabAudioPath: "audio/$id.mp3"),
+            VocabAudioRecorder(vocabAudioPath: "audio/$id.m4a"),
             const SizedBox(height: 20),
             Row(
               children: const <Widget>[

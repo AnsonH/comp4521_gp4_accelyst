@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:comp4521_gp4_accelyst/utils/constants/theme_data.dart';
 import 'package:comp4521_gp4_accelyst/utils/services/local_storage_service.dart';
@@ -49,6 +50,14 @@ class _VocabAudioRecorderState extends State<VocabAudioRecorder> {
   @override
   void initState() {
     super.initState();
+    vocabAudioPath += "/vocab-list-data/" + widget.vocabAudioPath;
+    _audioRecorder.hasPermission().then((bool hasPermission) {
+      if (hasPermission) {
+        setState(() {
+          _recorderStatus = RecorderStatus.idle;
+        });
+      }
+    });
   }
 
   /// Helper function to choose the correct button icon for use
@@ -95,11 +104,15 @@ class _VocabAudioRecorderState extends State<VocabAudioRecorder> {
     _timer?.cancel();
     _ampTimer?.cancel();
 
-    final path = await _audioRecorder.stop();
+    final cachePath = await _audioRecorder.stop();
 
-    debugPrint(path!);
+    debugPrint(cachePath!);
+    debugPrint(vocabAudioPath);
 
-    // TODO: save audio to mp3
+    // Save audio to m4a
+    File(cachePath).renameSync(vocabAudioPath);
+    showSnackbarMessage(context,
+        success: true, message: "Story saved successfully.");
 
     setState(() {
       _recorderStatus = RecorderStatus.idle;
@@ -129,50 +142,56 @@ class _VocabAudioRecorderState extends State<VocabAudioRecorder> {
   Widget build(BuildContext context) {
     return Card(
       color: secondaryColor,
-      child: (_recorderStatus == RecorderStatus.notReady)
-          ? const Text("Loading audio recorder ...")
-          : (_recorderStatus == RecorderStatus.error)
-              ? const Text("Unable to load recorder.")
-              : Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        getIcon(),
-                        // size: 25,
+      child: Padding(
+        padding: EdgeInsets.all(15),
+        child: (_recorderStatus == RecorderStatus.notReady)
+            ? const Text("Loading audio recorder ...")
+            : (_recorderStatus == RecorderStatus.error)
+                ? const Text("Unable to load recorder.")
+                : Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          getIcon(),
+                          // size: 25,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            switch (_recorderStatus) {
+                              // Originally is recording, switch to idle
+                              case RecorderStatus.recording:
+                                _stopRecording();
+                                break;
+                              // Originally is idle, switch to start recording
+                              case RecorderStatus.idle:
+                                _startRecording();
+                                break;
+                              default:
+                            }
+                          });
+                        },
+                        iconSize: 60,
+                        enableFeedback: false,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          switch (_recorderStatus) {
-                            // Originally is recording, switch to idle
-                            case RecorderStatus.recording:
-                              _stopRecording();
-                              break;
-                            // Originally is idle, switch to start recording
-                            case RecorderStatus.idle:
-                              _startRecording();
-                              break;
-                            default:
-                          }
-                        });
-                      },
-                      iconSize: 50,
-                      enableFeedback: false,
-                    ),
-                    Text(
-                      "${_recordDuration / 60}:${((_recordDuration < 10) ? "0" : "") + _recordDuration.toString()}",
-                      style: TextStyle(fontSize: 40),
-                    ),
-                    // Expanded(
-                    //   child: Slider(
-                    //     value: pos.inMilliseconds.toDouble(),
-                    //     max: length.inMilliseconds.toDouble(),
-                    //     onChanged: (double sliderPos) {
-                    //       _slideAudio(sliderPos);
-                    //     },
-                    //   ),
-                    // ),
-                  ],
-                ),
+                      Expanded(child: Container()),
+                      Text(
+                        "${_recordDuration ~/ 60}:${((_recordDuration < 10) ? "0" : "") + _recordDuration.toString()}",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(fontSize: 50),
+                      ),
+                      const SizedBox(width: 20),
+                      // Expanded(
+                      //   child: Slider(
+                      //     value: pos.inMilliseconds.toDouble(),
+                      //     max: length.inMilliseconds.toDouble(),
+                      //     onChanged: (double sliderPos) {
+                      //       _slideAudio(sliderPos);
+                      //     },
+                      //   ),
+                      // ),
+                    ],
+                  ),
+      ),
     );
   }
 

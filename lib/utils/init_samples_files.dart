@@ -52,15 +52,15 @@ Future<void> initSampleFiles() async {
     // Vocab 1 audio
     copyFile(
         oldPath:
-            "assets/samples/vocablist/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3",
+            "assets/samples/vocablist/10f8bfd0-d791-11ec-bfda-6f30d458013e.m4a",
         newPath:
-            "$path/vocab-list-data/audio/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3");
+            "$path/vocab-list-data/audio/10f8bfd0-d791-11ec-bfda-6f30d458013e.m4a");
     // Vocab 2 audio
     copyFile(
         oldPath:
-            "assets/samples/vocablist/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3",
+            "assets/samples/vocablist/72e283c0-d791-11ec-ac24-8747ed2bcf31.m4a",
         newPath:
-            "$path/vocab-list-data/audio/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3");
+            "$path/vocab-list-data/audio/72e283c0-d791-11ec-ac24-8747ed2bcf31.m4a");
   }
 }
 
