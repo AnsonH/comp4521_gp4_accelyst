@@ -17,14 +17,10 @@ class RomanRoomItem {
   /// Reference to the image stored in the file system.
   File? imageFile;
 
-  /// Image URL if it has an online copy.
-  String? url;
-
   RomanRoomItem({
     required this.id,
     this.description,
     this.imageFile,
-    this.url,
   });
 
   factory RomanRoomItem.fromJson(Map<String, dynamic> json) =>

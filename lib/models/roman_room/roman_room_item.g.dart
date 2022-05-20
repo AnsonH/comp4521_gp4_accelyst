@@ -12,7 +12,6 @@ RomanRoomItem _$RomanRoomItemFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
       imageFile:
           const FileJsonConverter().fromJson(json['imageFile'] as String),
-      url: json['url'] as String?,
     );
 
 Map<String, dynamic> _$RomanRoomItemToJson(RomanRoomItem instance) =>
@@ -20,5 +19,4 @@ Map<String, dynamic> _$RomanRoomItemToJson(RomanRoomItem instance) =>
       'id': instance.id,
       'description': instance.description,
       'imageFile': const FileJsonConverter().toJson(instance.imageFile),
-      'url': instance.url,
     };
