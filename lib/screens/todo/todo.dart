@@ -37,8 +37,7 @@ class _TodoState extends State<Todo> {
     setState(() => data = loadedData);
   }
 
-  /// This function deletes the corresponding Task.
-  /// Called when the delete button in the bottom popup bar is clicked for each task
+  /// Deletes the corresponding task in `data` and saves to JSON.
   Future<void> deleteTaskData(String id) async {
     setState(() {
       data.todoItems.removeWhere((element) => element.id == id);
@@ -114,6 +113,9 @@ class _TodoState extends State<Todo> {
 
               // Force re-render as `todoitem` is mutated
               setState(() {});
+            } else {
+              // Delete the `newTask` from JSON
+              deleteTaskData(newTask.id);
             }
           });
         },
