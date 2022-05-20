@@ -187,8 +187,36 @@ class _EditTaskState extends State<EditTask> {
                   },
                 ),
 
-                /// Add/Edit Deadline of the Task
+                /// Priority level
                 const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Text(
+                      "Priority: ",
+                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
+                    ),
+                    DropdownButton<TodoPriority>(
+                      value: widget.todoitem.priority,
+                      items: const [
+                        TodoPriority.none,
+                        TodoPriority.low,
+                        TodoPriority.medium,
+                        TodoPriority.high,
+                      ].map<DropdownMenuItem<TodoPriority>>((value) {
+                        return DropdownMenuItem<TodoPriority>(
+                          value: value,
+                          child: Text(todoPriorityMap[value]!),
+                        );
+                      }).toList(),
+                      onChanged: (TodoPriority? newValue) {
+                        setState(() => widget.todoitem.priority = newValue!);
+                      },
+                    ),
+                  ],
+                ),
+
+                /// Add/Edit Deadline of the Task
+                const SizedBox(height: 5),
                 Row(
                   children: [
                     Text(

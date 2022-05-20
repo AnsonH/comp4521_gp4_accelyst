@@ -18,6 +18,13 @@ enum TodoPriority {
   high,
 }
 
+const Map<TodoPriority, String> todoPriorityMap = {
+  TodoPriority.none: "None",
+  TodoPriority.low: "Low",
+  TodoPriority.medium: "Medium",
+  TodoPriority.high: "High",
+};
+
 /// Stores a list of all todo items. Used in the "Todo" homepage.
 @JsonSerializable()
 class TodoItems {
