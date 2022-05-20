@@ -14,7 +14,7 @@ class VocabStorage extends StorageService {
     super
         .initialize(
       datapath: "vocab-list-data" + (isAudio ? "/audio" : ""),
-      filename: "$filenameNoExt.${isAudio ? "mp3" : "json"}",
+      filename: "$filenameNoExt.${isAudio ? "m4a" : "json"}",
     )
         .then((_) {
       if (callback != null) {
@@ -30,13 +30,21 @@ class VocabStorage extends StorageService {
 
     // TODO: Delete all vocab audio
     for (Vocab vocab in vocabList.vocabs) {
-      File(StorageService.directory.path +
+      if (File(StorageService.directory.path +
               "/" +
               datapath +
               "/audio/" +
               vocab.id +
               ".m4a")
-          .deleteSync();
+          .existsSync()) {
+        File(StorageService.directory.path +
+                "/" +
+                datapath +
+                "/audio/" +
+                vocab.id +
+                ".m4a")
+            .deleteSync();
+      }
     }
 
     final jsonFile = File(getFilePath);
@@ -44,7 +52,10 @@ class VocabStorage extends StorageService {
   }
 
   void deleteVocabAudio() {
-    File(StorageService.directory.path + "/" + datapath + "/" + getFilePath)
-        .deleteSync();
+    if (File(StorageService.directory.path + "/" + datapath + "/" + getFilePath)
+        .existsSync()) {
+      File(StorageService.directory.path + "/" + datapath + "/" + getFilePath)
+          .deleteSync();
+    }
   }
 }

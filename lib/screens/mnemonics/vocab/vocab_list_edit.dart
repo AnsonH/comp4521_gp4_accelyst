@@ -174,8 +174,8 @@ class _VocabListEditState extends State<VocabListEdit> {
 
   void _deleteLastVocab() {
     final lastVocab = _vocabs.last;
-    final vocabAudioStorage = VocabStorage(lastVocab.id, isAudio: true);
-    vocabAudioStorage.deleteVocabAudio();
+    // final vocabAudioStorage = VocabStorage(lastVocab.id, isAudio: true);
+    // vocabAudioStorage.deleteVocabAudio();
     setState(() {
       _vocabs.removeLast();
     });

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
+import 'package:comp4521_gp4_accelyst/utils/services/local_storage_service.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
 import 'package:comp4521_gp4_accelyst/widgets/vocab_list/audio/audio_recorder_new.dart';
 
@@ -48,6 +51,22 @@ class _VocabEditState extends State<VocabEdit> {
       appBar: AppBar(
         backgroundColor: Colors.teal[700],
         title: const Text("Add Vocab"),
+        leading: BackButton(
+          onPressed: () {
+            if (File(StorageService.directory.path +
+                    "/vocab-list-data/audio/" +
+                    id +
+                    ".m4a")
+                .existsSync()) {
+              File(StorageService.directory.path +
+                      "/vocab-list-data/audio/" +
+                      id +
+                      ".m4a")
+                  .deleteSync();
+            }
+            Navigator.maybePop(context);
+          },
+        ),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.save),
@@ -62,7 +81,16 @@ class _VocabEditState extends State<VocabEdit> {
                     success: false, message: "Definition is required!");
                 return;
               }
-              // TODO: Add new vocab
+              if (!File(StorageService.directory.path +
+                      "/vocab-list-data/audio/" +
+                      id +
+                      ".m4a")
+                  .existsSync()) {
+                showSnackbarMessage(context,
+                    success: false, message: "Story audio is required!");
+                return;
+              }
+              // Add new vocab
               widget.callback(
                   vocab: Vocab(
                       id: id,

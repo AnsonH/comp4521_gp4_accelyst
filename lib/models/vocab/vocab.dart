@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:comp4521_gp4_accelyst/utils/services/local_storage_service.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'vocab.g.dart';
@@ -86,5 +89,11 @@ class Vocab {
 
   get getStoryAudioPath {
     return "audio/" + id + ".m4a";
+  }
+
+  bool vocabStoryExists() {
+    String path =
+        StorageService.directory.path + "/vocab-list-data/" + getStoryAudioPath;
+    return File(path).existsSync();
   }
 }
