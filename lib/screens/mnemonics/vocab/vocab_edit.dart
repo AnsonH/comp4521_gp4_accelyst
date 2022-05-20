@@ -1,6 +1,6 @@
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
-import 'package:comp4521_gp4_accelyst/widgets/vocab_list/audio/audio_recorder.dart';
+import 'package:comp4521_gp4_accelyst/widgets/vocab_list/audio/audio_recorder_new.dart';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -138,7 +138,7 @@ class _VocabEditState extends State<VocabEdit> {
                   fontWeight: FontWeight.bold,
                 )),
             // Story audio
-            VocabAudioRecorder(vocabAudioPath: "/audio/$id.mp3"),
+            VocabAudioRecorder(vocabAudioPath: "audio/$id.mp3"),
             const SizedBox(height: 20),
             Row(
               children: const <Widget>[
@@ -192,35 +192,42 @@ class _VocabEditState extends State<VocabEdit> {
             const SizedBox(height: 20),
             ElevatedButton(
               child: const Text("Add Segment"),
-              onPressed: (_vocabSegmentsControllers.length > 0 &&
-                      _vocabSegmentsControllers[
-                                  _vocabSegmentsControllers.length - 1][0]
-                              .text
-                              .trim() ==
-                          "" &&
-                      _vocabSegmentsControllers[
-                                  _vocabSegmentsControllers.length - 1][1]
-                              .text
-                              .trim() ==
-                          "")
-                  ? null
-                  : () {
-                      if (_vocabSegmentsControllers.length > 0 &&
-                          _vocabSegmentsControllers[
-                                      _vocabSegmentsControllers.length - 1][0]
-                                  .text
-                                  .trim() ==
-                              "" &&
-                          _vocabSegmentsControllers[
-                                      _vocabSegmentsControllers.length - 1][1]
-                                  .text
-                                  .trim() ==
-                              "") return;
-                      setState(() {
-                        _vocabSegmentsControllers.add(
-                            [TextEditingController(), TextEditingController()]);
-                      });
-                    },
+              onPressed:
+                  // (_vocabSegmentsControllers.length > 0 &&
+                  //         _vocabSegmentsControllers[
+                  //                     _vocabSegmentsControllers.length - 1][0]
+                  //                 .text
+                  //                 .trim() ==
+                  //             "" &&
+                  //         _vocabSegmentsControllers[
+                  //                     _vocabSegmentsControllers.length - 1][1]
+                  //                 .text
+                  //                 .trim() ==
+                  //             "")
+                  //     ? null
+                  //     :
+                  () {
+                if (_vocabSegmentsControllers.length > 0 &&
+                    _vocabSegmentsControllers[
+                                _vocabSegmentsControllers.length - 1][0]
+                            .text
+                            .trim() ==
+                        "" &&
+                    _vocabSegmentsControllers[
+                                _vocabSegmentsControllers.length - 1][1]
+                            .text
+                            .trim() ==
+                        "") {
+                  showSnackbarMessage(context,
+                      success: false,
+                      message: "Please fill in all segments and words first.");
+                  return;
+                }
+                setState(() {
+                  _vocabSegmentsControllers
+                      .add([TextEditingController(), TextEditingController()]);
+                });
+              },
             ),
             ElevatedButton(
               child: const Text("Delete Segment"),
