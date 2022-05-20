@@ -1,6 +1,7 @@
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/widgets/vocab_list/audio/audio_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class VocabRecall extends StatefulWidget {
@@ -57,6 +58,7 @@ class _VocabRecallState extends State<VocabRecall> {
       body: Container(
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 40),
             Text(
@@ -123,7 +125,7 @@ class _VocabRecallState extends State<VocabRecall> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       VocabAudioPlayer(
-                        vocabID: currentVocab.id,
+                        vocabAudioPath: currentVocab.getStoryAudioPath,
                       ),
                     ]
                   : [],
