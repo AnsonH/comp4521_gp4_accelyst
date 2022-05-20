@@ -6,6 +6,7 @@ import 'package:comp4521_gp4_accelyst/models/vocab/vocab.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_list.dart';
 import 'package:comp4521_gp4_accelyst/models/vocab/vocab_storage.dart';
 import 'package:comp4521_gp4_accelyst/screens/mnemonics/vocab/vocab_edit.dart';
+import 'package:comp4521_gp4_accelyst/widgets/core/show_snackbar_message.dart';
 
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -90,9 +91,21 @@ class _VocabListEditState extends State<VocabListEdit> {
 
   void _saveVocabList(BuildContext context) async {
     // Validate data
-    if (_nameController.text.trim() == "" ||
-        _subjectController.text.trim() == "" ||
-        _vocabs.isEmpty) return;
+    if (_nameController.text.trim() == "") {
+      showSnackbarMessage(context,
+          success: false, message: "Vocab list name is required!");
+      return;
+    }
+    if (_subjectController.text.trim() == "") {
+      showSnackbarMessage(context,
+          success: false, message: "Vocab list subject is required!");
+      return;
+    }
+    if (_vocabs.isEmpty) {
+      showSnackbarMessage(context,
+          success: false, message: "Vocab list must contain at least 1 vocab!");
+      return;
+    }
     // Save updated vocab list
     vocabList = VocabList(
         id: widget.uuid,
@@ -130,7 +143,11 @@ class _VocabListEditState extends State<VocabListEdit> {
 
     // Update actual mnemonics.json
     final String updatedJson = jsonEncode(mnemonicsData);
-    mnemonicsStorage.save(updatedJson);
+    await mnemonicsStorage.save(updatedJson);
+
+    // Show success snackbar
+    showSnackbarMessage(context,
+        success: true, message: "Vocab list saved successfully!");
 
     Navigator.pop(context); // Exit "Edit Vocab List" screen
   }
