@@ -163,6 +163,7 @@ class _EditTaskState extends State<EditTask> {
                       "Priority: ",
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
+                    const SizedBox(width: 5),
                     DropdownButton<TodoPriority>(
                       value: widget.todoitem.priority,
                       items: const [
@@ -191,34 +192,42 @@ class _EditTaskState extends State<EditTask> {
                       "Deadline: ",
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
-                    Text(
-                      (widget.todoitem.deadline != null)
-                          ? "${widget.todoitem.deadline!.day}/${widget.todoitem.deadline!.month}/${widget.todoitem.deadline!.year}"
-                          : "",
-                      style: const TextStyle(fontSize: 17),
-                    ),
-                    const Expanded(child: SizedBox()),
-                    TextButton.icon(
-                      icon: const Icon(Icons.date_range),
-                      label: const Text("Change"),
+                    TextButton(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            widget.todoitem.deadline != null
+                                ? widget.todoitem.getDeadlineDate()
+                                : "None",
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.grey[600],
+                          ),
+                        ],
+                      ),
                       onPressed: () {
                         setState(() {
                           _selectDate(context);
                         });
                       },
+                      style: TextButton.styleFrom(primary: Colors.black),
                     ),
+                    const Expanded(child: SizedBox()),
                     if (widget.todoitem.deadline != null)
-                      TextButton.icon(
+                      IconButton(
                         icon: const Icon(Icons.delete),
-                        label: const Text("Delete"),
+                        color: Colors.red[600],
                         onPressed: () {
                           setState(() {
                             widget.todoitem.deadline = null;
                           });
                         },
-                        style: TextButton.styleFrom(
-                          primary: Colors.red[600],
-                        ),
                       ),
                   ],
                 ),

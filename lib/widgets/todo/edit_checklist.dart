@@ -63,6 +63,7 @@ class _EditChecklistState extends State<EditChecklist> {
             ),
           ),
         ),
+        const SizedBox(width: 4),
       ],
     );
   }
