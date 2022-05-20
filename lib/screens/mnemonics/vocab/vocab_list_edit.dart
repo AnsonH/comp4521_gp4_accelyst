@@ -310,12 +310,14 @@ class _VocabListEditState extends State<VocabListEdit> {
             ),
             ElevatedButton(
               child: const Text("Delete Vocab"),
-              onPressed: () {
-                if (_vocabs.length == 0) return;
-                setState(() {
-                  _vocabs.removeLast();
-                });
-              },
+              onPressed: (_vocabs.isEmpty)
+                  ? null
+                  : () {
+                      if (_vocabs.length == 0) return;
+                      setState(() {
+                        _vocabs.removeLast();
+                      });
+                    },
             ),
           ],
           // crossAxisAlignment: CrossAxisAlignment.stretch,
