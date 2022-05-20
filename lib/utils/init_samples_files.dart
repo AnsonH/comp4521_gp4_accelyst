@@ -41,11 +41,24 @@ Future<void> initSampleFiles() async {
   ss.filename = "74230f80-d790-11ec-8f19-fd5579bc56a7.json";
   if (!ss.isFilePathExist) {
     // TODO: import vocab list files to ~/vocab-list-data/
+    // Vocab list JSON
     copyFile(
         oldPath:
             "assets/samples/vocablist/74230f80-d790-11ec-8f19-fd5579bc56a7.json",
         newPath:
             "$path/vocab-list-data/74230f80-d790-11ec-8f19-fd5579bc56a7.json");
+    // Vocab 1 audio
+    copyFile(
+        oldPath:
+            "assets/samples/vocablist/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3",
+        newPath:
+            "$path/vocab-list-data/audio/10f8bfd0-d791-11ec-bfda-6f30d458013e.mp3");
+    // Vocab 2 audio
+    copyFile(
+        oldPath:
+            "assets/samples/vocablist/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3",
+        newPath:
+            "$path/vocab-list-data/audio/72e283c0-d791-11ec-ac24-8747ed2bcf31.mp3");
   }
 }
 
